@@ -33,3 +33,12 @@ class fx:
         Eab = Eb-Ea
         Temp = Eab/Sab
         return Temp
+
+    def Volume(self,lv,na=""):
+        if not na:
+            n = 1
+        else:
+            n = na
+        v = lv[0,0]*(lv[1,1]*lv[2,2]-lv[2,1]*lv[1,2])+lv[0,1]*(lv[1,2]*lv[2,0]-lv[2,2]*lv[1,0])+lv[0,2]*(lv[1,0]*lv[2,1]-lv[2,0]*lv[1,1])
+        vpa = v/n # Volume per atom
+        return vpa
