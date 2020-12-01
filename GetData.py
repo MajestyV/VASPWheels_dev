@@ -13,6 +13,43 @@ class geda:
         self.BindEner = BindEner
         self.POSCAR = POSCAR
 
+    def omega(self,nkpoints,nbands,frequency):
+        w = np.zeros((nkpoints, nbands))
+        for i in range(len(frequency)):
+            m = i//nbands
+            n = i%nbands
+            for j in range(nbands):
+                if n == j:
+                    w[m,n] = frequency[i]
+        return w
+
+    def k_nomalizer(self,kpoints,npath,x,y,z):
+        knodes = []
+        nkpoints = len(kpoints)
+        a = nkpoints/npath
+        if nkpoints % npath == 0:
+            for i in range(npath+1):
+                if i == npath:
+                    knodes.append(kpoints[nkpoints-1])
+                else:
+                    knodes.append(kpoints[i*a])
+        else:
+            for i in range(npath+1):
+                knodes.append(kpoints[i*a])
+        normalized_kpoints = []
+        normalized_knodes = []
+        normalized_knodes.append(0)
+        for i in range(npath):
+            l0 = np.sqrt(x**2*(knodes[i+1][0]-knodes[i][0])**2+y**2*(knodes[i+1][1]-knodes[i][1])**2+z**2*(knodes[i+1][2]-knodes[i][2])**2)
+            dl = l0/np.float(a)
+            normalized_knodes.append(normalized_knodes[i]+l0)
+            for j in range(a):
+                l = normalized_knodes[i]+j*dl
+                normalized_kpoints.append(l)
+                if (i == npath-1 and j == a-1) and nkpoints % npath != 0 :
+                    normalized_kpoints.append(l+dl)
+        return normalized_knodes,normalized_kpoints
+
     def GetEDOS(self,DataPath=""):
         if not DataPath:
             EDOS = self.DOSCAR
@@ -164,64 +201,105 @@ class geda:
         lattice = np.array(lattice_list)
         return lattice,na,lattice_ratio
 
-    def GetPhononBands(self,DataPath1="",DataPath2="",x=1,y=1,z=1):
+    def GetPhononBands(self,DataPath1="",x=1,y=1,z=1):
         #pattern = re.compile(r'^(-?d+)(.d+)?$')
         pattern1 = re.compile(r'\d+')
         pattern2 = re.compile(r'-?\d+\.?\d+')
-        f2 = open(DataPath1)
-        line2 = f2.readline()
+        f = open(DataPath1)
+        line = f.readline()
         kpoints = []
         frequency_list = []
-        i = 0
-        while line2:
-            if re.search("npath:",line2):
-                npath = pattern1.findall(line2) # npath = number of k-paths
+        while line:
+            if re.search("npath:",line):
+                npath = pattern1.findall(line) # npath = number of k-paths
                 npath = int(npath[0])
-            elif re.search("natom:",line2):
-                natom = pattern1.findall(line2) # natom = number of atoms
+            elif re.search("natom:",line):
+                natom = pattern1.findall(line) # natom = number of atoms
                 natom = int(natom[0])
-            elif re.search("- q-position:",line2):
-                k = pattern2.findall(line2)
+            elif re.search("- q-position:",line):
+                k = pattern2.findall(line)
                 k = map(float,k)
                 kpoints.append(np.array(k))
-            elif re.search("frequency:",line2):
-                frequency = pattern2.findall(line2)
+            elif re.search("frequency:",line):
+                frequency = pattern2.findall(line)
                 frequency = float(frequency[0])
                 frequency_list.append(frequency)
-            line2 = f2.readline()
-        f2.close()
+            line = f.readline()
+        f.close()
         nkpoints = len(kpoints)
 
         nbands = 3*natom # nbands = number of bands
-        w = np.zeros((nkpoints,nbands))
-        for i in range(len(frequency_list)):
-            m = i//nbands
-            n = i%nbands
-            for j in range(nbands):
-                if n == j:
-                    w[m,n] = frequency_list[i]
+        w = self.omega(nkpoints,nbands,frequency_list)
 
-        knodes = []
-        a = nkpoints/npath
-        for i in range(npath+1):
-            if i == npath:
-                knodes.append(kpoints[nkpoints-1])
+        qnodes = self.k_nomalizer(kpoints,npath,x,y,z)[0]
+        qpoints = self.k_nomalizer(kpoints,npath,x,y,z)[1]
+
+        return qpoints,w,qnodes,nbands,nkpoints,npath
+
+    def GetGruneisen(self,DataPath,x=1,y=1,z=1):
+        pattern1 = re.compile(r'\d+')
+        pattern2 = re.compile(r'-?\d+\.?\d+')
+        f = open(DataPath)
+        line = f.readline()
+        kpoints = []
+        gruneisen_list = []
+        frequency_list = []
+        n_list = []
+        i = 0
+        j = 0
+        npath = 0
+        while line:
+            if re.search("- nqpoint:",line):
+                i = 1
+                npath += 1
+
+            if i == 1 and re.search("- q-position:",line):
+                k = pattern2.findall(line)
+                k = map(float,k)
+                i = 0
+                if npath == 1:
+                    kpoints.append(k)
+            elif i == 0 and re.search("- q-position:",line):
+                k = pattern2.findall(line)
+                k = map(float,k)
+                kpoints.append(k)
+
+            if re.search("distance:",line):
+                j = pattern2.findall(line)
+                j = float(j[0])
+            if j == 0 and npath == 1:
+                criterion = 1
+            elif j != 0:
+                criterion = 1
             else:
-                knodes.append(kpoints[i*a])
-        normalized_kpoints = []
-        normalized_knodes = []
-        normalized_knodes.append(0)
-        for i in range(npath):
-            l0 = np.sqrt(x**2*(knodes[i+1][0]-knodes[i][0])**2+y**2*(knodes[i+1][1]-knodes[i][1])**2+z**2*(knodes[i+1][2]-knodes[i][2])**2)
-            dl = l0/np.float(a)
-            normalized_knodes.append(normalized_knodes[i]+l0)
-            for j in range(a):
-                l = normalized_knodes[i]+j*dl
-                normalized_kpoints.append(l)
+                criterion = 0
+            if criterion == 1 and re.search("gruneisen:",line):
+                gruneisen = pattern2.findall(line)
+                gruneisen = float(gruneisen[0])
+                gruneisen_list.append(gruneisen)
+            elif criterion == 1 and re.search("frequency:",line):
+                frequency = pattern2.findall(line)
+                frequency = float(frequency[0])
+                frequency_list.append(frequency)
+            elif re.search("- #",line):
+                n = pattern1.findall(line)
+                n = int(n[0])
+                n_list.append(n)
+            line = f.readline()
+        f.close()
 
-        return normalized_kpoints,w,normalized_knodes,nbands,nkpoints,npath
+        nbands = max(n_list)
+        nkpoints  =len(kpoints)
+        r = self.omega(nkpoints,nbands,gruneisen_list)
+        w = self.omega(nkpoints,nbands,frequency_list)
+
+        qnodes = self.k_nomalizer(kpoints,npath,x,y,z)[0]
+        qpoints = self.k_nomalizer(kpoints,npath,x,y,z)[1]
+
+        return qpoints,r,w,qnodes,nbands,nkpoints,npath
 
 #gd = geda()
-#path = '/Users/liusongwei/Titanium/mode_Gruneisen_parameters/result_fdm_G_test2/alpha/orig/band.yaml'
+#path = '/Users/liusongwei/Titanium/mode_Gruneisen_parameters/result_fdm_G_test4/alpha/gruneisen.yaml'
+#print(gd.GetGruneisen(path))
 #print(gd.GetPhononBands(path)[0])
 #print(gd.GetPhononBands(path)[2])

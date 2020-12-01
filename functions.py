@@ -44,6 +44,25 @@ class fx:
         vpa = v/n # Volume per atom
         return vpa
 
+    def MyHeart(self,a=1.5,b=1,r0=1,n=1314):
+        theta = np.linspace(0.5*np.pi,2.5*np.pi,1000)
+        #theta = b*t
+        radius = r0
+        dt = theta[1]-theta[0]
+        r = []
+        for i in range(len(theta)):
+            if theta[i] <= 1.5*np.pi:
+                radius += a*dt
+            else:
+                radius += -a*dt
+            r.append(radius)
+        x = []
+        y = []
+        for i in range(len(theta)):
+            x.append(r[i]*np.cos(theta[i]))
+            y.append(r[i]*np.sin(theta[i]))
+        return x,y
+
 class BirchMurnaghanEOS:
     def __init__(self,V="",P="",E=""):
         self.V = V
