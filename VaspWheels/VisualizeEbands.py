@@ -70,7 +70,8 @@ class Plotting:
             plt.vlines(knodes[i],ymin,ymax,linewidth=0.5,linestyles='dashed',colors='k')
         if shift == 'True':
             plt.hlines(0,xmin,xmax,linewidth=0.5,linestyles='dashed',colors='k')  # The Fermi energy have been shifted to 0.
-            plt.ylabel('$E-E_{f}$ $\mathrm{(eV)}$',size=24,fontdict={'style':'italic'})  # style选项选用italic启动西文斜体
+            # plt.ylabel('$E-E_{f}$ $\mathrm{(eV)}$',size=24,fontdict={'style':'italic'})  # style选项选用italic启动西文斜体
+            plt.ylabel('Energy (eV)', size=24)  # style选项选用italic启动西文斜体
         else:
             plt.hlines(Ef,xmin,xmax,linewidth=0.5,linestyles='dashed',colors='k')
             plt.ylabel('Energy (eV)',size=24)
@@ -88,12 +89,12 @@ class Plotting:
         return
 
 if __name__=='__main__':
-    EIGENVAL = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Testing/EIGENVAL'
+    EIGENVAL = 'D:/MaterialsGallery/Testing/MoS2_bulk_SOC/result_pawlda/EIGENVAL'
     plot = Plotting()
-    Kpoints = [r'$\Gamma$','M', 'K', r'$\Gamma$', 'A', 'L', 'H', 'A']
-    path = [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0], [0, 0, 0.5], [0.5, 0, 0.5], [1.0 / 3.0, 1.0 / 3.0, 0.5], [0, 0, 0.5]]
+    Kpoints = [r'$\Gamma$','M', 'K', r'$\Gamma$','A','L','H','A']
+    path = [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0],[0,0,1/2.0],[1/2.0,0,1/2.0],[2/3.0,1/3.0,1/2.0],[0,0,1/2.0]]
     lattice = ['HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive']
-    a = plot.Ebands(EIGENVAL,path,LatticeCorrection='True',Lattice=lattice,ShiftFermi='True',Efermi=5.1,Kpoints=Kpoints,title='Band structure of bulk MoS2',latex='True')
+    a = plot.Ebands(EIGENVAL,path,LatticeCorrection='True',Lattice=lattice,ShiftFermi='True',Efermi=5.92,Kpoints=Kpoints,ylim=(-5,5),title='Band structure of monolayer MoS2',latex='False')
     #print(len(a['energy'][0]))
     #print(len(a['occupation'][31]))
     # print(a[1])

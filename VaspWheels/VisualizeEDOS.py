@@ -6,7 +6,7 @@ from VaspWheels import GetEDOS
 # 一些用于文章级结果图的matplotlib参数，由于这些参数都是通用的，所以可以作为全局变量设置
 plt.rcParams['xtick.direction'] = 'in'  # 将x轴的刻度线方向设置向内
 plt.rcParams['ytick.direction'] = 'in'  # 将y轴的刻度线方向设置向内
-font_config = {'font.family':'Times New Roman'}  # font.family设定所有字体为Times New Roman
+font_config = {'font.family':'Times New Roman'}  # font.family设定所有字体为Arial, 科研作图一般使用Times New Roman或者Arial两种字体
 plt.rcParams.update(font_config)  # 但是对于希腊字母(e.g. α, β, γ等)跟各种数学符号之类的不适用, Latex语法如$\Gamma$会被判断为None
 plt.rcParams['mathtext.default'] = 'regular'  # 可以通过这个选项修改所有希腊字母以及数学符号为Times New Roman
 
@@ -61,7 +61,7 @@ class Plotting:
             pass
         if shift == 'True':
             plt.vlines(0,ymin,ymax,linewidth=0.5,linestyles='dashed',colors='k')  # The Fermi energy have been shifted to 0.
-            plt.xlabel('$E-E_{f}$ $\mathrm{(eV)}$',size=24,fontdict={'style':'italic'})  # style选项选用italic启动西文斜体
+            plt.xlabel('Energy (eV)',size=24)  # style选项选用italic启动西文斜体
         else:
             plt.vlines(Ef,ymin,ymax,linewidth=0.5,linestyles='dashed',colors='k')
             plt.xlabel('Energy (eV)',size=24)
@@ -80,9 +80,9 @@ class Plotting:
         return
 
 if __name__=='__main__':
-    DOSCAR = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Testing/DOSCAR'
+    DOSCAR = 'D:/MaterialsGallery/Testing/MoS2_bulk_SOC/result_2/DOSCAR'
     plot = Plotting()
-    a = plot.EDOS(DOSCAR,ShiftFermi='True',plot_TOS='False',xlim=(-5,5),ylim=(0,20),title='DOS of bulk MoS2')
+    a = plot.EDOS(DOSCAR,ShiftFermi='True',plot_TOS='False',xlim=(-5,5),ylim=(0,20),title='DOS of bulk MoS2',latex='False')
     #print(len(a['energy'][0]))
     #print(len(a['occupation'][31]))
     # print(a[1])

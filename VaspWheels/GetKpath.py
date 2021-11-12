@@ -30,7 +30,7 @@ class Kpath:
     # This function is written to generate KPOINTS file for electronic dispersion calculation.
     def GetKpath(self,saving_directory,path,npoints=100):
         kpath = self.Kgenerator(path,npoints)
-        KPOINTS = saving_directory+'KPOINTS_ebands'
+        KPOINTS = saving_directory
         f = open(KPOINTS,'w')
         f.write('auto generate\n'+
                 str(len(kpath))+'\n'
@@ -74,17 +74,16 @@ class Kpath:
         return kprojection,nodes
 
 if __name__=='__main__':
-    saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Testing/'
+    saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Testing/Kpoints_ebands'
     kpath = Kpath()
     # Gamma-M-K-Gamma-A-L-H-A
-    path = [[0,0,0],[0.5,0,0],[1.0/3.0,1.0/3.0,0],[0,0,0],[0,0,0.5],[0.5,0,0.5],[1.0/3.0,1.0/3.0,0.5],[0,0,0.5]]
+    path = [[0,0,0],[0.5,0,0],[1.0/3.0,1.0/3.0,0],[0,0,0]]
     #a = kpath.Kgenerator(path,59)
     b = kpath.ProjectKpath(path,59,LatticeCorrection='True',Lattice=['HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive'])
     #print(len(a))
     print(b[0])
     print(b[1])
-    #kpath.GetKpath(saving_directory,path,59)
-
+    kpath.GetKpath(saving_directory,path,59)
     #LatticeParam = ['HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive']
     #lattice, parameters, type = LatticeParam
     #print(crystal.Reciprocal_lattice(lattice,parameters,type))
