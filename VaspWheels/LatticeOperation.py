@@ -1,7 +1,7 @@
 # This code is written for conducting various of lattice manipulations like forming supercell, exfoliating 2D layers and so on.
 
 import codecs
-import re
+import copy  # 引用这个模块主要的作用是为了将输入的动态变量进行深拷贝，以防止在函数运行过程中的一些操作改变了输入的动态变量
 import numpy as np
 from os import path
 
@@ -45,7 +45,7 @@ class latte:
         # The position of each atom will be preserved in this dictionary
         crystal_info = {'system':system,'scale':scale,'coordinate':coordinate}  # The information of this crystal will be preserved in this dictionary
 
-        return lattice_vector,atomic_position,crystal_info
+        return lattice_vector,atomic_position,crystal_info  # 应注意：lattice_vector为数组，而atomic_position、crystal_info为字典
 
     # 这个函数可以将晶体信息组装成一个POSCAR文件
     def WritePOSCAR(self,saving_directory=default_directory+'POSCAR_new',lattice_vector=None,atomic_position=None,crystal_info=None):
@@ -85,15 +85,18 @@ class latte:
         s_x,s_y,s_z = scale_factor  # 解压出各个晶向上的增大倍数
         shrink_factor = [1/float(s_x),1/float(s_y),1/float(s_z)]  # 用于缩放原子坐标的缩放因子
 
+        # 在python中，字符串、数值、元组均为静态变量，字典、列表为动态变量，所以对动态变量进行操作时要注意先将其深拷贝一份，以防止原动态变量中的值被改变
+        # https://www.runoob.com/w3cnote/python-variable-references-and-copies.html
+        # https://zhuanlan.zhihu.com/p/109563649
         # 接下来，我们按照顺序，先改晶格基矢再改原子坐标信息
-        lattice_vector_old = lattice_vector
+        lattice_vector_old = copy.deepcopy(lattice_vector)  # # 深拷贝输入的列表变量，以防止后续操作改变输入列表中的值
         # 将旧的晶格基矢赋给新的变量，以防止互相影响，然后计算得到扩胞后的lattice vector
         lattice_vector_new = np.array([np.array(lattice_vector_old[n])*scale_factor[n] for n in range(len(lattice_vector_old))])
         # numpy数组乘以一个数，表示原数组中每个数字与这个数相乘 (input: np.array([1,2,3])*5, output: array([5,10,15]))
 
-        atomic_position_new = atomic_position  # 同样，提取扩胞前的原子坐标信息，防止可能的互相影响
-        num_atom_old = atomic_position['num_atom']  # 提取扩胞前的原子总数
-        atomic_coordinate_old = atomic_position['atomic_coordinate']  # 提取扩胞前的原子坐标
+        atomic_position_new = copy.deepcopy(atomic_position)  # 深拷贝输入的字典变量，以防止后续操作改变输入字典中的值
+        num_atom_old = atomic_position_new['num_atom']  # 提取扩胞前的原子总数
+        atomic_coordinate_old = atomic_position_new['atomic_coordinate']  # 提取扩胞前的原子坐标
 
         # 先修改原子总数
         total_scale = s_x * s_y * s_z  # 原子总数增加的倍数
@@ -125,16 +128,15 @@ class latte:
         t_vac = vacuum_layer  # 真空层厚度
 
         # 同样，先修改晶格基矢，再修改原子坐标
-        lattice_vector_old = lattice_vector
-        lattice_vector_new = lattice_vector
-        z_a,z_b,z_c = lattice_vector_old[2]  # 解压出z晶向在正交直角坐标系下的三个分量
+        lattice_vector_new = copy.deepcopy(lattice_vector)
+        z_a,z_b,z_c = lattice_vector_new[2]  # 解压出z晶向在正交直角坐标系下的三个分量
         lattice_vector_new[2] = np.array([z_a,z_b,z_c/2.0+t_vac])
         # 延长z晶向的长度，因为注意，由于我们接下来会删除一半的晶胞，所以延长后的长度应该是原本半个晶胞的长度加上真空层的厚度
 
         # 修改原子坐标
-        atomic_position_new = atomic_position
-        num_atom_old = atomic_position['num_atom']  # 提取剥离前的原子总数
-        atomic_coordinate_old = atomic_position['atomic_coordinate'] # 提取剥离前的原子坐标
+        atomic_position_new = copy.deepcopy(atomic_position)
+        num_atom_old = atomic_position_new['num_atom']  # 提取剥离前的原子总数
+        atomic_coordinate_old = atomic_position_new['atomic_coordinate'] # 提取剥离前的原子坐标
 
         # 先修改原子总数
         num_atom_new = [int(num_atom_old[i]/2.0) for i in range(len(num_atom_old))]  # 各种原子的数目减少为原先的一半，同时要注意转换为整型，不然Vesta读不了
@@ -158,9 +160,7 @@ class latte:
     def ExfoliateFewLayer(self,num_layer=1,vacuum_layer=20,lattice_vector=None,atomic_position=None):
         # 对于TMD而已，一个晶胞中有两层monolayer，而我们的Exfoliate函数会将一层删除并保留一层
         # 所以如果我们想要n_layer层材料，我们可以先扩胞到n_cell=n_layer，再Exfoliate（该函数会将不要的那几层删除）
-        lattice_vector_old = lattice_vector
-        atomic_position_old = atomic_position
-        lattice_vector_supercell,atomic_position_supercell = self.Supercell([1,1,int(num_layer)],lattice_vector_old,atomic_position_old)
+        lattice_vector_supercell,atomic_position_supercell = self.Supercell([1,1,int(num_layer)],lattice_vector,atomic_position)
         lattice_vector_new,atomic_position_new = self.Exfoliate(vacuum_layer,lattice_vector_supercell,atomic_position_supercell)
         return lattice_vector_new,atomic_position_new
 
