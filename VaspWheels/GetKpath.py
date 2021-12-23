@@ -74,16 +74,16 @@ class Kpath:
         return kprojection,nodes
 
 if __name__=='__main__':
-    saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Testing/Kpoints_ebands'
+    saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Kpoints_ebands'
     kpath = Kpath()
     # Gamma-M-K-Gamma-A-L-H-A
-    path = [[0,0,0],[0.5,0,0],[1.0/3.0,1.0/3.0,0],[0,0,0]]
+    path = [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0], [0,0,1/2.0], [1/2.0,0,1/2.0], [1/3.0, 1/3.0, 1/2.0], [0,0,1/2.0]]
     #a = kpath.Kgenerator(path,59)
     b = kpath.ProjectKpath(path,59,LatticeCorrection='True',Lattice=['HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive'])
     #print(len(a))
     print(b[0])
     print(b[1])
-    kpath.GetKpath(saving_directory,path,59)
+    kpath.GetKpath(saving_directory,path,99)
     #LatticeParam = ['HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive']
     #lattice, parameters, type = LatticeParam
     #print(crystal.Reciprocal_lattice(lattice,parameters,type))

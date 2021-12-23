@@ -89,12 +89,14 @@ class Plotting:
         return
 
 if __name__=='__main__':
-    EIGENVAL = 'D:/MaterialsGallery/Testing/MoS2_bulk_SOC/result_pawlda/EIGENVAL'
+    EIGENVAL = 'D:/MaterialsGallery/Testing/MoS2_monolayer_test/result_double_cell/EIGENVAL'
     plot = Plotting()
-    Kpoints = [r'$\Gamma$','M', 'K', r'$\Gamma$','A','L','H','A']
-    path = [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0],[0,0,1/2.0],[1/2.0,0,1/2.0],[2/3.0,1/3.0,1/2.0],[0,0,1/2.0]]
+    #Kpoints = [r'$\Gamma$','M', 'K', r'$\Gamma$', 'A', 'L', 'H', 'A']
+    #path = [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0], [0,0,1/2.0], [1/2.0,0,1/2.0], [1/3.0, 1/3.0, 1/2.0], [0,0,1/2.0]]
+    Kpoints = [r'$\Gamma$', 'M', 'K', r'$\Gamma$']
+    path = [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0]]
     lattice = ['HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive']
-    a = plot.Ebands(EIGENVAL,path,LatticeCorrection='True',Lattice=lattice,ShiftFermi='True',Efermi=5.92,Kpoints=Kpoints,ylim=(-5,5),title='Band structure of monolayer MoS2',latex='False')
+    a = plot.Ebands(EIGENVAL,path,LatticeCorrection='True',Lattice=lattice,ShiftFermi='False',Efermi=6.685,Kpoints=Kpoints,ylim=(-5,5),title='Band structure of 7-layer MoS2',latex='False')
     #print(len(a['energy'][0]))
     #print(len(a['occupation'][31]))
     # print(a[1])

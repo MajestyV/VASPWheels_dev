@@ -56,11 +56,11 @@ class Ebands:
         return bands
 
 if __name__=='__main__':
-    EIGENVAL = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Testing/EIGENVAL'
+    EIGENVAL = 'D:/MaterialsGallery/Testing/MoS2_pawlda/MoS2_2H/1/result/EIGENVAL'
     ebands = Ebands()
     # Gamma-M-K-Gamma-A-L-H-A
     a = ebands.GetData(EIGENVAL)
-    print(len(a['energy'][0]))
+    #print(len(a['energy'][0]))
     #print(len(a['occupation'][31]))
-    # print(a[1])
+    print(a)
     #kpath.GetKpath(saving_directory,path,59)
