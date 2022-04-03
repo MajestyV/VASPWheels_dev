@@ -71,10 +71,10 @@ class Plotting:
         if shift == 'True':
             plt.hlines(0,xmin,xmax,linewidth=0.5,linestyles='dashed',colors='k')  # The Fermi energy have been shifted to 0.
             # plt.ylabel('$E-E_{f}$ $\mathrm{(eV)}$',size=24,fontdict={'style':'italic'})  # style选项选用italic启动西文斜体
-            plt.ylabel('Energy (eV)', size=24)  # style选项选用italic启动西文斜体
+            plt.ylabel('$E-E_{f}$ (eV)', size=24)  # style选项选用italic启动西文斜体
         else:
             plt.hlines(Ef,xmin,xmax,linewidth=0.5,linestyles='dashed',colors='k')
-            plt.ylabel('Energy (eV)',size=24)
+            plt.ylabel('$E-E_{f}$ (eV)',size=24)
         plt.xticks(knodes,HSP,size=20)
         plt.yticks(size=14)
         plt.xlim(xmin,xmax)

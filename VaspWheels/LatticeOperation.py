@@ -164,6 +164,32 @@ class latte:
         lattice_vector_new,atomic_position_new = self.Exfoliate(vacuum_layer,lattice_vector_supercell,atomic_position_supercell)
         return lattice_vector_new,atomic_position_new
 
+    def Exfoliate2(self,num_layer=1,vacuum_layer=20,lattice_vector=None,atomic_position=None):
+        latt_vec, atom_pos = self.Supercell([1,1,num_layer],lattice_vector,atomic_position)
+
+        lattice_vector_new = copy.deepcopy(latt_vec)
+        z_a, z_b, z_c = lattice_vector_new[2]  # 解压出z晶向在正交直角坐标系下的三个分量
+        lattice_vector_new[2] = np.array([z_a, z_b, z_c+vacuum_layer])
+
+        # shifting_vec = np.float(vacuum_layer)/np.float(z_c+vacuum_layer)
+        atomic_position_new = copy.deepcopy(atom_pos)
+        num_atom_new = atomic_position_new['num_atom']  # 提取剥离前的原子总数
+        atomic_coordinate_new = atomic_position_new['atomic_coordinate']  # 提取剥离前的原子坐标
+        for n in range(len(atomic_coordinate_new)):
+            print(atomic_coordinate_new[n])
+            a,b,c = atomic_coordinate_new[n]
+            if c >= 0.5:
+                atomic_coordinate_new[n] = [a,b,np.float(c*z_c+vacuum_layer)/np.float(z_c+vacuum_layer)]
+            else:
+                atomic_coordinate_new[n] = [a,b,np.float(c*z_c)/np.float(z_c+vacuum_layer)]
+            print(atomic_coordinate_new[n])
+
+        atomic_position_new['atomic_coordinate'] = atomic_coordinate_new
+
+        return lattice_vector_new,atomic_position_new
+
+
+
 #if __name__=='__main__':
     #pass
     #POSCAR = 'D:/MaterialsGallery/2D Materials/MoS2/Crystal structures/Bulk 2H-MoS2.vasp'
