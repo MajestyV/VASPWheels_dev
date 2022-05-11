@@ -6,14 +6,14 @@ VB = VisualizeEbands.Plotting()  # 能带可视化专用包
 
 Data = {'LDA':'/Users/liusongwei/MaterialsGallery/MoS2/Data/MoS2_2H/MoS2_pawlda_SOC/',  # Data for xc-function LDA
         'PBE':'D:/Data/MoS2/GSE/pawpbe_vasp5_SOC/',  # Data for xc-function PBE
-        'GSE':'D:/Data/MoS2/GSE/pawpbe_vasp5/'}            # Data for GSE calculation
+        'GSE':'D:/Projects/PhaseTransistor/Data/Simulation/GSE/'}            # Data for GSE calculation
 Repository = Data['GSE']  # 选择可视化PBE关联函数的计算结果
 
 # 指定特定的结构
-nlayer = '2_D3BJ_GSE_1'
-directory = '0.100'
+nlayer = '3/3_D3BJ_GSE_1'
+directory = '0.250'
 # title = r'Band structure of '+nlayer+' $MoS_2$'
-title = r'Bilayer, D2ISIF4, 0.3 V/nm - ST2'
+title = r''
 
 # Address of the data file
 EIGENVAL = Repository+nlayer+'/'+directory+'/EIGENVAL'

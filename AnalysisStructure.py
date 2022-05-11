@@ -1,15 +1,7 @@
 import numpy as np
 import codecs
 
-#Bulk_struc = '/Users/liusongwei/MaterialsGallery/MoS2/Data/MoS2_POSCAR/MoS2_bulk.vasp'
-#Initial_struc = '/Users/liusongwei/MaterialsGallery/MoS2/Data/MoS2_POSCAR/MoS2_2.vasp'
-#D2_ISIF2 = '/Users/liusongwei/MaterialsGallery/MoS2/Data/MoS2_2H_pawpbe/result_D2_ISIF2/relaxed_structure'
-#noD2_ISIF2 = '/Users/liusongwei/MaterialsGallery/MoS2/Data/MoS2_2H_pawpbe/result_noD2_ISIF2/relaxed_structure'
-#D2_ISIF4 = '/Users/liusongwei/MaterialsGallery/MoS2/Data/MoS2_2H_pawpbe/result_D2_ISIF4/relaxed_structure'
-#noD2_ISIF4 = '/Users/liusongwei/MaterialsGallery/MoS2/Data/MoS2_2H_pawpbe/result_noD2_ISIF4/relaxed_structure'
-
-input = '/Users/liusongwei/MaterialsGallery/MoS2/Data/MoS2_2H/MoS2_pawpbe_vasp5_SOC/bulk/bulk_D3BJ/relaxed_structure'
-#bulk_33 = '/Users/liusongwei/MaterialsGallery/MoS2/Data/MoS2_2H/MoS2_pawlda_SOC/bulk/result_DoubleRelax_ISIF3-3/relaxed_structure'
+relaxed_structure = 'D:/MaterialsGallery/Testing/MoS2_pawpbe/MoS2_2H/2/result_D2_ISIF2/relaxed_structure'
 
 # This function is written to read the CONTCAR (relaxed_structure) and analysis the data within.
 def GetStructure(CONTCAR):
@@ -67,49 +59,53 @@ def distance(Point_1, Point_2, latt_param=[[1.0,0,0],[0,1.0,0],[0,0,1.0]]):
 
     return np.sqrt(d_sqaure[0][0])
 
-def Structure_of_MoS2(relaxed_structure,m=3):
-    Sturc_info = GetStructure(relaxed_structure)
-    lp = Sturc_info['lattice_parameter']  # lp - lattice parameter
-    atom_pos = Sturc_info['atomic_position']
-    natom = Sturc_info['num_atom']
+Sturc_info = GetStructure(relaxed_structure)
+lp = Sturc_info['lattice_parameter']  # lp - lattice parameter
+atom_pos = Sturc_info['atomic_position']
+natom = Sturc_info['num_atom']
 
-    a_vec, b_vec, c_vec = lp
-    a = np.linalg.norm(np.array(a_vec),ord=2)  # 二范数即向量的模
-    b = np.linalg.norm(np.array(b_vec),ord=2)
+a_vec, b_vec, c_vec = lp
+a = np.linalg.norm(np.array(a_vec),ord=2)  # 二范数即向量的模
+b = np.linalg.norm(np.array(b_vec),ord=2)
+
+#g = np.mat([a_vec,b_vec,c_vec])
+#g_T = np.transpose(g)
+#metric_tensor = np.dot(g,g_T)  # 应注意，这里要用向量/矩阵的点乘，不是叉乘，不要弄混
+#print(metric_tensor)
 
 
-    #g = np.mat([a_vec,b_vec,c_vec])
-    #g_T = np.transpose(g)
-    #metric_tensor = np.dot(g,g_T)  # 应注意，这里要用向量/矩阵的点乘，不是叉乘，不要弄混
-    #print(metric_tensor)
+num_Mo = int(natom[0])
+num_S = int(natom[1])
+Mo_1 = np.mat(atom_pos[0])
+Mo_2 = np.mat(atom_pos[1])
+S_1 = np.mat(atom_pos[num_Mo])
+S_2 = np.mat(atom_pos[num_Mo+1])
+S_3 = np.mat(atom_pos[num_Mo+2])
+S_4 = np.mat(atom_pos[num_Mo+3])
 
-    num_Mo = int(natom[0])
-    num_S = int(natom[1])
-    Mo_1 = np.mat(atom_pos[0])
-    Mo_2 = np.mat(atom_pos[1])
-    S_1 = np.mat(atom_pos[num_Mo])
-    S_2 = np.mat(atom_pos[num_Mo+1])
-    S_3 = np.mat(atom_pos[num_Mo+2])
-    S_4 = np.mat(atom_pos[num_Mo+3])
+a0 = distance([1.0,0,0],[0,0,0],lp)
+b0 = distance([0,1.0,0],[0,0,0],lp)
+c_over_2 = distance([0,0,np.array(Mo_1)[0][2]],[0,0,np.array(Mo_2)[0][2]],lp)
+d_Mo1_S1 = distance(Mo_1,S_1,lp)
+d_Mo1_S2 = distance(Mo_1,S_2,lp)
+d_Mo1_S3 = distance(Mo_1,S_3,lp)
+d_Mo1_S4 = distance(Mo_1,S_4,lp)
+d_Mo2_S1 = distance(Mo_2,S_1,lp)
+d_Mo2_S2 = distance(Mo_2,S_2,lp)
+d_Mo2_S3 = distance(Mo_2,S_3,lp)
+d_Mo2_S4 = distance(Mo_2,S_4,lp)
 
-    a0 = round(distance([1.0,0,0],[0,0,0],lp),m)
-    b0 = round(distance([0,1.0,0],[0,0,0],lp),m)
-    c0 = round(distance([0,0,1.0],[0,0,0],lp),m)
-    c_over_2 = round(distance([0,0,np.array(Mo_1)[0][2]],[0,0,np.array(Mo_2)[0][2]],lp),m)
-    d_Mo1_S1 = round(distance(Mo_1,S_1,lp),m)
-    d_Mo1_S2 = round(distance(Mo_1,S_2,lp),m)
-    d_Mo1_S3 = round(distance(Mo_1,S_3,lp),m)
-    d_Mo1_S4 = round(distance(Mo_1,S_4,lp),m)
-    d_Mo2_S1 = round(distance(Mo_2,S_1,lp),m)
-    d_Mo2_S2 = round(distance(Mo_2,S_2,lp),m)
-    d_Mo2_S3 = round(distance(Mo_2,S_3,lp),m)
-    d_Mo2_S4 = round(distance(Mo_2,S_4,lp),m)
+print(a,a0)
+print(b,b0)
+print(c_over_2)
+print(d_Mo1_S1,d_Mo1_S2,d_Mo1_S3,d_Mo1_S4)
+print(d_Mo2_S1,d_Mo2_S2,d_Mo2_S3,d_Mo2_S4)
 
-    return a0, b0, c0, c_over_2, [d_Mo1_S1,d_Mo1_S2,d_Mo1_S3,d_Mo1_S4], [d_Mo2_S1,d_Mo2_S2,d_Mo2_S3,d_Mo2_S4]
-
-for data in [input]:
-    a, b, c, inter_spacing, dMo1, dMo2 = Structure_of_MoS2(data)
-    print(str(data)+':')
-    print(a,b,c)
-    print(inter_spacing)
-    print(dMo1,dMo2)
+# d = Mo_1-S_4
+#d = np.array([[0,1,0]])
+#d_abs_sq = d*metric_tensor*np.transpose(d)  # 同时，这里也是点乘
+#d_abs_sq = np.array(d_abs_sq)  # 将d_abs_sq从矩阵形式转变为数组形式
+#d_abs = np.sqrt(d_abs_sq[0,0])
+#print(d)
+#print(d_abs_sq)
+#print(d_abs)

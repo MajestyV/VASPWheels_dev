@@ -1,13 +1,23 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from VaspWheels import GetChargeDensity
 
-#print(list(np.arange(0,215,48.96)))
-#print(np.array(list(np.arange(-195.84,-0.1,48.96))+list(np.arange(0,215,48.96))))
-#print(np.array(list(np.arange(-20,-0.1,5))+list(np.arange(0,23,5))))
+GCD = GetChargeDensity.Charge()
 
-a = np.array([3.14733000000000, 0.00000000000000, 0.00000000000000])
-b = np.array([-1.57366500000000, 2.72566700000000, 0.00000000000000])
-c = np.array([0.00000000000000,0.00000000000000, 43.91229000000000])
+# 数据地址
+#CHGDIFF = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/4/Differential_Charge_Density/CHGDIFF-0.050.vasp'
 
-print(np.linalg.norm(6*(a-b),ord=2))
-print(np.linalg.norm(c,ord=2))
-#print(a-b)
+# 提取数据
+#data = GCD.ExtractCharge(CHGDIFF)
+
+# v = GCD.Volume(data['lattice'])  # 计算原胞体积
+# isosurface_level = 6.0e-4/v
+# print(v)
+print(4e-4/6.748344)
+
+# a = np.array([3.14733000000000, 0.00000000000000, 0.00000000000000])
+# b = np.array([-1.57366500000000, 2.72566700000000, 0.00000000000000])
+# c = np.array([0.00000000000000,0.00000000000000, 43.91229000000000])
+
+# print(np.linalg.norm(6*(a-b),ord=2))
+# print(np.linalg.norm(c,ord=2))
