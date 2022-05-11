@@ -60,6 +60,7 @@ class Phonon:
         ymin, ymax = ylim
         color = kwargs['color'] if 'color' in kwargs else 'k'
         label = kwargs['label'] if 'label' in kwargs else None
+        linewidth = kwargs['linewidth'] if 'linewidth' in kwargs else '0.6'
 
         label_band = kwargs['label_band'] if 'label_band' in kwargs else 'False'
         bands_labelled = kwargs['bands_labelled'] if 'bands_labelled' in kwargs else None
@@ -75,14 +76,18 @@ class Phonon:
         for n in range(nbands):
             if label_band == 'True':
                 if n+1 in bands_labelled:
-                    plt.plot(q_projected, frequency[n], linewidth=0.6, color=labelling_color)
+                    #if bands_labelled.index(n+1) == 0:
+                        #plt.plot(q_projected, frequency[n], linewidth=linewidth, color=labelling_color, label='Raman active')
+                    #else:
+                        #plt.plot(q_projected, frequency[n], linewidth=linewidth, color=labelling_color)
+                    plt.plot(q_projected, frequency[n], linewidth=linewidth, color=labelling_color)
                 else:
-                    plt.plot(q_projected, frequency[n], linewidth=0.6, color=color)
+                    plt.plot(q_projected, frequency[n], linewidth=linewidth, color=color)
             else:
                 if label and n==0:
-                    plt.plot(q_projected,frequency[n],linewidth=0.6,color=color,label=label)
+                    plt.plot(q_projected,frequency[n],linewidth=linewidth,color=color,label=label)
                 else:
-                    plt.plot(q_projected,frequency[n],linewidth=0.6,color=color)
+                    plt.plot(q_projected,frequency[n],linewidth=linewidth,color=color)
         plt.xlim(xmin,xmax)
         plt.ylim(ymin,ymax)
 

@@ -63,4 +63,5 @@ if __name__=='__main__':
     #print(len(a['energy'][0]))
     #print(len(a['occupation'][31]))
     print(a)
+
     #kpath.GetKpath(saving_directory,path,59)

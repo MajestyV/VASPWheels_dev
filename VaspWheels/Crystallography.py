@@ -71,8 +71,8 @@ class Crystal:
                              'Body-centered cubic': [[-a/2.0,a/2.0,a/2.0],
                                                      [a/2.0,-a/2.0,a/2.0],
                                                      [a/2.0,a/2.0,-a/2.0]],
-                             'Hexagonal': [[a / 2.0, -a * np.sqrt(3) / 2.0, 0],
-                                           [a / 2.0, a * np.sqrt(3) / 2.0, 0],
+                             'Hexagonal': [[a, 0, 0],
+                                           [-a/2.0, a*np.sqrt(3)/2.0, 0],
                                            [0, 0, c]]}
         # 同样，增加缩写
         primitve_abbreviate = {'CUB':primitive_vectors['Cubic'],
