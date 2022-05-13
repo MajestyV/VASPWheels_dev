@@ -1,119 +1,98 @@
+import os
+
 import numpy as np
+import xlrd
+import xlwt
 import matplotlib.pyplot as plt
 from VaspWheels import Crystallography
-from VaspWheels import GetEbands
-from scipy.optimize import leastsq
+from VaspWheels import GetEffectiveMass
 
-cryst = Crystallography.Crystal()
-GEB = GetEbands.Ebands()
+crystal = Crystallography.Crystal()
+GEM = GetEffectiveMass.EffectiveMass()
 
 lattice = ['HEX', [3.1473295667554400, 3.1473295667554400, 43.9122903625234997, 90, 90, 120], 'primitive']
-reciprocal = cryst.Reciprocal_lattice('HEX',[3.1473295667554400, 3.1473295667554400, 43.9122903625234997, 90, 90, 120])
+crystal_class, lattice_para, cell_type = lattice
+reciprocal = crystal.Reciprocal_lattice(crystal_class,lattice_para)
 
-data_file = 'D:/Projects/PhaseTransistor/Data/Simulation/Conductivity/Mobility/4/EffectiveMass/4_GSE_EffectiveMass/'
+data_repository = 'D:/Projects/PhaseTransistor/Data/Simulation/Conductivity/Mobility/4/EffectiveMass/4_GSE_EffectiveMass/'
 
-# a1, a2, a3 = [3.1473295667554400, 3.1473295667554400, 43.9122903625234997]
+E_field = ['0.025', '0.050', '0.075', '0.100', '0.125', '0.150', '0.175', '0.200', '0.225', '0.250', '0.275', '0.300']
+E_test = ['0.025']
 
-def Interpolation(Starting_point,Stopping_point,frame=([1,0,0],[0,1,0],[0,0,1]),k_cutoff=0.015,num_point=6):
-    x,y,z = frame
-    input = [x,y,z,Starting_point,Stopping_point]
-    input_reform = [np.array(n) for n in input]              # 将所有输入数据从列表转换成数组
-    x,y,z,Starting_point,Stopping_point = input_reform       # 将转换后的数据从input_reform中解压出来
-    vec = np.array(Stopping_point)-np.array(Starting_point)  # 计算起点指向终点的方向向量
-    projected_vec = vec[0]*x+vec[1]*y+vec[2]*z               # 计算vec在正交直角坐标系下的坐标（投影）
-    length = np.linalg.norm(projected_vec,ord=2)             # 计算vec的长度
-    Stopping_point_new = Starting_point+vec*k_cutoff/length  # 通过k_cutoff/length计算出插值的终点
+# HSP = High Symmetry Point （高对称点）
+HSP = {'Gamma': [0, 0, 0], 'K': [1/3.0, 1/3.0, 0], 'Lambda':[2/3.0, 0, 0],
+       'M': [0.500, 0, 0], 'Sigma': [0.176666666667, 0.176666666667, 0], 'Alpha': [1/3.0, 0, 0]}
 
-    d_vec = (Stopping_point_new-Starting_point)/(num_point-1)  # 通过插点数num_point计算出插点的间隔量d_vec
-    point_list = []
-    point = Starting_point
-    for i in range(num_point):
-        point_list.append(point)
-        point = point+d_vec                                    # 每跑一个循环增加一个d_vec向量
-
-    return point_list
-
-def ProjectK(K_point,origin,frame):
-    x, y, z = frame
-    input = [x, y, z, K_point, origin]
-    input_reform = [np.array(n) for n in input]  # 将所有输入数据从列表转换成数组
-    x, y, z, K_point, origin = input_reform  # 将转换后的数据从input_reform中解压出来
-    K_point = K_point-origin
-    projected_K = K_point[0] * x + K_point[1] * y + K_point[2] * z  # 计算vec在正交直角坐标系下的坐标（投影）
-    length = np.linalg.norm(projected_K, ord=2)
-    return length
-
-def GenKPOINTS(saving_directory,point_list):
-    KPOINTS = saving_directory+'KPOINTS'
-    f = open(KPOINTS,'w')
-    f.write('auto generate\n'+
-            str(len(point_list))+'\n'+
-            'Reciprocal\n')
-    for i in range(len(point_list)):
-        f.write(str(point_list[i][0])+' '+str(point_list[i][1])+' '+str(point_list[i][2])+' 1\n')
-    f.close()
-    return
-
-def GetBandEdge(VB_index,CB_index,data):
-    VB = data[VB_index-1]
-    CB = data[CB_index-1]
-    return VB,CB
-
-# 用于计算有效质量的模块
-p0 = [1,1,1]  # 初猜
-
-def function(p,x):
-    A,B,C = p
-    return A*x**2+B*x+C
-
-def error(p,x,y):
-    return function(p,x)-y
-
+direction = ['K to Gamma', 'K to Lambda', 'K to M', 'Sigma to Gamma', 'Sigma to Alpha', 'Gamma to K']
 
 # This part is important
-part1 = Interpolation([1/3.0, 1/3.0, 0],[0, 0, 0],frame=reciprocal)
-part2 = Interpolation([1/3.0, 1/3.0, 0],[2/3.0, 0, 0],frame=reciprocal)
-part3 = Interpolation([1/3.0, 1/3.0, 0],[0.500, 0, 0],frame=reciprocal)
-part4 = Interpolation([0.176666666667, 0.176666666667, 0],[0, 0, 0],frame=reciprocal)
-part5 = Interpolation([0.176666666667, 0.176666666667, 0],[1/3.0, 0, 0],frame=reciprocal)
-part6 = Interpolation([0, 0, 0],[1/3.0, 1/3.0, 0],frame=reciprocal)
+part1 = GEM.Interpolation(HSP['K'],HSP['Gamma'],reciprocal_lattice=reciprocal)
+part2 = GEM.Interpolation(HSP['K'],HSP['Lambda'],reciprocal_lattice=reciprocal)
+part3 = GEM.Interpolation(HSP['K'],HSP['M'],reciprocal_lattice=reciprocal)
+part4 = GEM.Interpolation(HSP['Sigma'],HSP['Gamma'],reciprocal_lattice=reciprocal)
+part5 = GEM.Interpolation(HSP['Sigma'],HSP['Alpha'],reciprocal_lattice=reciprocal)
+part6 = GEM.Interpolation(HSP['Gamma'],HSP['K'],reciprocal_lattice=reciprocal)
 total = part1+part2+part3+part4+part5+part6
 
-# GenKPOINTS(data_file,total)
-
-#print(ProjectK([0.176666666667, 0.176666666667, 0],[1/3,1/3,0],reciprocal))
-
-Ebands_data = GEB.GetData(data_file+'0.025/'+'EIGENVAL')
-
-kpath = Ebands_data['kpath']
-energy =  Ebands_data['energy']
-
-#print(len(energy[0]))
-
-vb,cb = GetBandEdge(96,97,energy)
-K = []
-vb_k = []   # 对应这段K点的价带
-cb_k = []   # 对应这段K点的导带
-for i in range(6):
-    proj_K = ProjectK(kpath[i],kpath[0],reciprocal)
-    K.append(proj_K)
-    vb_k.append(vb[i])
-    cb_k.append(cb[i])
-K = np.array(K)
-vb_k = np.array(vb_k)
 
 
-p0 = np.array([1.0,1.0,1.0])
-para = leastsq(error,p0,args=(K,vb_k))
+def function(p, x):
+    A, B, C = p
+    return A * x ** 2 + B * x + C
 
-x0 = np.linspace(0,0.015,100)
-plt.plot(K,vb_k)
-plt.plot(x0,function(para[0],x0))
+m_hole_total = []
+m_electron_total = []
+for n in E_field:
+    EIGENVAL = data_repository+n+'/'+'EIGENVAL'
+    k_point, vb, cb = GEM.GetBandEdge(EIGENVAL, 96, 97)   # 将特定电场下的能带数据提取出来
 
-print(para)
+    m_hole = []
+    m_electron = []
+
+    for i in range(6):  # 6 K-point in the K-space is evaluated
+        k = []
+        E_vb = []
+        E_cb = []
+        for j in range(6):  # 每个K点附近都插值了6个点用于多项式拟合计算有效质量
+            origin = 6*i
+            length = GEM.Length(k_point[origin],k_point[origin+j],reciprocal)
+            k.append(length)
+            E_vb.append(np.array(vb[origin+j]))
+            E_cb.append(np.array(cb[origin+j]))
+
+        k = np.array(k)  # 将k从list转换为array方便后面计算
+
+        m_h, para_h = GEM.CalEffectiveMass(k,E_vb)  # 调用函数计算有效质量
+        m_e, para_e = GEM.CalEffectiveMass(k,E_cb)
+
+        m_hole.append(m_h)
+        m_electron.append(m_e)
+
+    m_hole_total.append(m_hole)
+    m_electron_total.append(m_electron)
+
+print(m_hole_total)
+print(m_electron_total)
+
+# os.remove(data_repository+'EffectiveMass.xls')
+
+# workbook = xlrd.open_workbook(data_repository+'EffectiveMass.xls')
+workbook = xlwt.Workbook()
+cell_overwrite_ok=True
+
+sheet = workbook.add_sheet('ElectronEffectiveMass')
+for i in range(len(E_field)):
+    sheet.write(i+2,1,E_field[i])
+    for j in range(len(direction)):
+        sheet.write(1,j+2,direction[j])
+        sheet.write(i+2,j+2,m_electron_total[i][j])
+workbook.save(data_repository+'EffectiveMass.xls')
 
 
+#x = np.linspace(0,0.008,100)
 
-#test = np.linspace(0,36,36)
-#plt.plot(test,vb)
-#plt.ylim(1.42,1.44)
+#plt.plot(k/1.8897261246257702,0.0367493*np.array(vb_k))
+#plt.plot(x,function(para,x))
+
+#print(para)
+#print(m)

@@ -13,7 +13,7 @@ GCD = GetChargeDensity.Charge()
 # v = GCD.Volume(data['lattice'])  # 计算原胞体积
 # isosurface_level = 6.0e-4/v
 # print(v)
-print(4e-4/6.748344)
+print(1/0.529177210903)
 
 # a = np.array([3.14733000000000, 0.00000000000000, 0.00000000000000])
 # b = np.array([-1.57366500000000, 2.72566700000000, 0.00000000000000])
