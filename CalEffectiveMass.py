@@ -1,7 +1,4 @@
-import os
-
 import numpy as np
-import xlrd
 import xlwt
 import matplotlib.pyplot as plt
 from VaspWheels import Crystallography
@@ -20,21 +17,33 @@ E_field = ['0.025', '0.050', '0.075', '0.100', '0.125', '0.150', '0.175', '0.200
 E_test = ['0.025']
 
 # HSP = High Symmetry Point （高对称点）
-HSP = {'Gamma': [0, 0, 0], 'K': [1/3.0, 1/3.0, 0], 'Lambda':[2/3.0, 0, 0],
-       'M': [0.500, 0, 0], 'Sigma': [0.176666666667, 0.176666666667, 0], 'Alpha': [1/3.0, 0, 0]}
+HSP = {'GAMMA': [0, 0, 0], 'K': [1/3.0, 1/3.0, 0], 'SIGMA_1':[2/3.0, 0, 0], 'SIGMA_2': [1/3.0, 0, 0],
+       'M': [0.500, 0, 0], 'LAMBDA': [0.176666666667, 0.176666666667, 0]}
 
-direction = ['K to Gamma', 'K to Lambda', 'K to M', 'Sigma to Gamma', 'Sigma to Alpha', 'Gamma to K']
+# 计算曲率时的取点方向
+direction = ['K to GAMMA', 'K to SIGMA_1', 'K to M', 'LAMBDA to GAMMA', 'LAMBDA to SIGMA_2', 'GAMMA to K']
 
 # This part is important
-part1 = GEM.Interpolation(HSP['K'],HSP['Gamma'],reciprocal_lattice=reciprocal)
-part2 = GEM.Interpolation(HSP['K'],HSP['Lambda'],reciprocal_lattice=reciprocal)
+part1 = GEM.Interpolation(HSP['K'],HSP['GAMMA'],reciprocal_lattice=reciprocal)
+part2 = GEM.Interpolation(HSP['K'],HSP['SIGMA_1'],reciprocal_lattice=reciprocal)
 part3 = GEM.Interpolation(HSP['K'],HSP['M'],reciprocal_lattice=reciprocal)
-part4 = GEM.Interpolation(HSP['Sigma'],HSP['Gamma'],reciprocal_lattice=reciprocal)
-part5 = GEM.Interpolation(HSP['Sigma'],HSP['Alpha'],reciprocal_lattice=reciprocal)
-part6 = GEM.Interpolation(HSP['Gamma'],HSP['K'],reciprocal_lattice=reciprocal)
+part4 = GEM.Interpolation(HSP['LAMBDA'],HSP['GAMMA'],reciprocal_lattice=reciprocal)
+part5 = GEM.Interpolation(HSP['LAMBDA'],HSP['SIGMA_2'],reciprocal_lattice=reciprocal)
+part6 = GEM.Interpolation(HSP['GAMMA'],HSP['K'],reciprocal_lattice=reciprocal)
 total = part1+part2+part3+part4+part5+part6
 
+# 这个函数可以将GSE计算的有效质量数据写入excel文件
+def ExportEffectiveMassData(saving_directory,data,Kpoint,Efield,filename='EffectiveMass'):
+    workbook = xlwt.Workbook()
 
+    sheet = workbook.add_sheet('ElectronEffectiveMass', cell_overwrite_ok=True)
+    for i in range(len(Efield)):
+        sheet.write(i + 1, 0, Efield[i])
+        for j in range(len(Kpoint)):
+            sheet.write(0, j + 1, Kpoint[j])
+            sheet.write(i + 1, j + 1, data[i][j])
+    workbook.save(saving_directory+filename+'.xls')
+    return
 
 def function(p, x):
     A, B, C = p
@@ -74,25 +83,15 @@ for n in E_field:
 print(m_hole_total)
 print(m_electron_total)
 
-# os.remove(data_repository+'EffectiveMass.xls')
+#workbook = xlwt.Workbook()
 
-# workbook = xlrd.open_workbook(data_repository+'EffectiveMass.xls')
-workbook = xlwt.Workbook()
-cell_overwrite_ok=True
+#sheet = workbook.add_sheet('ElectronEffectiveMass', cell_overwrite_ok=True)
+#for i in range(len(E_field)):
+    #sheet.write(i+1,0,E_field[i])
+    #for j in range(len(direction)):
+        #sheet.write(0,j+1,direction[j])
+        #sheet.write(i+1,j+1,m_electron_total[i][j])
+#workbook.save(data_repository+'EffectiveMass.xls')
 
-sheet = workbook.add_sheet('ElectronEffectiveMass')
-for i in range(len(E_field)):
-    sheet.write(i+2,1,E_field[i])
-    for j in range(len(direction)):
-        sheet.write(1,j+2,direction[j])
-        sheet.write(i+2,j+2,m_electron_total[i][j])
-workbook.save(data_repository+'EffectiveMass.xls')
-
-
-#x = np.linspace(0,0.008,100)
-
-#plt.plot(k/1.8897261246257702,0.0367493*np.array(vb_k))
-#plt.plot(x,function(para,x))
-
-#print(para)
-#print(m)
+ExportEffectiveMassData(data_repository,m_electron_total,direction,E_field,filename='EM_electron')
+ExportEffectiveMassData(data_repository,m_hole_total,direction,E_field,filename='EM_hole')
