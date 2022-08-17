@@ -4,22 +4,23 @@ from VaspWheels import VisualizeEbands
 
 VB = VisualizeEbands.Plotting()  # 能带可视化专用包
 
-Data = {'LDA':'/Users/liusongwei/MaterialsGallery/MoS2/Data/MoS2_2H/MoS2_pawlda_SOC/',  # Data for xc-function LDA
-        'PBE':'D:/Projects/PhaseTransistor/Data/Simulation/MoS2_pawpbe_vasp5_D3BJ/',  # Data for xc-function PBE
-        'GSE':'D:/Projects/PhaseTransistor/Data/Simulation/GSE/'}            # Data for GSE calculation
-Repository = Data['PBE']  # 选择可视化PBE关联函数的计算结果
+#Data = {'LDA':'/Users/liusongwei/MaterialsGallery/MoS2/Data/MoS2_2H/MoS2_pawlda_SOC/',  # Data for xc-function LDA
+        #'PBE':'D:/Projects/PhaseTransistor/Data/Simulation/MoS2_pawpbe_vasp5_D3BJ/',  # Data for xc-function PBE
+        #'GSE':'D:/Projects/PhaseTransistor/Data/Simulation/GSE/'}            # Data for GSE calculation
 
-# 指定特定的结构
-nlayer = 'Bulk'
-directory = 'result_OPTCELL_SOC'
-# title = r'Band structure of '+nlayer+' $MoS_2$'
+Data_dir = 'D:/Projects/PhaseTransistor/Data/Simulation/Conductivity/Mobility/4/2H_quadrilayer_shifted/result_D3BJ/'
+
 title = r''
 
 # Address of the data file
-EIGENVAL = Repository+nlayer+'/'+directory+'/EIGENVAL'
+EIGENVAL = Data_dir+'EIGENVAL'
 
 # K_path
-K_path = {'2D': [[r'$\Gamma$', 'M', 'K', r'$\Gamma$'],
+K_path = {'ORT': [[r'$\Gamma$', 'X', 'S', 'Y', r'$\Gamma$', 'S'],
+                 [[0, 0, 0], [0.5, 0, 0], [0.5, 0.5, 0], [0, 0.5, 0], [0, 0, 0], [0.5, 0.5, 0]]],
+          'ORT_1': [[r'$\Gamma$', 'Y', 'S', 'X', r'$\Gamma$', 'S'],
+                   [[0, 0, 0], [0, 0.5, 0], [0.5, 0.5, 0], [0.5, 0, 0], [0, 0, 0], [0.5, 0.5, 0]]],
+          '2D': [[r'$\Gamma$', 'M', 'K', r'$\Gamma$'],
                  [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0]]],
           '3D': [[r'$\Gamma$','M', 'K', r'$\Gamma$', 'A', 'L', 'H', 'A'],
                  [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0], [0,0,1/2.0], [1/2.0,0,1/2.0], [1/3.0, 1/3.0, 1/2.0], [0,0,1/2.0]]]}
@@ -27,12 +28,13 @@ K_path = {'2D': [[r'$\Gamma$', 'M', 'K', r'$\Gamma$'],
 # path = [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0], [0,0,1/2.0], [1/2.0,0,1/2.0], [1/3.0, 1/3.0, 1/2.0], [0,0,1/2.0]]
 #Kpoints = [r'$\Gamma$', 'M', 'K', r'$\Gamma$']
 #path = [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0]]
-Kpoints = K_path['3D']  # Plotting the bands along 2D K_path
+Kpoints = K_path['ORT_1']  # Plotting the bands along 2D K_path
 
-lattice = ['HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive']  # The parameters of hexagonal lattice
+# lattice = ['HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive']  # The parameters of hexagonal lattice
+# lattice = ['ORT', [3.16, 5.47, 12.9, 90, 90, 90], 'unitcell']
+lattice = ['ORT', [3.16, 5.47, 12.9, 90, 90, 90], 'unitcell']
 
-
-Markdown = Repository+nlayer+'/'+directory+'/Markdown_SCF'  # 这个文件记载着准确的费米能级
+Markdown = Data_dir+'/Markdown_SCF'  # 这个文件记载着准确的费米能级
 pattern = re.compile(r'-?\d+\.?\d+')  # 匹配浮点数的正则表达式
 f = codecs.open(Markdown, 'rb', 'utf-8', 'ignore')
 line = f.readline()

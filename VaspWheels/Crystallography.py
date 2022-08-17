@@ -42,7 +42,10 @@ class Crystal:
         a, b, c, alpha, beta, gamma = lattice_parameter
 
         # 构建unitcell的晶格向量
-        unitcell_vectors = {'Cubic': [[a,0,0],
+        unitcell_vectors = {'Orthorhombic': [[a,0,0],
+                                             [0,b,0],
+                                             [0,0,c]],
+                            'Cubic': [[a,0,0],
                                       [0,a,0],
                                       [0,0,a]],
                             'Face-centered cubic': [[a,0,0],
@@ -55,14 +58,18 @@ class Crystal:
                                           [a/2.0, a*np.sqrt(3)/2.0,0],
                                           [0,0,c]]}
         # 把缩写的选项也增加进去
-        unitcell_abbreviate = {'CUB':unitcell_vectors['Cubic'],
+        unitcell_abbreviate = {'ORT':unitcell_vectors['Orthorhombic'],
+                               'CUB':unitcell_vectors['Cubic'],
                                'FCC':unitcell_vectors['Face-centered cubic'],
                                'BCC':unitcell_vectors['Body-centered cubic'],
                                'HEX':unitcell_vectors['Hexagonal']}
         unitcell_vectors.update(unitcell_abbreviate)
 
         # 构建primitive晶向
-        primitive_vectors = {'Cubic': [[a,0,0],
+        primitive_vectors = {'Orthorhombic': [[0,b/2.0,c/2.0],
+                                              [a/2.0,0,c/2.0],
+                                              [a/2.0,b/2.0,0]],
+                             'Cubic': [[a,0,0],
                                        [0,a,0],
                                        [0,0,a]],
                              'Face-centered cubic': [[0,a/2.0,a/2.0],
@@ -75,7 +82,8 @@ class Crystal:
                                            [-a/2.0, a*np.sqrt(3)/2.0, 0],
                                            [0, 0, c]]}
         # 同样，增加缩写
-        primitve_abbreviate = {'CUB':primitive_vectors['Cubic'],
+        primitve_abbreviate = {'ORT':primitive_vectors['Orthorhombic'],
+                               'CUB':primitive_vectors['Cubic'],
                                'FCC':primitive_vectors['Face-centered cubic'],
                                'BCC':primitive_vectors['Body-centered cubic'],
                                'HEX':primitive_vectors['Hexagonal']}

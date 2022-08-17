@@ -25,8 +25,9 @@ filename = 'PDOS_SUM_SOC.dat'
 
 # 这个函数利用pandas包读取dat文件中的数据
 def GetProjectedDOS(file):
+    # pandas.read_csv函数默认将第一行作为表头，可以通过header变量调整
     data = pd.read_csv(file,sep="\s+")  # 以空格作为分隔符，\s匹配任意空白字符，等价于 [\t\n\r\f]
-    title = data.columns[0]  # 利用pandas的columns函数获取数据表头
+    title = data.columns  # 利用pandas的columns函数获取数据表头
     dimension = data.shape   # 利用pandas的shape函数获取数据的维度，格式为： （行数，列数）
     return data, title, dimension
 

@@ -146,7 +146,8 @@ class latte:
         atomic_coordinate_new = []
         for i in range(len(atomic_coordinate_old)):
             coord = atomic_coordinate_old[i]  # 将逐个原子坐标提取出来修改z方向的值
-            if coord[2] <= 1/2:    # 判断这个原子属于上层还是下层，因为之前原子坐标采用的都是分数坐标，所以要用1/2来判断上下层
+            print(coord)
+            if coord[2] <= 0.5:    # 判断这个原子属于上层还是下层，因为之前原子坐标采用的都是分数坐标，所以要用1/2来判断上下层
                 coord[2] = (coord[2]*z_c+t_vac/2.0)/float(z_c/2.0+t_vac)  # 下层原子：先转换成正交直角坐标系下的坐标往上移动半个真空层再用延长后的z轴长度得到分数坐标
                 atomic_coordinate_new.append(coord)
             else:

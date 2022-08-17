@@ -74,12 +74,15 @@ class Kpath:
         return kprojection,nodes
 
 if __name__=='__main__':
-    saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Kpoints_ebands'
+    #saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Kpoints_ebands'
+    saving_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/Phase/input_files/K-path_ORT_1'
     kpath = Kpath()
     # Gamma-M-K-Gamma-A-L-H-A
-    path = [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0], [0,0,1/2.0], [1/2.0,0,1/2.0], [1/3.0, 1/3.0, 1/2.0], [0,0,1/2.0]]
+    # path = [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0], [0,0,1/2.0], [1/2.0,0,1/2.0], [1/3.0, 1/3.0, 1/2.0], [0,0,1/2.0]]
+    # Gamma-X-S-Y-Gamma-A
+    path = [[0, 0, 0], [0, 0.5, 0], [0.5, 0.5, 0], [0.5, 0, 0], [0, 0, 0], [0.5, 0.5, 0]]
     #a = kpath.Kgenerator(path,59)
-    b = kpath.ProjectKpath(path,59,LatticeCorrection='True',Lattice=['HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive'])
+    b = kpath.ProjectKpath(path,59,LatticeCorrection='True',Lattice=['ORT', [3.16, 5.47, 12.9, 90, 90, 90], 'unitcell'])
     #print(len(a))
     print(b[0])
     print(b[1])

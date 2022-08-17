@@ -71,8 +71,8 @@ for n in E_field:
 
         k = np.array(k)  # 将k从list转换为array方便后面计算
 
-        m_h, para_h = GEM.CalEffectiveMass(k,E_vb)  # 调用函数计算有效质量
-        m_e, para_e = GEM.CalEffectiveMass(k,E_cb)
+        m_h, para_h = GEM.CalEffectiveMass(k,E_vb)  # 调用函数计算空穴有效质量
+        m_e, para_e = GEM.CalEffectiveMass(k,E_cb)  # 调用函数计算电子有效质量
 
         m_hole.append(m_h)
         m_electron.append(m_e)

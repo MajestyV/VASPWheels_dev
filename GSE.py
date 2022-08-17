@@ -16,7 +16,10 @@ home_dir_4_1 = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/4/4_D3BJ_GSE_1_m
 home_dir_4_m1 = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/4/4_D3BJ_GSE_m1_more_bands'
 home_dir_5_1 = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/5/5_D3BJ_GSE_1'
 home_dir_5_m1 = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/5/5_D3BJ_GSE_m1'
+home_dir_6_1 = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/Non-SOC/2/2_D3BJ_GSE_1'
 # home_dir_4 = 'H:/Raw_Data/GSE_pawpbe_SOC_MoS2/2_D3BJ_GSE_1'
+Data_point_0 = ['0.025','0.050','0.075','0.100','0.125','0.150','0.175','0.200','0.225','0.250','0.275','0.300',
+                '0.325','0.350','0.375','0.400','0.425','0.450','0.475','0.500','0.525','0.550']
 Data_point_1 = ['0.000','0.025','0.050','0.075','0.100','0.125','0.150','0.175','0.200','0.225','0.250','0.275','0.300',
                 '0.325','0.350','0.375','0.400','0.425','0.450','0.475','0.500','0.525','0.550']
 Data_point_2 = ['m0.550','m0.525','m0.500','m0.475','m0.450','m0.425','m0.400','m0.375','m0.350','m0.325','m0.300','m0.275',
@@ -163,9 +166,10 @@ Ef_5_m1 = [3.1109, 3.11, 3.1648, 3.0609, 3.1067, 2.9976, 3.0394, 2.9326, 2.9711,
 
 #a,b = Extract_GSE_Data(Data_point_1,home_dir_2,shift_fermi=0.2)
 #a,b = Extract_negative_GSE_Data(Data_point_1,home_dir_6,efermi=-0.51,shift_fermi=0.1)
-c,d = Extract_GSE_Data(Data_point_5,home_dir_5_1)
+a,b = Extract_GSE_Data(Data_point_0,home_dir_6_1)
+#c,d = Extract_GSE_Data(Data_point_5,home_dir_5_1)
 #c,d = Extract_negative_GSE_Data(Data_point_6,home_dir_5_m1)
-plt.scatter(c,d,color='k')
+plt.scatter(a,b,color='k')
 #plt.scatter(Efield_1,Bandgap_1,color='r',marker='+')
 #plt.plot(x0,y0,linestyle='-.',color='k')
 plt.title('Giant Stark Effect of bilayer MoS2',fontsize=16)
@@ -175,5 +179,5 @@ plt.ylim(0,1.3)
 plt.xlim(-0.6,0.6)
 plt.show()
 
-print(c)
-print(d)
+#print(c)
+#print(d)
