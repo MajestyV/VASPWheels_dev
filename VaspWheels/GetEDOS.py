@@ -37,6 +37,13 @@ class EDOS:
 
         return separated_data
 
+    # 费米面调零函数
+    def ShiftFermiEnergy(self,energy,fermi_energy):
+        shifted_energy = []
+        for i in range(len(energy)):
+            shifted_energy.append(energy[i]-fermi_energy)
+        return shifted_energy
+
     # 利用self.ReadDOS()整理出态密度(DOS)
     def GetData(self,DOSCAR,spin_polarized='False'):
         data = self.ReadDOS(DOSCAR)[0]  # 非投影的态密度在第一个子集当中
