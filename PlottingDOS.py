@@ -1,7 +1,7 @@
 import codecs
 import re
 import matplotlib.pyplot as plt
-from VaspWheels import VisualizeEDOS
+from VaspWheels_old import VisualizeEDOS
 
 VD = VisualizeEDOS.Plotting()
 

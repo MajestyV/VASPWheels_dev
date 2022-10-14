@@ -1,6 +1,6 @@
 import codecs
 import re
-from VaspWheels import VisualizeEbands
+from VaspWheels_old import VisualizeEbands
 
 VB = VisualizeEbands.Plotting()  # 能带可视化专用包
 
