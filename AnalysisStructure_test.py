@@ -1,6 +1,6 @@
 import numpy as np
 
-from VaspWheels import AnalysisStructure
+from VaspWheels import AnalyzeStructure
 from VaspWheels import Visualization
 
 AS = AnalysisStructure.structure()  # 晶体结构分析包

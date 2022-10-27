@@ -56,24 +56,24 @@ class Ebands:
         ylim = kwargs['ylim'] if 'ylim' in kwargs else (-20,20)  # Y轴范围
         color = kwargs['color'] if 'color' in kwargs else np.array([70,148,203])/255.0  # 控制颜色
 
-        VI.GlobalSetting(bottom_tick=False,y_major_tick=1)  # 利用Visualization模块引入画图全局变量
+        VI.GlobalSetting(bottom_tick=False,y_major_tick=2)  # 利用Visualization模块引入画图全局变量
 
         # 画Visualization模块能带图
         for i in range(nbands):
-            VI.Visulize(k,energy[i],color=color)
+            VI.Visualize(k,energy[i],color=color)
 
             # 画高对称点分割线
             seperate_line_color = np.array([155,165,160])/255.0
             for i in range(len(knodes)-2):  # 第一跟最后的一个高对称点跟能带图的左右边界重合，所以不必作分割线
-                plt.vlines(knodes[i+1], ylim[0], ylim[1], linewidth=0.6, linestyles='dotted', colors=seperate_line_color)
+                plt.vlines(knodes[i+1], ylim[0], ylim[1], linewidth=2, linestyles='dashed', colors=seperate_line_color)
             # 画费米面分割线
             if shift == 'True':
-                plt.hlines(0, xlim[0], xlim[1], linewidth=0.6, linestyles='dotted',
+                plt.hlines(0, xlim[0], xlim[1], linewidth=2, linestyles='dashed',
                            colors=seperate_line_color)  # The Fermi energy have been shifted to 0.
                 # plt.ylabel('$E-E_{f}$ $\mathrm{(eV)}$',size=24,fontdict={'style':'italic'})  # style选项选用italic启动西文斜体
                 plt.ylabel('$E-E_{f}$ (eV)', size=20)  # style选项选用italic启动西文斜体
             else:
-                plt.hlines(Ef, xlim[0], xlim[1], linewidth=0.6, linestyles='dotted', colors=seperate_line_color)
+                plt.hlines(Ef, xlim[0], xlim[1], linewidth=2, linestyles='dashed', colors=seperate_line_color)
                 plt.ylabel('$E-E_{f}$ (eV)', size=20)
 
             # 对于能带图，有些参数Visualization模块无法设置，因此在此利用matplotlib进行修改

@@ -12,8 +12,12 @@ class plot:
     def Color(self,mode):
         def RGB(r,g,b): return np.array([r,g,b])/255.0  # 将RGB值归一化的函数，只有归一化的RGB值才能被matplotlib读取
 
-        color_dict = {'Red_n_Black': [RGB(255,59,59),RGB(7,7,7)],
-                      'Red_n_Blue': [RGB(201,61,66),RGB(70,148,203)],
+        color_dict = {'Black_n_Red': [RGB(7,7,7),RGB(255,59,59)],
+                      'Red_n_Black': [RGB(255,59,59),RGB(7,7,7)],
+                      'Blue_n_Grey': [RGB(57, 83, 163),RGB(92,92,92)],
+                      'Three_contrast_OldFashion': [RGB(7, 7, 7), RGB(57, 83, 163), RGB(255, 59, 59)],
+                      'Red_n_Blue': [RGB(239,76,77),RGB(70,148,203)],
+                      'Red_n_Grey': [RGB(239,76,77),RGB(92,92,92)],
                       'Three_contrast': [RGB(7,7,7),RGB(57,83,163),RGB(239,76,77)],
                       'One_color': [RGB(7,7,7)],
                       'Two_color': [RGB(254,129,125),RGB(129,184,223)],
@@ -40,6 +44,11 @@ class plot:
         plt.tick_params(which='major', length=5)  # 设置主刻度长度
         plt.tick_params(which='minor', length=2)  # 设置次刻度长度
 
+        if 'figsize' in kwargs:
+            plt.figure(figsize=kwargs['figsize'])
+        else:
+            pass
+
         # 创建图例对象
         ax = plt.subplot(111)  # 注意有些参数（比如刻度）一般都在ax中设置,不在plot中设置
 
@@ -49,16 +58,38 @@ class plot:
         x_minor_tick = kwargs['x_minor_tick'] if 'x_minor_tick' in kwargs else x_major_tick / 5.0  # 设置x轴次刻度标签
         y_minor_tick = kwargs['y_minor_tick'] if 'y_minor_tick' in kwargs else y_major_tick / 5.0  # 设置y轴次刻度标签
 
-        # 设置主刻度
-        x_major_locator = MultipleLocator(x_major_tick)  # 将x主刻度标签设置为x_major_tick的倍数
-        y_major_locator = MultipleLocator(y_major_tick)  # 将y主刻度标签设置为y_major_tick的倍数
-        ax.xaxis.set_major_locator(x_major_locator)
-        ax.yaxis.set_major_locator(y_major_locator)
-        # 设置次刻度
-        x_minor_locator = MultipleLocator(x_minor_tick)  # 将x主刻度标签设置为x_major_tick/5.0的倍数
-        y_minor_locator = MultipleLocator(y_minor_tick)  # 将y主刻度标签设置为y_major_tick/5.0的倍数
-        ax.xaxis.set_minor_locator(x_minor_locator)
-        ax.yaxis.set_minor_locator(y_minor_locator)
+        # 控制是否关闭坐标轴刻度
+        hide_tick = kwargs['hide_tick'] if 'hide_tick' in kwargs else ''  # 控制关闭哪根坐标轴的刻度
+        if hide_tick == 'x':
+            ax.set_xticks([])  # 设置x轴刻度为空
+        elif hide_tick == 'y':
+            ax.set_yticks([])  # 设置y轴刻度为空
+        elif hide_tick == 'both':
+            ax.set_xticks([])  # 设置x轴刻度为空
+            ax.set_yticks([])  # 设置y轴刻度为空
+        else:
+            # 设置主刻度
+            x_major_locator = MultipleLocator(x_major_tick)  # 将x主刻度标签设置为x_major_tick的倍数
+            y_major_locator = MultipleLocator(y_major_tick)  # 将y主刻度标签设置为y_major_tick的倍数
+            ax.xaxis.set_major_locator(x_major_locator)
+            ax.yaxis.set_major_locator(y_major_locator)
+            # 设置次刻度
+            x_minor_locator = MultipleLocator(x_minor_tick)  # 将x主刻度标签设置为x_major_tick/5.0的倍数
+            y_minor_locator = MultipleLocator(y_minor_tick)  # 将y主刻度标签设置为y_major_tick/5.0的倍数
+            ax.xaxis.set_minor_locator(x_minor_locator)
+            ax.yaxis.set_minor_locator(y_minor_locator)
+        # 设置刻度文本选项
+        # 控制是否隐藏刻度文本的模块
+        hide_ticklabel = kwargs['hide_ticklabel'] if 'hide_ticklabel' in kwargs else ''  # 控制隐藏哪根坐标轴的刻度
+        if hide_ticklabel == 'x':
+            ax.xaxis.set_ticklabels([])  # 设置x轴刻度标签为空
+        elif hide_ticklabel == 'y':
+            ax.yaxis.set_ticklabels([])  # 设置y轴刻度标签为空
+        elif hide_ticklabel == 'both':
+            ax.xaxis.set_ticklabels([])  # 设置x轴刻度标签为空
+            ax.yaxis.set_ticklabels([])  # 设置y轴刻度标签为空
+        else:
+            pass
 
         # 设置全局字体选项
         font_type = kwargs['font_type'] if 'font_type' in kwargs else 'Arial'  # 默认字体为sans-serif
@@ -70,7 +101,7 @@ class plot:
     # 这个函数可以用于画单根曲线，并确定曲线的形式，如：线型（散点还是连续曲线），线的颜色，线宽等等
     # 如有多根曲线，则可以重复调用此函数来画图
     # 这个函数的输入数据x和y必须是一维数组（也就是说(x,y)是二维数组）
-    def Visulize(self,x,y,**kwargs):
+    def Visualize(self,x,y,**kwargs):
         x = np.array(x)  # 将输入的数据转换为数组，以防出错
         y = np.array(y)
 
@@ -122,14 +153,14 @@ class plot:
         legend = kwargs['legend'] if 'legend' in kwargs else 'False'  # 控制是否要图例
         location = kwargs['location'] if 'location' in kwargs else 'best'  # 若要图例，此参数可以控制图例位置
         labels = kwargs['labels'] if 'labels' in kwargs else None  # 若要图例，此参数可以设置曲线名称
-        legend_size = kwargs['legend_size'] if 'legend_size' in kwargs else 18  # 控制图例大小的参数
+        legend_size = kwargs['legend_size'] if 'legend_size' in kwargs else 16  # 控制图例大小的参数
         if legend == 'True':
             plt.legend(loc=location,labels=labels,fontsize=legend_size,frameon=False)  # 设置图例
         else:
             pass
 
         # 控制x轴跟y轴坐标轴名称的模块
-        label_size = kwargs['label_size'] if 'label' in kwargs else 20  # 控制坐标轴名称大小的参数
+        label_size = kwargs['label_size'] if 'label_size' in kwargs else 20  # 控制坐标轴名称大小的参数
         if 'xlabel' in kwargs:
             plt.xlabel(kwargs['xlabel'],fontsize=label_size)
         else:
@@ -170,7 +201,7 @@ class plot:
 
         # 控制图标题的模块
         if 'title' in kwargs:
-            plt.title(kwargs['title'],size=26)
+            plt.title(kwargs['title'],size=20)
         else:
             pass
 
