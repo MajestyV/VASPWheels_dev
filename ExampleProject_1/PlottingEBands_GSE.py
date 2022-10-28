@@ -44,7 +44,7 @@ lattice = ['HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive']  # The parameter
 #Efermi = float(Energy[0])
 
 # 将费米能级调整到价带顶
-valence, conduction = AB.GetBandEdge(EIGENVAL)
+valence, conduction = AB.AnalyzeOccupation(EIGENVAL)
 Efermi = max(valence)  # 价带顶即为费米面（后面的系数是线宽修正）
 
 ###############################################################################################################
