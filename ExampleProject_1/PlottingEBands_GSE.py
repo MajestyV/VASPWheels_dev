@@ -8,9 +8,11 @@ VB = VisualizeEbands.Ebands()  # 调用VisualizeEbands模块
 # 数据文件夹的地址的导入
 
 # 储存存放数据的文件夹的绝对地址的字典
-Main_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/1/1_D3BJ_GSE_1_221013/'
+# Main_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/1/1_D3BJ_GSE_1_221013/'
+Main_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/4/4_D3BJ_GSE_1_more_bands'
+# Main_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/5/5_D3BJ_GSE_1/'
 
-Efield = '0.025'  # 在特定结构子文件夹中，存放数据的文件夹；同时也恰好时电场强度，单位为V/Angstrom
+Efield = '0.225'  # 在特定结构子文件夹中，存放数据的文件夹；同时也恰好时电场强度，单位为V/Angstrom
 
 data_directory = Main_directory+'/'+Efield+'/'  # 存放画能带图所需的数据文件的绝对地址
 
