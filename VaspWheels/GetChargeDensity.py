@@ -75,6 +75,22 @@ class Charge:
         V_cell = np.dot(a, np.cross(b, c))
         return V_cell
 
+    # 此函数可以将ExtractCharge函数提取得到的原始数据展开成画图可用的二维数组型数据
+    def Map_to_2D(self,Data_dict,dimension=(48*6,640)):
+        volume = self.Volume(Data_dict['lattice'])  # 计算原胞体积
+
+        length, width = dimension  # 解压画图区域的长和宽
+
+        # 整理数据
+        x, y, z = Data_dict['mesh']
+        CharDiff = self.Mapping(Data_dict['charge'], x, y, z)
+        CharDiff_2D = np.zeros((width, length))
+        for i in range(length):
+            for j in range(width):
+                CharDiff_2D[j, i] = CharDiff[(47-i)%48, i%48, j]/volume
+
+        return CharDiff_2D
+
 if __name__=='__main__':
     GCD = Charge()
 

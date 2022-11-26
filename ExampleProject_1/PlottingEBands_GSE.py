@@ -12,7 +12,7 @@ VB = VisualizeEbands.Ebands()  # 调用VisualizeEbands模块
 Main_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/4/4_D3BJ_GSE_1_more_bands'
 # Main_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/5/5_D3BJ_GSE_1/'
 
-Efield = '0.225'  # 在特定结构子文件夹中，存放数据的文件夹；同时也恰好时电场强度，单位为V/Angstrom
+Efield = '0.200'  # 在特定结构子文件夹中，存放数据的文件夹；同时也恰好时电场强度，单位为V/Angstrom
 
 data_directory = Main_directory+'/'+Efield+'/'  # 存放画能带图所需的数据文件的绝对地址
 
@@ -52,7 +52,7 @@ Efermi = max(valence)  # 价带顶即为费米面（后面的系数是线宽修�
 ###############################################################################################################
 # 可视化
 
-title = r''  # 标题
+title = r'$\mathcal{E}$ = 1.00 V/nm'  # 标题
 
 VB.Ebands(EIGENVAL,Kpoints[1],LatticeCorrection='True',Lattice=lattice,ShiftFermi='True',Efermi=Efermi,
           Kpoints=Kpoints[0],ylim=(-3,5),title=title,latex='False')
