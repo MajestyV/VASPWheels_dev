@@ -12,11 +12,19 @@ class vasp:
         self.name = vasp
 
     ##############################################################################################################
-    # 一些常用的通用型函数
+    # 一些通用函数
+
     # 这个函数利用linecache模块，可以从数据文件中读出指定行的信息，并以字符串形式返回
     # 应注意，这个函数的行数从1开始，即line_index=5指要读文件中的第五行
     def GrepLineContent(self,file,line_index):
         return linecache.getline(file,line_index).strip()
+
+    # 此函数可将费米面调整为零，适用于energy为列表，一维数据，二维数组以及矩阵形式的数据的情况
+    # 若输入的energy是一维数组或列表，对应于能量值是一维序列的情况，应用于调整态密度DOS的自变量
+    # 若输入的energy是嵌套列表，二维数组或矩阵，对应于能量是二维能量面的情况，应用于调整能带图bands的高度
+    def ShiftFermi_Energy(self, energy, fermi_energy):
+        energy_array = np.array(energy)  # 将输入转换为数组，确保下一步计算中的输入是数组（一维或二维）形式的数据
+        return energy_array-fermi_energy
 
     ##############################################################################################################
     # 态密度（DOS）提取模块
@@ -150,49 +158,27 @@ class vasp:
         bands = np.zeros((num_bands,num_kpoints))        # 定义一个num_bands行num_kpoints列的矩阵用于存放能带数据
         occupation = np.zeros((num_bands, num_kpoints))  # 同理，定义一个矩阵存放电子占据数据，此矩阵跟能带矩阵具有相同的维度
 
+        # 在EIGENVAL中，数据会按照K点路径顺序排布，每个K点的能带数据可以看作一个循环，那么我们便可以通过不断loop循环来将数据进行分类整理
+        nrows_cycle = num_bands+2   # 每个循环的数据行数为：能带数+K点坐标行+空白分割行 = 能带数+2行
+        k_path, k_weight = [[],[]]  # 批量定义空列表准备储存数据，k_path是K点路径，k_weight是K点对应的权重
+        for i in range(num_kpoints):
+            # 确定各个数据对应的列表引索
+            k_index, band_data_starting = [i*nrows_cycle+1, i*nrows_cycle+2]
+            k_path.append([raw_data[k_index][0],raw_data[k_index][1],raw_data[k_index][2]])  # K点路径
+            k_weight.append(raw_data[k_index][3])
+            # 通过循环将能带数据赋值到刚刚创建的矩阵中
+            for j in range(num_bands):
+                bands[j,i] = raw_data[band_data_starting+j][1]
+                occupation[j,i] = raw_data[band_data_starting+j][2]
 
-        bands = {'number': nbands,
-                 'energy': [[] for i in range(nbands)],  # 注意，此处不能有 [[]]*nbands，这样子做的话大列表中的子列表指针的内存会指向同一块
-                 'occupation': [[] for i in range(nbands)],  # 关于上述问题，参考：https://zhuanlan.zhihu.com/p/88197389
-                 'kpath': [],
-                 'num kpoints': nkpoints}
-        nrows = nbands+2  # number of line in one data subset (一个数据子集的行数)
-        for i in range(len(data)):
-            if i % nrows == 0:  # The first row are useless
-                pass
-            elif i % nrows == 1:  # The second row gives out the K-path
-                bands['kpath'].append([data[i][0],data[i][1],data[i][2]])
-            else:
-                band_index = int(data[i][0]-1)  # 能带标识，在EIGENVAL里面，能带序号从1开始
-                energy = data[i][1]  # 能量值
-                occupation = data[i][2]  # 标示能带是否被占据
-                bands['energy'][band_index].append(energy)
-                bands['occupation'][band_index].append(occupation)
+        data_dict = {'num_kpoints': num_kpoints,          # K点路径上的取点数
+                     'num_bands': num_bands,              # 能带数目
+                     'k_path': k_path,                    # K点路径
+                     'k_weight': k_weight,                # 每个K点对应的权重
+                     'bands': np.array(bands),            # 能带数据（最后的输出为二维数组的话，操作空间会更大）
+                     'occupation': np.array(occupation)}  # 轨道（能带）占据情况}
 
-        return bands
-
-    ###############################################################################################################
-    # 费米面调零模块
-    # 对应于能量值是连续一维的情况，应用于调整DOS的自变量（因此输入的energy应该是一维数组亦或是列表）
-    def ShiftFermi_Energy(self, energy, fermi_energy):
-        shifted_energy = []
-        for i in range(len(energy)):
-            shifted_energy.append(energy[i] - fermi_energy)
-        return shifted_energy
-
-    # 对应于能量是二维能量面的情况，应用于调整能带图bands的高度（因此输入的energy应该是嵌套的列表亦或是二维数组）
-    def ShiftFermi(self,energy, fermi_energy):
-        nbands = len(energy)  # number of bands
-        nkpoints = len(energy[0])  # number of k points calculated
-        shifted_energy = [[] for n in range(nbands)]
-        for i in range(nbands):
-            for j in range(nkpoints):
-                shifted_energy[i].append(energy[i][j] - fermi_energy)
-        return shifted_energy
-
-
-
-
+        return data_dict
 
 if __name__=='__main__':
     EIGENVAL = 'D:/MaterialsGallery/Testing/MoS2_pawlda/MoS2_2H/1/result/EIGENVAL'
