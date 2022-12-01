@@ -1,11 +1,9 @@
-# This code is written for extracting electronic band structure data from V.A.S.P. results.
+# This code is written to extract electronic band structure data from V.A.S.P. calculation results.
 
 import codecs
 import re
 import linecache  # 这个模块非常适合根据给出的行号， 从文本文件中读取指定行的数据
-
 import numpy as np
-
 
 class vasp:
     def __init__(self):
