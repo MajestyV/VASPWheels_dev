@@ -3,13 +3,9 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from VaspWheels import GetKpath
-from VaspWheels import GetEbands
-from Visualize import Visualization
+from VaspWheels import Visualization
 
 ####################################################################################################################
-GK = GetKpath.Kpath()      # 调用GetKpath模块
-GE = GetEbands.Ebands()    # 调用GetEbands模块
 VI = Visualization.plot()  # 调用Visualization模块
 #####################################################################################################################
 
@@ -17,65 +13,48 @@ class plotting:
     def __init__(self):
         self.name = plotting
 
-    # 这个函数可以用于可视化电子能带
-    def Ebands(self,EIGENVAL,Kpath,**kwargs):
-        # 提取能带计算结果以及各种参数
-        bands = GE.GetData(EIGENVAL)
-        nbands = bands['number']  # 提取能带总数
-        nkpoints_total = bands['num kpoints']  # 提取K点总数
-        nnodes = len(Kpath)  # 高对称点数
-        npoints = int((nkpoints_total-nnodes)/(nnodes-1))  # 两个高对称点中间的取点数 = (K点总数-高对称点数)/(高对称点数-1)
-        energy = bands['energy']  # 能带具体的能量值
+    #################################################################################################################
+    # 电子能带可视化模块
 
-        # 费米能调零选项设置
-        shift = kwargs['ShiftFermi'] if 'ShiftFermi' in kwargs else 'False'
-        Ef = kwargs['Efermi'] if 'Efermi' in kwargs else 0
-        if shift == 'True':
-            energy = self.ShiftFermi(energy,Ef)
-        else:
-            pass
+    # 此函数利用Visualization模块可视化电子能带
+    def Electron_bands(self,Kpath_projected,Bands,Knodes_projected,**kwargs):
+        num_bands, num_kpoints = np.shape(Bands)  # 输入的能带数据Energy应该是一个num_bands行num_kpoints列的二维数组
+        num_Knodes = len(Knodes_projected)         # K点路径端点的个数，即高对称点的个数
 
-        # 利用GetKpath模块确定K点路径（X轴）
-        correction = kwargs['LatticeCorrection'] if 'LatticeCorrection' in kwargs else 'False'  # 晶格修正选项
-        lattice = kwargs['Lattice'] if 'Lattice' in kwargs else ['Cubic', [1, 1, 1, 90, 90, 90], 'primitive']
-        k,knodes = GK.ProjectKpath(Kpath,npoints,LatticeCorrection=correction,Lattice=lattice)  # 生成投影到一维的K点路径
+        # 一些画图参数（以动态变量的形式传入）
+        title = kwargs['title'] if 'title' in kwargs else ''  # 能带图标题，默认为无标题
+        color = kwargs['color'] if 'color' in kwargs else np.array([70,148,203])/255.0                     # 能带曲线颜色
+        color_split = kwargs['color_split'] if 'color_split' in kwargs else np.array([155,165,160])/255.0  # 分割线颜色
+        xlim = (min(Kpath_projected), max(Kpath_projected))       # X轴范围
+        ylim = kwargs['ylim'] if 'ylim' in kwargs else (-20, 20)  # Y轴范围
+        ylabel = kwargs['ylabel'] if 'ylabel' in kwargs else 'Energy (eV)'        # y轴名称
+        y_major_tick = kwargs['y_major_tick'] if 'y_major_tick' in kwargs else 2  # y轴主刻度的步长
 
-        # 画图参数
-        HSP = kwargs['Kpoints'] if 'Kpoints' in kwargs else ['P'+str(n+1) for n in range(len(knodes))]  # HSP - high symmetry point
-        xlim = (k[0],k[len(k)-1])  # X轴范围
-        ylim = kwargs['ylim'] if 'ylim' in kwargs else (-20,20)  # Y轴范围
-        color = kwargs['color'] if 'color' in kwargs else np.array([70,148,203])/255.0  # 控制颜色
+        # 定义好各种参数，接下来是正式的画图部分
+        VI.GlobalSetting(bottom_tick=False, y_major_tick=y_major_tick)  # 引入画图全局变量
 
-        VI.GlobalSetting(bottom_tick=False,y_major_tick=2)  # 利用Visualization模块引入画图全局变量
+        # 画能带图
+        for i in range(num_bands):
+            VI.Visualize(Kpath_projected,Bands[i],color=color)
 
-        # 画Visualization模块能带图
-        for i in range(nbands):
-            VI.Visualize(k,energy[i],color=color)
+        # 对于能带图，有些参数Visualization模块无法设置，因此在此利用matplotlib进行修改
+        # 画高对称点分割线
+        for i in range(num_Knodes-2):  # 第一跟最后的一个高对称点跟能带图的左右边界重合，所以不必作分割线
+            plt.vlines(Knodes_projected[i+1],ylim[0],ylim[1], linewidth=2, linestyles='dashed',colors=color_split)
+        # 画费米面分割线
+        plt.hlines(0,xlim[0],xlim[1],linewidth=2,linestyles='dashed',colors=color_split)
 
-            # 画高对称点分割线
-            seperate_line_color = np.array([155,165,160])/255.0
-            for i in range(len(knodes)-2):  # 第一跟最后的一个高对称点跟能带图的左右边界重合，所以不必作分割线
-                plt.vlines(knodes[i+1], ylim[0], ylim[1], linewidth=2, linestyles='dashed', colors=seperate_line_color)
-            # 画费米面分割线
-            if shift == 'True':
-                plt.hlines(0, xlim[0], xlim[1], linewidth=2, linestyles='dashed',
-                           colors=seperate_line_color)  # The Fermi energy have been shifted to 0.
-                # plt.ylabel('$E-E_{f}$ $\mathrm{(eV)}$',size=24,fontdict={'style':'italic'})  # style选项选用italic启动西文斜体
-                plt.ylabel('$E-E_{f}$ (eV)', size=20)  # style选项选用italic启动西文斜体
-            else:
-                plt.hlines(Ef, xlim[0], xlim[1], linewidth=2, linestyles='dashed', colors=seperate_line_color)
-                plt.ylabel('$E-E_{f}$ (eV)', size=20)
+        # HighSymPoint - High Symmetry Point, 高对称性点
+        HighSymPoint = kwargs['HighSymPoint'] if 'HighSymPoint' in kwargs else ['K'+str(n+1) for n in range(num_Knodes)]
+        plt.xticks(Knodes_projected, HighSymPoint, size=20)
 
-            # 对于能带图，有些参数Visualization模块无法设置，因此在此利用matplotlib进行修改
-            plt.xticks(knodes, HSP, size=20)
-            if 'title' in kwargs:
-                plt.title(kwargs['title'], size=24)
-            else:
-                pass
+        # 利用Visualization模块内置函数对能带图细节进行修改
+        VI.FigureSetting(xlim=xlim, ylim=ylim, title=title, ylabel=ylabel)
 
-        # 利用Visualization对图像细节进行修改
-        VI.FigureSetting(xlim=xlim,ylim=ylim)
+        return
 
+    # 此函数利用Visualization模块可视化声子能带
+    def Phonon_bands(self, Kpath_projected, Frequency, Knodes_projected, **kwargs):
         return
 
     def VisualizePhononBand(self,band_yaml,degree_of_freedom=3,**kwargs):

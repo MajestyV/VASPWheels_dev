@@ -20,7 +20,7 @@ class vasp:
     # 此函数可将费米面调整为零，适用于energy为列表，一维数据，二维数组以及矩阵形式的数据的情况
     # 若输入的energy是一维数组或列表，对应于能量值是一维序列的情况，应用于调整态密度DOS的自变量
     # 若输入的energy是嵌套列表，二维数组或矩阵，对应于能量是二维能量面的情况，应用于调整能带图bands的高度
-    def ShiftFermi_Energy(self, energy, fermi_energy):
+    def ShiftFermiSurface(self, energy, fermi_energy):
         energy_array = np.array(energy)  # 将输入转换为数组，确保下一步计算中的输入是数组（一维或二维）形式的数据
         return energy_array-fermi_energy
 
@@ -137,6 +137,9 @@ class vasp:
         parameter = pattern_int.findall(parameter_string)  # 利用正则表达式提取出这一行所有的整数
         num_valence_electrons, num_kpoints, num_bands = parameter
         # 这行第一个数为价电子总数，第二个为k点路径总点数，第三个为能带总数
+        num_valence_electrons = int(num_valence_electrons)  # 从文件中读取完的数据形式为字符串，需要转换为整型才能进行后续处理
+        num_kpoints = int(num_kpoints)
+        num_bands = int(num_bands)
 
         # 通过循环读取EIGENVAL中的数据
         file = codecs.open(EIGENVAL,'rb','utf-8','ignore')  # Open file, using codecs to uniform coding type
@@ -158,12 +161,12 @@ class vasp:
 
         # 在EIGENVAL中，数据会按照K点路径顺序排布，每个K点的能带数据可以看作一个循环，那么我们便可以通过不断loop循环来将数据进行分类整理
         nrows_cycle = num_bands+2   # 每个循环的数据行数为：能带数+K点坐标行+空白分割行 = 能带数+2行
-        k_path, k_weight = [[],[]]  # 批量定义空列表准备储存数据，k_path是K点路径，k_weight是K点对应的权重
+        Kpath, Kweight = [[],[]]  # 批量定义空列表准备储存数据，k_path是K点路径，k_weight是K点对应的权重
         for i in range(num_kpoints):
             # 确定各个数据对应的列表引索
-            k_index, band_data_starting = [i*nrows_cycle+1, i*nrows_cycle+2]
-            k_path.append([raw_data[k_index][0],raw_data[k_index][1],raw_data[k_index][2]])  # K点路径
-            k_weight.append(raw_data[k_index][3])
+            Kindex, band_data_starting = [i*nrows_cycle+1, i*nrows_cycle+2]
+            Kpath.append([raw_data[Kindex][0],raw_data[Kindex][1],raw_data[Kindex][2]])  # K点路径
+            Kweight.append(raw_data[Kindex][3])
             # 通过循环将能带数据赋值到刚刚创建的矩阵中
             for j in range(num_bands):
                 bands[j,i] = raw_data[band_data_starting+j][1]
@@ -171,8 +174,8 @@ class vasp:
 
         data_dict = {'num_kpoints': num_kpoints,          # K点路径上的取点数
                      'num_bands': num_bands,              # 能带数目
-                     'k_path': k_path,                    # K点路径
-                     'k_weight': k_weight,                # 每个K点对应的权重
+                     'Kpath': Kpath,                    # K点路径
+                     'Kweight': Kweight,                # 每个K点对应的权重
                      'bands': np.array(bands),            # 能带数据（最后的输出为二维数组的话，操作空间会更大）
                      'occupation': np.array(occupation)}  # 轨道（能带）占据情况}
 

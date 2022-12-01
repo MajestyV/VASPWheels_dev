@@ -40,38 +40,31 @@ class Kpath:
         f.close()
         return
 
-    # This function is written to project the K-path into one dimensional line.
-    def ProjectKpath(self,path,npoints=100,**kwargs):
-        correction = kwargs['LatticeCorrection'] if 'LatticeCorrection' in kwargs else 'False'  # 这段代码用于晶格修正K空间的尺度
+    # 此函数可以将三维的K点路径投影为K点路程
+    # K点路径（Kpath）实际上是一系列的向量坐标，想象一个点沿这个路径不断地走，那么它走过的路程将不断增加
+    # 将沿这个路程计算得到的能量值展开，我们就得到了经常能看到的能带图
+    def ProjectKpath(self,Kpath,num_segments,**kwargs):
+        # 输入晶格常数，默认为立方单位晶格，即不作任何的晶格修正
         lattice, parameters, type = kwargs['Lattice'] if 'Lattice' in kwargs else ['Cubic', [1, 1, 1, 90, 90, 90], 'primitive']
-        b1,b2,b3 = crystal.Reciprocal_lattice(lattice,parameters,type)
-        correction_array = np.array([np.linalg.norm(b1,ord=2),np.linalg.norm(b2,ord=2),np.linalg.norm(b3,ord=2)])
+        b1,b2,b3 = crystal.Reciprocal_lattice(lattice,parameters,type)  # 计算倒空间基矢
+        # 通过倒空间基矢的长度，对K点路程进行晶格修正
+        scaling = np.array([np.linalg.norm(b1,ord=2),np.linalg.norm(b2,ord=2),np.linalg.norm(b3,ord=2)])
 
-        nnodes = len(path)  # number of K-point nodes in the path
-        # print(nnodes)
-        kprojection = []
-        nodes = []
-        kp = 0  # Always setting the origin as starting point
-        kprojection.append(kp)
-        nodes.append(kp)
-        for i in range(nnodes-1):  # n nodes indicating the whole is seperated into n-1 subpaths
-            # print(path[i+1],path[i])
-            subpath = np.array(path[i+1])-np.array(path[i])
-            if correction == 'True':  # 启动晶格修正选项
-                subpath = np.multiply(subpath,correction_array)  # np.multiply: 数组对应元素位置相乘
-            else:
-                pass
-            lsubpath = np.linalg.norm(subpath,ord=2)  # 求这段路径的二阶范数，也就是向量的模
-            delta = lsubpath/(npoints+1)  # n points seperate the subpath into n+1 sections
-            for j in range(npoints):
-                kp = kp+delta
-                kprojection.append(kp)
-            kp = kp+delta  # This is the K-projection position of the nodes except the first node, because npoints do not include the nodes
-            kprojection.append(kp)
-            nodes.append(kp)
+        Kpath = np.array(Kpath)  # 将K点路径转换为数组，防止后面出错
+        num_kpoints = len(Kpath)  # K点路径中的K点数目
 
-        # kpath.append(path[nnodes - 1])
-        return kprojection,nodes
+        K_distance = 0.0  # K点路程的初始值为0
+        Kpath_projected = [K_distance]  # 记录每一个路程点
+        for i in range(num_kpoints-1):
+            # 因为有些路径向着负方向，所以要取绝对值
+            K_distance = K_distance+abs(np.dot((Kpath[i+1]-Kpath[i]),scaling))
+            Kpath_projected.append(K_distance)
+
+        # 接下来，我们将K点路径转折点对应的路程端点取出，以在能带图上分块，方便分析
+        inter = int((num_kpoints-1)/num_segments)  # 总点数 = 分段数*间隔点数+1
+        Knodes_projected = Kpath_projected[0:num_kpoints:inter]  # K点路程端点
+
+        return Kpath_projected, Knodes_projected
 
 if __name__=='__main__':
     #saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Kpoints_ebands'
