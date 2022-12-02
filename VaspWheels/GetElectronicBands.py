@@ -188,10 +188,15 @@ class vasp:
     # 这个模块的功能包括但不限于从静态自洽计算（SCF）结果中获取费米能级，或者通过能带占据情况确定费米能级位置
     # 以及计算禁带宽度，判断其为直接还是间接带隙等等
 
+    # 此函数可以直接从SCF计算中得到的OUTCAR文件中读取费米能级
+    def GetFermiEnergy(self,OUTCAR):
+        return
+
     # 若使用MajestyV的脚本计算电子能带，SCF计算结果中通常会生成一个总结文件Markdown_SCF，其中记载着准确的费米能级（没有分数占据的情况下）
+
     # MajestyV的github：https://github.com/MajestyV
     # 此函数可以从Markdown文件中提取费米能级的计算结果
-    def GetFermiEnergy(self, Markdown_SCF):
+    def GetFermiEnergy_Markdown(self, Markdown_SCF):
         pattern = re.compile(r'-?\d+\.?\d+')  # 匹配浮点数的正则表达式
         file = codecs.open(Markdown_SCF, 'rb', 'utf-8', 'ignore')
         line = file.readline()
@@ -209,8 +214,8 @@ class vasp:
         bands = data_dict['bands']  # 能带具体的能量值
         occupation = data_dict['occupation']  # 能带的占据情况
 
-        Unoccupied = []  # 这个列表用于存放所有未被占据的能带数据
-        Occupied = []  # 这个列表用于存放所有已被占据的能带数据
+        unoccupied = []  # 这个列表用于存放所有未被占据的能带数据
+        occupied = []  # 这个列表用于存放所有已被占据的能带数据
         for n in range(num_kpoints):
             energy_unoccupied = []
             energy_occupied = []
@@ -218,66 +223,66 @@ class vasp:
                     energy = bands[m,n]
                     filling_condition = occupation[m][n]  # 电子的填充情况
                     if round(filling_condition, accuracy_order) == 0:  # 通过判断能带的占据情况来确定能带在费米面之下还是费米面之上
-                        energy_unoccupied.append(energy)
+                        energy_unoccupied.append(energy)  # 0则为未被占据的能带
                     else:
-                        energy_occupied.append(energy)
-            Unoccupied.append(energy_unoccupied)
-            Occupied.append(energy_occupied)
+                        energy_occupied.append(energy)    # 1则为被占据的能带
+            unoccupied.append(energy_unoccupied)
+            occupied.append(energy_occupied)
 
-        ConductionBand = [min(Unoccupied[i]) for i in range(len(Unoccupied))]  # 最低未占据能带（导带），Lowest unoccupied band
-        ValenceBand = [max(Occupied[i]) for i in range(len(Occupied))]  # 最高已占据能带（价带），Highest occupied band
+        conduction_band = [min(unoccupied[i]) for i in range(len(unoccupied))]  # 最低未占据能带（导带），Lowest unoccupied band
+        valence_band = [max(occupied[i]) for i in range(len(occupied))]  # 最高已占据能带（价带），Highest occupied band
 
-        return ValenceBand, ConductionBand
+        return valence_band, conduction_band
 
-        # 此函数通过费米能级的位置区分导带跟价带（不太准确）
-        def AnalyzeEfermi(self, EIGENVAL, Efermi=0):
-            Bands = GE.GetData(EIGENVAL)  # 利用GetEbands模块从EIGENVAL文件提取能带数据
-            energy = Bands['energy']  # 获取能带数据
-            K_path = Bands['kpath']  # 获取计算EIGENVAL时的K空间路径
-            occupation = Bands['occupation']  # 获取能带占据信息
+    # 此函数通过费米能级的位置区分导带跟价带（如果出现分数电子占据的情况，得到的结果可能不太准确）
+    def GetBandEdges_Fermi(self, EIGENVAL, Efermi=0):
+        data_dict = self.GetEbands(EIGENVAL)  # 利用GetEbands函数从EIGENVAL文件提取能带数据
+        num_bands = data_dict['num_bands']  # 提取能带总数
+        num_kpoints = data_dict['num_kpoints']  # 提取K点总数
+        bands = data_dict['bands']  # 能带具体的能量值
+        occupation = data_dict['occupation']  # 能带的占据情况
 
-            Unoccupied = []  # 这个列表用于存放所有未被占据的能带数据
-            Occupied = []  # 这个列表用于存放所有已被占据的能带数据
-            for n in range(len(K_path)):
-                E_unoccupied = []
-                E_occupied = []
-                for m in range(len(energy)):
-                    E = energy[m][n]
-                    if E >= Efermi:  # 通过能量E是否大于给定的费米能级判断能带在费米面之下还是费米面之上
-                        E_unoccupied.append(E)
-                    else:
-                        E_occupied.append(E)
-                Unoccupied.append(E_unoccupied)
-                Occupied.append(E_occupied)
+        unoccupied = []  # 这个列表用于存放所有未被占据的能带数据
+        occupied = []  # 这个列表用于存放所有已被占据的能带数据
+        for n in range(num_kpoints):
+            energy_unoccupied = []
+            energy_occupied = []
+            for m in range(num_bands):
+                energy = bands[m,n]
+                if energy >= Efermi:  # 通过能量E是否大于给定的费米能级判断能带在费米面之下还是费米面之上
+                    energy_unoccupied.append(energy)
+                else:
+                    energy_occupied.append(energy)
+            unoccupied.append(energy_unoccupied)
+            occupied.append(energy_occupied)
 
-            ConductionBand = [min(Unoccupied[i]) for i in range(len(Unoccupied))]  # 最低未占据能带（导带），Lowest unoccupied band
-            ValenceBand = [max(Occupied[i]) for i in range(len(Occupied))]  # 最高已占据能带（价带），Highest occupied band
+        conduction_band = [min(unoccupied[i]) for i in range(len(unoccupied))]  # 最低未占据能带（导带），Lowest unoccupied band
+        valence_band = [max(occupied[i]) for i in range(len(occupied))]  # 最高已占据能带（价带），Highest occupied band
 
-            return ValenceBand, ConductionBand
+        return valence_band, conduction_band
 
-        # 此函数可以计算带隙（Bandgap），同时得出材料是直接带隙还是间接带隙
-        def AnalyzeBandgap(self, EIGENVAL, **kwargs):
-            mode = kwargs['mode'] if 'mode' in kwargs else 'Occupation'  # 默认通过电子占据情况分析带隙
-            Precision = kwargs['Precision'] if 'Precision' in kwargs else 0  # 分析电子占据情况时所用的精确度
-            Efermi = kwargs['Efermi'] if 'Efermi' in kwargs else 0.0  # 通常不使用此模式，故设Efermi为0
+    # 此函数可以计算带隙（Bandgap），同时分析材料是直接带隙还是间接带隙
+    def GetBandgap(self, EIGENVAL, **kwargs):
+        mode = kwargs['mode'] if 'mode' in kwargs else 'Occupation'  # 默认通过电子占据情况分析带隙
+        accuracy_order = kwargs['accuracy_order'] if 'accuracy_order' in kwargs else 0  # 分析电子占据情况时所用的精确度
+        Efermi = kwargs['Efermi'] if 'Efermi' in kwargs else 0.0  # 通常不使用此模式，故设Efermi为0
 
-            if mode == 'Occupation':
-                ValenceBand, ConductionBand = self.AnalyzeOccupation(EIGENVAL, Precision=Precision)
-            elif mode == 'Efermi':
-                ValenceBand, ConductionBand = self.AnalyzeEfermi(EIGENVAL, Efermi=Efermi)
-            else:
-                print(r'ERROR: The mode of this function could only be "Occupation" or "Efermi".')
-                return
+        if mode == 'occupation':
+            valence_band, conduction_band = self.GetBandEdges(EIGENVAL, accuracy_order=accuracy_order)
+        elif mode == 'Efermi':
+            valence_band, conduction_band = self.GetBandEdges_Fermi(EIGENVAL, Efermi=Efermi)
+        else:
+            print(r'ERROR: The mode of this function could only be "Occupation" or "Efermi".')
+            return
 
-            Ev_max = max(ValenceBand)  # 价带顶
-            Ec_min = min(ConductionBand)  # 导带底
-            Eg = Ec_min - Ev_max  # 带隙
+        Ev_max = max(valence_band)  # 价带顶
+        Ec_min = min(conduction_band)  # 导带底
+        Eg = Ec_min - Ev_max  # 带隙
 
-            # 分析价带顶跟导带底的位置
-            extremum_position = (ValenceBand.index(Ev_max), ConductionBand.index(Ec_min))
+        # 分析价带顶跟导带底的位置
+        extremum_location = (valence_band.index(Ev_max), conduction_band.index(Ec_min))
 
-            return Eg, Ev_max, Ec_min, extremum_position
-
+        return Eg, Ev_max, Ec_min, extremum_location
 
 if __name__=='__main__':
     EIGENVAL = 'D:/MaterialsGallery/Testing/MoS2_pawlda/MoS2_2H/1/result/EIGENVAL'

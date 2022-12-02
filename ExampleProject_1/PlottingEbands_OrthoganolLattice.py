@@ -28,16 +28,12 @@ num_kpoints = bands_dict['num_kpoints']  # 提取K点总数
 Kpath = bands_dict['Kpath']  # K点路径
 bands = bands_dict['bands']  # 能带具体的能量值
 
-# K点路径
-Kpath_dict = {'ORT': [[r'$\Gamma$', 'X', 'S', 'Y', r'$\Gamma$', 'S'],
-                     [[0, 0, 0], [0.5, 0, 0], [0.5, 0.5, 0], [0, 0.5, 0], [0, 0, 0], [0.5, 0.5, 0]]],
-              'ORT_1': [[r'$\Gamma$', 'Y', 'S', 'X', r'$\Gamma$', 'S'],
-                       [[0, 0, 0], [0, 0.5, 0], [0.5, 0.5, 0], [0.5, 0, 0], [0, 0, 0], [0.5, 0.5, 0]]],
-              '2D': [[r'$\Gamma$', 'M', 'K', r'$\Gamma$'],
-                   [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0]]],
-              '3D': [[r'$\Gamma$','M', 'K', r'$\Gamma$', 'A', 'L', 'H', 'A'],
-                   [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0], [0,0,1/2.0], [1/2.0,0,1/2.0], [1/3.0, 1/3.0, 1/2.0], [0,0,1/2.0]]]}
-# Kpath = Kpath_dict['ORT_1']  # Plotting the bands along 2D K_path
+# 高对称点名称
+HighSymPoint_dict = {'ORT': [r'$\Gamma$', 'X', 'S', 'Y', r'$\Gamma$', 'S'],
+                     'ORT_1': [r'$\Gamma$', 'Y', 'S', 'X', r'$\Gamma$', 'S'],
+                     'ORT_2': [r'$\Gamma$', 'X', 'S', r'$\Gamma$', 'Y'],
+                     '2D_HEX': [r'$\Gamma$', 'M', 'K', r'$\Gamma$'],
+                     '3D_HEX': [r'$\Gamma$','M', 'K', r'$\Gamma$', 'A', 'L', 'H', 'A']}
 
 lattice = ['ORT', [3.16, 5.47, 12.9, 90, 90, 90], 'unitcell']
 
@@ -48,18 +44,8 @@ Kpath_projected,Knodes_projected = GK.ProjectKpath(Kpath,num_segments,LatticeCor
 # print(Knodes_projected)
 
 # 费米面调零
-Markdown = data_directory+result[1]+'/Markdown_SCF'  # 这个文件记载着准确的费米能级
-pattern = re.compile(r'-?\d+\.?\d+')  # 匹配浮点数的正则表达式
-f = codecs.open(Markdown, 'rb', 'utf-8', 'ignore')
-line = f.readline()
-Energy = pattern.findall(line)
-#print(Energy)
-Efermi = float(Energy[0])
-#value = line.split()
-#value = list(map(float,value))
-#print(Energy)
-#print(Efermi)
+Eg, Ev_max, Ec_min, extremum_location = GE.GetBandgap(EIGENVAL,mode='occupation')
 
-bands_shifted = GE.ShiftFermiSurface(bands,Efermi-0.34)
+bands_shifted = GE.ShiftFermiSurface(bands,Ev_max)
 
-VB.Electron_bands(Kpath_projected,bands_shifted,Knodes_projected,ylim=(-2,4.5))
+VB.Electron_bands(Kpath_projected,bands_shifted,Knodes_projected,ylim=(-2,4.5),HighSymPoint=HighSymPoint_dict['ORT_1'])

@@ -28,9 +28,9 @@ class Kpath:
         return kpath
 
     # This function is written to generate KPOINTS file for electronic dispersion calculation.
-    def GetKpath(self,saving_directory,path,npoints=100):
-        kpath = self.Kgenerator(path,npoints)
-        KPOINTS = saving_directory
+    def GetKpath(self,saving_address,nodes,npoints=100):
+        kpath = self.Kgenerator(nodes,npoints)
+        KPOINTS = saving_address
         f = open(KPOINTS,'w')
         f.write('auto generate\n'+
                 str(len(kpath))+'\n'
