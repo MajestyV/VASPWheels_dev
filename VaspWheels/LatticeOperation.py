@@ -1,4 +1,4 @@
-# This code is written for conducting various of lattice manipulations like forming supercell, exfoliating 2D layers and so on.
+# 此代码为操控晶体结构而生，基础功能有读取以及生成V.A.S.P.计算所需要的晶体结构文件（POSCAR），构建超胞，施加应变，剥离二维薄片等
 
 import codecs
 import copy  # 引用这个模块主要的作用是为了将输入的动态变量进行深拷贝，以防止在函数运行过程中的一些操作改变了输入的动态变量
@@ -11,6 +11,10 @@ class latte:
     """ LATTicE operation """
     def __init__(self):
         self.name = latte
+        self.default_directory = path.dirname(__file__)+'/'  # 设置这个代码文件所在的文件夹为默认读取路径
+
+    def Test(self,POSCAR):
+        return
 
     # 这个函数可以读取指定POSCAR文件中的信息
     # 应注意，目前可读的POSCAR需要是VESTA生成.vasp文件格式，若需读取其他格式POSCAR则需对这个包进行扩展

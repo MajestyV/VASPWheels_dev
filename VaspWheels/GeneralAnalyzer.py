@@ -3,6 +3,8 @@
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 class functions:
     """ This class of functions is designed for general data analysis and computation in ab initio study. """
@@ -24,6 +26,7 @@ class functions:
         y = data_array[:, 1]  # 默认第二列为因变量
         return x, y
 
+    # 此函数可以利用pandas提取csv文件中的数据
     def GetData_csv(self, data_file, **kwargs):
         # 一些关于数据文件的参数
         header = kwargs['header'] if 'header' in kwargs else None  # 文件中的数据列，默认为没有列名，第一行作为数据读取
@@ -37,3 +40,29 @@ class functions:
         y = data_array[:, y_col]  # 默认第二列为因变量
 
         return x,y
+
+    ##############################################################################################################
+    # 可视化分析模块
+
+    # 此函数可以对数据进行三维曲线的可视化
+    def Visualize3D_curve(self,x,y,z):
+        # 定义图像和三维坐标轴
+        fig = plt.figure()
+        # ax = plt.axes(projection='3d')  # 也可以使用：ax=Axes3D(fig)
+        ax = Axes3D(fig)
+        ax.plot3D(x,y,z)
+        return
+
+    # 此函数可以对数据进行三维可视化
+    def Visualize3D_surface(self, x, y, z):
+        # 定义图像和三维坐标轴
+        fig = plt.figure()
+        # ax = plt.axes(projection='3d')  # 也可以使用：ax=Axes3D(fig)
+        ax = Axes3D(fig)
+        ax.plot_surface(x, y, z)
+        return
+
+    # 此函数可以将三维数据投影成等高线图，适用于多种场景如：势能（能量）面分析，误差最小化等
+    def Visualiza_contour(self):
+        return
+
