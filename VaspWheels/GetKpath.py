@@ -14,18 +14,18 @@ class Kpath:
     def Kgenerator(self,path,npoints=100):
         nnodes = len(path)  # number of K-point nodes in the path
         #print(nnodes)
-        kpath = []
+        Kpath = []
         for i in range(nnodes-1):  # n nodes indicating the whole is seperated into n-1 subpaths
             #print(path[i+1],path[i])
             subpath = np.array(path[i+1])-np.array(path[i])
             delta = subpath/(npoints+1)  # n points seperate the subpath into n+1 sections
-            kpath.append(path[i])
+            Kpath.append(path[i])
             for j in range(npoints):
                 k = np.array(path[i])+(j+1)*delta
-                kpath.append(list(k))
+                Kpath.append(list(k))
 
-        kpath.append(path[nnodes-1])
-        return kpath
+        Kpath.append(path[nnodes-1])
+        return Kpath
 
     # This function is written to generate KPOINTS file for electronic dispersion calculation.
     def GetKpath(self,saving_address,nodes,npoints=100):
@@ -65,6 +65,17 @@ class Kpath:
         Knodes_projected = Kpath_projected[0:num_kpoints:inter]  # K点路程端点
 
         return Kpath_projected, Knodes_projected
+
+    # 此函数可以通过指定起点，方向，步数以及步长来获取一系列的K点路径
+    # 适用于计算电子能带的迁移率，声子能带的声速等需要获取指定能谷或能峰并对能量面进行计算（如求导数，曲率，散度，以及旋度等）的场景
+    def GenerateKvector(self,origin_array,direction_array,num_step,step_length,lattice_info):
+        lattice, parameters, type = lattice_info  # 解压输入的晶格信息
+        b1, b2, b3 = crystal.Reciprocal_lattice(lattice, parameters, type)  # 计算倒空间基矢
+        # 通过倒空间基矢的长度，对K点路程进行晶格修正
+        scaling = np.array([np.linalg.norm(b1, ord=2), np.linalg.norm(b2, ord=2), np.linalg.norm(b3, ord=2)])
+
+
+        return
 
 if __name__=='__main__':
     #saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Kpoints_ebands'
