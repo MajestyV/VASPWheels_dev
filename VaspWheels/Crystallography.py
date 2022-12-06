@@ -11,23 +11,23 @@ class Crystal:
     # 简单的向量计算模块，所以向量都应该是三维的向量
     # 向量的点乘
     def dot_product(self,x,y):
-        return x[0]*y[0]+x[1]*y[1]+x[2]*y[2]
+        return np.array(x[0]*y[0]+x[1]*y[1]+x[2]*y[2])
 
     # 向量的叉乘
     def cross_product(self,x,y):
         product = [x[1]*y[2]-x[2]*y[1],
                    x[2]*y[0]-x[0]*y[2],
                    x[0]*y[1]-x[1]*y[0]]
-        return product
+        return np.array(product)
 
     # 计算不同晶格坐标中向量的模
     def length(self,vector,metric_tensor=np.array([[1.0,0,0],[0,1.0,0],[0,0,1.0]])):
-        r_square = 0
+        d_square = 0
         for i in range(len(vector)):
             for j in range(len(vector)):
-                r_square = r_square+vector[i]*metric_tensor[i][j]*vector[j]
-        r = np.sqrt(r_square)
-        return r
+                d_square = d_square+vector[i]*metric_tensor[i][j]*vector[j]
+        d = np.sqrt(d_square)
+        return d
 
 
     # There are 14 kinds of Bravais lattice within 7 kinds of lattice system. (7大晶系，14种布拉菲晶格）
@@ -100,7 +100,7 @@ class Crystal:
         g = [[self.dot_product(a1,a1), self.dot_product(a1,a2), self.dot_product(a1,a3)],
              [self.dot_product(a2,a1), self.dot_product(a2,a2), self.dot_product(a2,a3)],
              [self.dot_product(a3,a1), self.dot_product(a3,a2), self.dot_product(a3,a3)]]
-        return g
+        return np.array(g)
 
     # 计算倒易空间基矢
     def Reciprocal_lattice(self,lattice,lattice_parameter,lattice_type='primitive'):
@@ -116,7 +116,7 @@ class Crystal:
         b2 = [(2.0*pi/V)*self.cross_product(a3,a1)[n] for n in range(len(self.cross_product(a3,a1)))]
         b3 = [(2.0*pi/V)*self.cross_product(a1,a2)[n] for n in range(len(self.cross_product(a1,a2)))]
 
-        return [b1,b2,b3]
+        return np.array([b1,b2,b3])
 
     # 计算倒易空间的度规张量
     def Reciprocal_MetricTensor(self,lattice,lattice_parameter,lattice_type='primitive'):
@@ -124,7 +124,7 @@ class Crystal:
         g_star = [[self.dot_product(b1,b1), self.dot_product(b1,b2), self.dot_product(b1,b3)],
                   [self.dot_product(b2,b1), self.dot_product(b2,b2), self.dot_product(b2,b3)],
                   [self.dot_product(b3,b1), self.dot_product(b3,b2), self.dot_product(b3,b3)]]
-        return g_star
+        return np.array(g_star)
 
 
     def Volume(self,lattice,lattice_parameter,lattice_type='primitive',space='real'):

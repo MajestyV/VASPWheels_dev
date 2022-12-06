@@ -25,10 +25,6 @@ class vasp:
         return energy_array-fermi_energy
 
     ##############################################################################################################
-    # 费米能级提取模块
-    #
-
-    ##############################################################################################################
     # 态密度（DOS）提取模块
 
     # This function is designed to read out DOS data from DOSCAR
@@ -193,7 +189,6 @@ class vasp:
         return
 
     # 若使用MajestyV的脚本计算电子能带，SCF计算结果中通常会生成一个总结文件Markdown_SCF，其中记载着准确的费米能级（没有分数占据的情况下）
-
     # MajestyV的github：https://github.com/MajestyV
     # 此函数可以从Markdown文件中提取费米能级的计算结果
     def GetFermiEnergy_Markdown(self, Markdown_SCF):

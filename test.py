@@ -1,21 +1,20 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+from VaspWheels import Crystallography
+from VaspWheels import GetKpath
 
-fig = plt.figure()  #定义新的三维坐标轴
-ax3 = plt.axes(projection='3d')
+CT = Crystallography.Crystal()
+GK = GetKpath.vasp()
 
-#定义三维数据
-xx = np.arange(-5,4,0.5)
-yy = np.arange(-5,5,0.5)
-X, Y = np.meshgrid(xx, yy)
-Z = np.sin(X)+np.cos(Y)
+lattice = ['Cubic', [1, 1, 1, 90, 90, 90], 'primitive']
 
-print(X.shape)
-print(Y.shape)
-print(Z.shape)
+real_lattice = [[3.147329567, 0.000000000, 0.000000000],
+                [-1.573664783, 2.725667359, 0.000000000],
+                [0.000000000, 0.000000000, 43.912290363]]
 
-#作图
-ax3.plot_surface(X,Y,Z,cmap='rainbow')
-#ax3.contour(X,Y,Z, zdim='z',offset=-2，cmap='rainbow)   #等高线图，要设置offset，为Z的最小值
-plt.show()
+# 会跟VASP的OUTCAR差2pi倍
+lattice_reciprocal = CT.Reciprocal_lattice('HEX',[3.147329567,3.147329567,43.912290363,90,90,120])
+# lattice_reciprocal = CT.Reciprocal_lattice('HEX',[3.147329567,3.147329567,1,90,90,120])
+a = GK.CalculateReciprocalLattice(real_lattice)
+
+print(lattice_reciprocal)
+print(a)

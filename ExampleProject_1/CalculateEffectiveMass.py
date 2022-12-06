@@ -1,24 +1,50 @@
 import numpy as np
-import xlwt
-import matplotlib.pyplot as plt
-from VaspWheels import Crystallography
-from VaspWheels import GetEffectiveMass
+from VaspWheels import GetKpath
 
-crystal = Crystallography.Crystal()
-GEM = GetEffectiveMass.EffectiveMass()
+GK = GetKpath.vasp()  # 调用GetKpath模块
 
-lattice = ['HEX', [3.1473295667554400, 3.1473295667554400, 43.9122903625234997, 90, 90, 120], 'primitive']
-crystal_class, lattice_para, cell_type = lattice
-reciprocal = crystal.Reciprocal_lattice(crystal_class,lattice_para)
+##################################################################################################################
+# 先定义一些在接下来的计算中可能用到的参数
+
+# 晶体结构信息
+
+crystal_info = ['HEX', [3.1473295667554400, 3.1473295667554400, 43.9122903625234997, 90, 90, 120], 'primitive']
+
+real_lattice = [[3.1473295667554400, 0.0000000000000000, 0.0000000000000000],
+                [-1.5736647833777198, 2.7256673589277995, 0.0000000000000000],
+                [0.0000000000000000, 0.0000000000000000, 43.9122903625234997]]
+
+reciprocal_lattice = GK.CalculateReciprocalLattice(real_lattice)
+
+# 一些关键的高对称点（High symmetry point, HSP）
+HSP = {'G': [0, 0, 0],
+       'K': [1/3.0, 1/3.0, 0],
+       'S1':[2/3.0, 0, 0],
+       'S2': [1/3.0, 0, 0],
+       'M': [0.500, 0, 0],
+       'L': [0.176666666667, 0.176666666667, 0]}
+
+# 计算曲率时的取点方向
+direction = ['K to G', 'K to S1', 'K to M', 'L to G', 'L to S2', 'G to K']
+
+##################################################################################################################
+# 生成计算迁移率所需的K点文件
+
+data_directory = 'D:/PhD_research/Data/Simulation/MoS2/CarrierTransport/4/EffectiveMass/Kpath/'
+
+origin =      [HSP['K'], HSP['K'], HSP['K'], HSP['L'], HSP['L'], HSP['G']]
+destination = [HSP['G'], HSP['S1'],HSP['M'], HSP['G'], HSP['S2'],HSP['K']]
+
+Kpoints_list = GK.GenerateKpath_segment(origin,destination,30,0.01,reciprocal_lattice)
+
+GK.GenKPOINTS(data_directory+'Test',Kpoints_list)
+
+##################################################################################################################
 
 data_repository = 'D:/Projects/PhaseTransistor/Data/Simulation/Conductivity/Mobility/4/EffectiveMass/4_GSE_EffectiveMass/'
 
 E_field = ['0.025', '0.050', '0.075', '0.100', '0.125', '0.150', '0.175', '0.200', '0.225', '0.250', '0.275', '0.300']
 E_test = ['0.025']
-
-# HSP = High Symmetry Point （高对称点）
-HSP = {'GAMMA': [0, 0, 0], 'K': [1/3.0, 1/3.0, 0], 'SIGMA_1':[2/3.0, 0, 0], 'SIGMA_2': [1/3.0, 0, 0],
-       'M': [0.500, 0, 0], 'LAMBDA': [0.176666666667, 0.176666666667, 0]}
 
 # 计算曲率时的取点方向
 direction = ['K to GAMMA', 'K to SIGMA_1', 'K to M', 'LAMBDA to GAMMA', 'LAMBDA to SIGMA_2', 'GAMMA to K']

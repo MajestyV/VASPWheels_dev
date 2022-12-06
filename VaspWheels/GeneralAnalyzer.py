@@ -42,6 +42,9 @@ class functions:
         return x,y
 
     ##############################################################################################################
+    # 计算模块
+
+    ##############################################################################################################
     # 可视化分析模块
 
     # 此函数可以对数据进行三维曲线的可视化
@@ -64,5 +67,21 @@ class functions:
 
     # 此函数可以将三维数据投影成等高线图，适用于多种场景如：势能（能量）面分析，误差最小化等
     def Visualiza_contour(self):
+        return
+
+    ##############################################################################################################
+    # 数据保存模块
+
+    # 这个函数可以将GSE计算的有效质量数据写入excel文件
+    def ExportEffectiveMassData(self,saving_directory, data, Kpoint, Efield, filename='EffectiveMass'):
+        workbook = xlwt.Workbook()
+
+        sheet = workbook.add_sheet('ElectronEffectiveMass', cell_overwrite_ok=True)
+        for i in range(len(Efield)):
+            sheet.write(i + 1, 0, Efield[i])
+            for j in range(len(Kpoint)):
+                sheet.write(0, j + 1, Kpoint[j])
+                sheet.write(i + 1, j + 1, data[i][j])
+        workbook.save(saving_directory + filename + '.xls')
         return
 

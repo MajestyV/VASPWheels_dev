@@ -5,18 +5,49 @@ from VaspWheels import Crystallography
 
 crystal = Crystallography.Crystal()
 
-class Kpath:
+class vasp:
     def __init__(self):
-        self.name = Kpath
+        self.name = vasp
 
+    ##############################################################################################################
+    # 倒易空间（K空间）相关模块（功能包括K空间长度计算，K点路径生成等）
+
+    # 此函数可以通过正（实）空间基矢计算倒易空间基矢
+    def CalculateReciprocalLattice(self,real_lattice):
+        real_lattice = np.array(real_lattice)  # 确保输入正空间基矢数据为数组形式
+        a1, a2, a3 = real_lattice
+
+        volume = np.dot(a1,np.cross(a2, a3))   # 晶胞的体积，后面计算基矢时会用到
+
+        pi = np.pi  # 圆周率
+        b1 = (2.0*pi/volume)*np.cross(a2,a3)   # b1 = 2*pi*(a2xa3)/[a1·(a2xa3)]
+        b2 = (2.0*pi/volume)*np.cross(a3,a1)   # b2 = 2*pi*(a3xa1)/[a1·(a2xa3)]
+        b3 = (2.0*pi/volume)*np.cross(a1,a2)   # b3 = 2*pi*(a1xa2)/[a1·(a2xa3)]
+
+        return np.array([b1, b2, b3])
+
+    # 这个函数可以根据输入的倒格矢计算K空间中任意两点的距离，单位为Å^{-1}
+    def Length(self, origin, destination, reciprocal_lattice):
+        x, y, z = reciprocal_lattice                   # 倒格矢在正交直角坐标系上的表示，用于计算K空间中向量的长度
+        input = [x, y, z, origin, destination]
+        input_reformed = [np.array(n) for n in input]  # 批量将所有输入数据转换成数组，防止后续计算出错
+        x, y, z, origin, destination = input_reformed  # 将转换后的数据从input_reform中解压出来
+
+        direction = destination - origin  # 计算K空间坐标（布里渊区分数坐标）下由origin（起点）指向destination（终点）的方向向量
+        # 计算方向向量在正交直角坐标系下的坐标（投影）
+        direction_projected = direction[0]*x+direction[1]*y+direction[2]*z
+
+        length = np.linalg.norm(direction_projected, ord=2)  # 向量的二范数即模长
+
+        return length
+
+    # 此函数可以通过指定端点（转折点）生成完整的K点路径
     # This function is designed to generate the K-points trajectory.
     # Example input: path=[[0,0,0],[0.5,0,0],[0.5,0.5,0],[0.5,0.5,0.5],[0,0,0]], npoints is the number of points between two neighboring nodes in the path
-    def Kgenerator(self,path,npoints=100):
+    def GenerateKpath(self,path,npoints=100):
         nnodes = len(path)  # number of K-point nodes in the path
-        #print(nnodes)
         Kpath = []
         for i in range(nnodes-1):  # n nodes indicating the whole is seperated into n-1 subpaths
-            #print(path[i+1],path[i])
             subpath = np.array(path[i+1])-np.array(path[i])
             delta = subpath/(npoints+1)  # n points seperate the subpath into n+1 sections
             Kpath.append(path[i])
@@ -27,17 +58,61 @@ class Kpath:
         Kpath.append(path[nnodes-1])
         return Kpath
 
+    # 此函数可以通过指定起点，方向，步数以及步长来获取一系列的K点路径段
+    # 适用于计算电子能带的迁移率，声子能带的声速等需要获取指定能谷或能峰并对能量面进行计算（如求导数，曲率，散度，以及旋度等）的场景
+    def GenerateKpath_segment(self, origin_array, destination_array, num_step, step_length, reciprocal_lattice):
+        x, y, z = reciprocal_lattice                   # 倒格矢在正交直角坐标系上的表示，用于计算K空间中向量的长度
+        input = [x, y, z, origin_array, destination_array]
+        input_reformed = [np.array(n) for n in input]  # 批量将所有输入数据转换成数组，防止后续计算出错
+        x, y, z, origin_array, destination_array = input_reformed  # 将转换后的数据从input_reform中解压出来
+        num_segment = len(origin_array)                # K点路径段的段数
+
+        Kpoints_total = []
+        for i in range(num_segment):
+            origin = origin_array[i]
+            destination = destination_array[i]
+
+            direction = destination - origin  # 计算起点指向终点的方向向量
+            length = self.Length(origin, destination, reciprocal_lattice)  # 计算方向向量（direction）的长度
+            interpolating_destination = origin + (step_length/length)*direction  # 通过step_length/length计算出插值的终点
+            # 应注意，如果要计算电子或者空穴的有效质量，step_length的长度通常在0.01-0.02 Å左右（当然，越密越好，不过要算的点就多了）
+            step_vec = (interpolating_destination-origin)/(num_step-1)  # 通过插点数num_point计算出插点的间隔量d_vec
+
+            Kpoint_segment = []
+            Kpoint = origin  # 定义初始值，即为这段路径（segment）的起点（origin）
+            for j in range(num_step):
+                Kpoint_segment.append(Kpoint)
+                Kpoint = Kpoint+step_vec  # 每跑一个循环增加一个d_vec向量
+
+            Kpoints_total = Kpoints_total+Kpoint_segment  # 将每一段K点路径段的K点列表串接
+
+        return Kpoints_total
+
+    ##############################################################################################################
+    # KPOINTS文件生成模块
+
+    # 这个函数可以指定K点列表生成V.A.S.P.计算所需的KPOINTS文件
+    def GenKPOINTS(self, saving_address, Kpoints_list):
+        file = open(saving_address, 'w')
+        file.write('auto generate\n' +     # 写入KPOINTS文件表头
+                   str(len(Kpoints_list)) + '\n' +
+                   'Reciprocal\n')
+        for i in range(len(Kpoints_list)):  # 根据Kpoints_list将K点一个个写入
+            file.write(str(Kpoints_list[i][0])+' '+str(Kpoints_list[i][1])+' '+str(Kpoints_list[i][2])+' 1\n')
+        file.close()
+        return
+
     # This function is written to generate KPOINTS file for electronic dispersion calculation.
     def GetKpath(self,saving_address,nodes,npoints=100):
-        kpath = self.Kgenerator(nodes,npoints)
+        Kpath = self.GenerateKpath(nodes,npoints)
         KPOINTS = saving_address
-        f = open(KPOINTS,'w')
-        f.write('auto generate\n'+
-                str(len(kpath))+'\n'
-                'Reciprocal\n')
-        for i in range(len(kpath)):
-            f.write(str(kpath[i][0])+' '+str(kpath[i][1])+' '+str(kpath[i][2])+' 1\n')
-        f.close()
+        file = open(KPOINTS,'w')
+        file.write('auto generate\n'+  # 写入KPOINTS文件表头
+                   str(len(Kpath))+'\n'
+                   'Reciprocal\n')
+        for i in range(len(Kpath)):
+            file.write(str(Kpath[i][0])+' '+str(Kpath[i][1])+' '+str(Kpath[i][2])+' 1\n')
+        file.close()
         return
 
     # 此函数可以将三维的K点路径投影为K点路程
@@ -66,21 +141,10 @@ class Kpath:
 
         return Kpath_projected, Knodes_projected
 
-    # 此函数可以通过指定起点，方向，步数以及步长来获取一系列的K点路径
-    # 适用于计算电子能带的迁移率，声子能带的声速等需要获取指定能谷或能峰并对能量面进行计算（如求导数，曲率，散度，以及旋度等）的场景
-    def GenerateKvector(self,origin_array,direction_array,num_step,step_length,lattice_info):
-        lattice, parameters, type = lattice_info  # 解压输入的晶格信息
-        b1, b2, b3 = crystal.Reciprocal_lattice(lattice, parameters, type)  # 计算倒空间基矢
-        # 通过倒空间基矢的长度，对K点路程进行晶格修正
-        scaling = np.array([np.linalg.norm(b1, ord=2), np.linalg.norm(b2, ord=2), np.linalg.norm(b3, ord=2)])
-
-
-        return
-
 if __name__=='__main__':
     #saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Kpoints_ebands'
     saving_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/Phase/input_files/K-path_ORT_1'
-    kpath = Kpath()
+    kpath = vasp()
     # Gamma-M-K-Gamma-A-L-H-A
     # path = [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0], [0,0,1/2.0], [1/2.0,0,1/2.0], [1/3.0, 1/3.0, 1/2.0], [0,0,1/2.0]]
     # Gamma-X-S-Y-Gamma-A
