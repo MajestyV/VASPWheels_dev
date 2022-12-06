@@ -18,3 +18,5 @@ a = GK.CalculateReciprocalLattice(real_lattice)
 
 print(lattice_reciprocal)
 print(a)
+
+print((1/4.0)*0.176666666667/(1/6.0))

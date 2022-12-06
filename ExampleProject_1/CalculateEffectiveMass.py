@@ -17,27 +17,32 @@ real_lattice = [[3.1473295667554400, 0.0000000000000000, 0.0000000000000000],
 reciprocal_lattice = GK.CalculateReciprocalLattice(real_lattice)
 
 # 一些关键的高对称点（High symmetry point, HSP）
-HSP = {'G': [0, 0, 0],
-       'K': [1/3.0, 1/3.0, 0],
-       'S1':[2/3.0, 0, 0],
-       'S2': [1/3.0, 0, 0],
-       'M': [0.500, 0, 0],
-       'L': [0.176666666667, 0.176666666667, 0]}
+HSP = {'G':  [0, 0, 0],
+       'M':  [1/2.0,0,0],
+       'M1': [1/2.0,-1/2.0,0],
+       'K':  [1/3.0, 1/3.0, 0],
+       'Sl': [0.26500000000050006,0,0],
+       'S1': [1/3.0, 0, 0],
+       'S2': [2/3.0, 0, 0],
+       'L':  [0.176666666667, 0.176666666667, 0]}
 
 # 计算曲率时的取点方向
-direction = ['K to G', 'K to S1', 'K to M', 'L to G', 'L to S2', 'G to K']
+direction = ['K-G','K-M','K-S1','K-S2',
+             'G-K','G-M','G-M1',
+             'L-K','L-G','L-Sl']
 
 ##################################################################################################################
 # 生成计算迁移率所需的K点文件
 
-data_directory = 'D:/PhD_research/Data/Simulation/MoS2/CarrierTransport/4/EffectiveMass/Kpath/'
+# data_directory = 'D:/PhD_research/Data/Simulation/MoS2/CarrierTransport/4/EffectiveMass/Kpath/'  # 宿舍电脑
+data_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/Conductivity/EffectiveMass/Kpath/'  # 办公室电脑
 
-origin =      [HSP['K'], HSP['K'], HSP['K'], HSP['L'], HSP['L'], HSP['G']]
-destination = [HSP['G'], HSP['S1'],HSP['M'], HSP['G'], HSP['S2'],HSP['K']]
+origin =      [HSP['K'], HSP['K'], HSP['K'], HSP['K'], HSP['G'], HSP['G'], HSP['G'], HSP['L'], HSP['L'], HSP['L']]
+destination = [HSP['G'], HSP['M'], HSP['S1'],HSP['S2'],HSP['K'], HSP['M'], HSP['M1'],HSP['K'], HSP['G'], HSP['Sl']]
 
 Kpoints_list = GK.GenerateKpath_segment(origin,destination,30,0.01,reciprocal_lattice)
 
-GK.GenKPOINTS(data_directory+'Test',Kpoints_list)
+GK.GenKPOINTS(data_directory+'K-path_EffectiveMass',Kpoints_list)
 
 ##################################################################################################################
 
