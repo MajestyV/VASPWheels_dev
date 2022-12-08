@@ -5,7 +5,7 @@ from VaspWheels import GetElectronicBands
 from VaspWheels import VisualizeBands
 
 
-GK = GetKpath.Kpath()           # 调用GetKpath模块
+GK = GetKpath.vasp()           # 调用GetKpath模块
 GE = GetElectronicBands.vasp()  # 调用GetElectronicBands模块
 VB = VisualizeBands.plotting()  # 调用VisualizeBands模块（能带可视化专用包）
 

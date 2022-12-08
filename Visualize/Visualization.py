@@ -1,32 +1,76 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator, FormatStrFormatter
-import re
+from matplotlib.ticker import MultipleLocator
 
 class plot:
     """ This class of functions is designed to plot scientific figures in a uniform format."""
     def __init__(self):
         self.name = plot
 
+    ###############################################################################################################
+    # 颜色模块
+    # RGB值转换函数
+    def RGB(self,r,g,b): return np.array([r,g,b])/255.0  # 将RGB值归一化的函数，只有归一化的RGB值才能被matplotlib读取
+
+    # 此函数可以转换CMYK色值到RGB色值
+    def CMYK_to_RGB(self,c, m, y, k, cmyk_scale=100, rgb_scale=255):
+        r = rgb_scale * (1.0 - c / float(cmyk_scale)) * (1.0 - k / float(cmyk_scale))
+        g = rgb_scale * (1.0 - m / float(cmyk_scale)) * (1.0 - k / float(cmyk_scale))
+        b = rgb_scale * (1.0 - y / float(cmyk_scale)) * (1.0 - k / float(cmyk_scale))
+        return np.array([r, g, b])/255.0
+
     # 常用配色
     def Color(self,mode):
-        def RGB(r,g,b): return np.array([r,g,b])/255.0  # 将RGB值归一化的函数，只有归一化的RGB值才能被matplotlib读取
-
-        color_dict = {'Black_n_Red': [RGB(7,7,7),RGB(255,59,59)],
-                      'Red_n_Black': [RGB(255,59,59),RGB(7,7,7)],
-                      'Blue_n_Grey': [RGB(57, 83, 163),RGB(92,92,92)],
-                      'Three_contrast_OldFashion': [RGB(7, 7, 7), RGB(57, 83, 163), RGB(255, 59, 59)],
-                      'Red_n_Blue': [RGB(239,76,77),RGB(70,148,203)],
-                      'Red_n_Grey': [RGB(239,76,77),RGB(92,92,92)],
-                      'Three_contrast': [RGB(7,7,7),RGB(57,83,163),RGB(239,76,77)],
-                      'One_color': [RGB(7,7,7)],
-                      'Two_color': [RGB(254,129,125),RGB(129,184,223)],
-                      'Three_color': [RGB(77,133,189),RGB(247,144,61),RGB(89,169,90)],
-                      'Four_color': [RGB(23,23,23),RGB(6,223,6),RGB(255,28,0),RGB(0,37,255)],
-                      'Five_color': [RGB(1,86,153),RGB(250,192,15),RGB(243,118,74),RGB(95,198,201),RGB(79,89,109)]
+        color_dict = {
+                      'Black_n_Red': [self.RGB(7,7,7),self.RGB(255,59,59)],
+                      'Red_n_Black': [self.RGB(255,59,59),self.RGB(7,7,7)],
+                      'Blue_n_Grey': [self.RGB(57, 83, 163),self.RGB(92,92,92)],
+                      'Three_contrast_OldFashion': [self.RGB(7, 7, 7), self.RGB(57, 83, 163), self.RGB(255, 59, 59)],
+                      'Red_n_Blue': [self.RGB(239,76,77),self.RGB(70,148,203)],
+                      'Red_n_Grey': [self.RGB(239,76,77),self.RGB(92,92,92)],
+                      'Three_contrast': [self.RGB(7,7,7),self.RGB(57,83,163),self.RGB(239,76,77)],
+                      'One_color': [self.RGB(7,7,7)],
+                      'Two_color': [self.RGB(254,129,125),self.RGB(129,184,223)],
+                      'Three_color': [self.RGB(77,133,189),self.RGB(247,144,61),self.RGB(89,169,90)],
+                      'Four_color': [self.RGB(23,23,23),self.RGB(6,223,6),self.RGB(255,28,0),self.RGB(0,37,255)],
+                      'Five_color': [self.RGB(1,86,153),self.RGB(250,192,15),self.RGB(243,118,74),
+                                     self.RGB(95,198,201),self.RGB(79,89,109)]
                       }
         return color_dict[mode]
 
+    # 莫兰迪色系
+    def MorandiColor(self,mode):
+        color_dict = {
+                      'Black':      self.CMYK_to_RGB(80,72,69,36),
+                      'Pinkgrey':   self.CMYK_to_RGB(0,10,10,30),
+                      'Grey':       self.CMYK_to_RGB(0,0,0,54),
+                      'LightGrey':  self.CMYK_to_RGB(0,0,0,33),
+                      'Deepgrey':   self.CMYK_to_RGB(0,0,0,73),
+                      'Darkgrey':   self.CMYK_to_RGB(0,0,0,83),
+                      'Orangered':  self.CMYK_to_RGB(0,81,81,30),
+                      'Red':        self.CMYK_to_RGB(0,75,75,35),
+                      'Wine':       self.CMYK_to_RGB(0,69,51,42),
+                      'Green':      self.CMYK_to_RGB(67,50,62,0),
+                      'Spring':     self.CMYK_to_RGB(32,22,27,0),
+                      'Forrest':    self.CMYK_to_RGB(87,70,82,0),
+                      'Blue':       self.CMYK_to_RGB(78,65,44,3),
+                      'Lightblue':  self.CMYK_to_RGB(30,20,8,8),
+                      'Deepblue':   self.CMYK_to_RGB(86,73,46,8),
+                      'Paris':      self.CMYK_to_RGB(80,70,48,8),
+                      'Purpleblue': self.CMYK_to_RGB(40,30,8,8),
+                      'Five_color': (self.CMYK_to_RGB(0,32,38,38),self.CMYK_to_RGB(0,22,31,25),
+                                     self.CMYK_to_RGB(16,28,0,22),self.CMYK_to_RGB(0,26,28,12),
+                                     self.CMYK_to_RGB(6,21,0,51)),
+                      'Colormap_grey':   (self.CMYK_to_RGB(0,0,0,33),self.CMYK_to_RGB(0,0,0,83)),
+                      'Colormap_red':    (self.CMYK_to_RGB(0,10,10,30),self.CMYK_to_RGB(0,81,81,30)),
+                      'Colormap_green':  (self.CMYK_to_RGB(32,22,27,0),self.CMYK_to_RGB(87,70,82,0)),
+                      'Colormap_blue':   (self.CMYK_to_RGB(40,30,8,8),self.CMYK_to_RGB(80,70,48,8))
+                      }
+
+        return color_dict[mode]
+
+    ###############################################################################################################
+    # 画图模块
     # 一些用于文章级结果图的matplotlib参数，可以作为matplotlib的全局变量载入
     def GlobalSetting(self,**kwargs):
         # 设置刻度线方向
@@ -215,10 +259,25 @@ if __name__=='__main__':
     y1 = np.cos(x1)
     y2 = np.sin(x2)
 
+
+    def cmyk_to_rgb(c, m, y, k, cmyk_scale=100, rgb_scale=255):
+        r = rgb_scale * (1.0 - c / float(cmyk_scale)) * (1.0 - k / float(cmyk_scale))
+        g = rgb_scale * (1.0 - m / float(cmyk_scale)) * (1.0 - k / float(cmyk_scale))
+        b = rgb_scale * (1.0 - y / float(cmyk_scale)) * (1.0 - k / float(cmyk_scale))
+        return np.array([r, g, b])/255.0
+    print(cmyk_to_rgb(78,65,44,3,100))
+
     fig = plot()
     #print(np.array([x1]))
 
     fig.GlobalSetting()  # 引入全局画图参数
 
+    # color = ''
+    # color = fig.RGB(142.5195, 173.502, 206.55)
+    color = fig.CMYK_to_RGB(0,0,0,33)
+    # color = 'brown'
+
+    # 红-'brown', 灰-'grey'
+
     # 应注意，唯有当x1与x2的长度一样的时候，才能把两者合成一个二维数组
-    fig.Visulize(np.array([x1,x2]),np.array([y1,y2]))
+    fig.Visualize(np.array([x1,x2]),np.array([y1,y2]),color=color)

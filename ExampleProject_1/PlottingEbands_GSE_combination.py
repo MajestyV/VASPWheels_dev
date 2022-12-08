@@ -2,16 +2,17 @@ import re
 import codecs
 import numpy as np
 import matplotlib.pyplot as plt
-from VaspWheels import GetEbands
+from matplotlib.ticker import MultipleLocator
+from VaspWheels import GetElectronicBands
 from VaspWheels import GetEDOS
 from VaspWheels import GetKpath
-from Visualize import Visualization
+from VaspWheels import Visualization
 
 ###############################################################################################################
-GD = GetEDOS.EDOS()        # 调用GetEDOS模块
-GB = GetEbands.Ebands()    # 调用GetEbands模块
-GK = GetKpath.Kpath()      # 调用GetKpath模块
-VI = Visualization.plot()  # 调用Visualization模块
+GD = GetEDOS.EDOS()             # 调用GetEDOS模块
+GE = GetElectronicBands.vasp()  # 调用GetElectronicbands模块
+GK = GetKpath.vasp()            # 调用GetKpath模块
+VI = Visualization.plot()       # 调用Visualization模块
 ###############################################################################################################
 # 定义一些可能用到的函数
 
@@ -81,10 +82,13 @@ def InterceptingEbands(EIGENVAL,InterceptedKpath,fermi_energy):
     return K_projected, InterceptedEbands, nbands
 
 if __name__=='__main__':
-    # main_dir = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/OPTCELL/4_D3BJ_GSE_OPTCELL_1'  # 办公室电脑
-    main_dir = 'D:/PhD_research/办公室电脑/Data/Simulation/GSE/OPTCELL/4_D3BJ_GSE_OPTCELL_1'  # 宿舍电脑
+    main_dir = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/OPTCELL/4_D3BJ_GSE_OPTCELL_1'  # 办公室电脑
+    # main_dir = 'D:/PhD_research/办公室电脑/Data/Simulation/GSE/OPTCELL/4_D3BJ_GSE_OPTCELL_1'  # 宿舍电脑
     data_list = ['0.000', '0.100','0.200']
-    Efield = ['0.0V/nm', '1.0V/nm', '2.0V/nm']  # 电场强度
+    Efield = ['0 V/nm', '0.5 V/nm', '1.0 V/nm']  # 电场强度
+
+    # 确定晶格参数
+    lattice = ('HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive')
 
     VI.GlobalSetting()  # 全局画图设定
 
@@ -98,14 +102,26 @@ if __name__=='__main__':
     bands_fig_3 = plt.subplot2grid(grid_shape,(0,10),rowspan=num_row,colspan=5)
     DOS_fig = plt.subplot2grid(grid_shape,(0,15),rowspan=num_row,colspan=2)
 
+    y_major_locator = MultipleLocator(1)
+    y_minor_locator = MultipleLocator(0.5)
+    bands_fig_1.yaxis.set_major_locator(y_major_locator)
+    bands_fig_1.yaxis.set_minor_locator(y_minor_locator)
+    bands_fig_2.yaxis.set_major_locator(y_major_locator)
+    bands_fig_2.yaxis.set_minor_locator(y_minor_locator)
+    bands_fig_3.yaxis.set_major_locator(y_major_locator)
+    bands_fig_3.yaxis.set_minor_locator(y_minor_locator)
+
     plt.subplots_adjust(wspace=0)
 
     # 画图参数
-    ylim=(-2,2)
+    ylim=(-2.1,2.1)
     ymin,ymax = ylim
-    #color = [np.array([124,172,247])/255.0,np.array([128,138,248])/255.0,
+    # color = [np.array([124,172,247])/255.0,np.array([128,138,248])/255.0,
              #np.array([157,132,249])/255.0,np.array([195,137,250])/255.0]
-    color = [np.array([77,133,189])/255.0,np.array([247,144,61])/255.0,np.array([89,169,90])/255.0]
+    # color = [np.array([77,133,189])/255.0,np.array([247,144,61])/255.0,np.array([89,169,90])/255.0]
+    color = [VI.CMYK_to_RGB(40,30,8,8),VI.CMYK_to_RGB(60,50,28,8),VI.CMYK_to_RGB(80,70,48,8)]
+
+    grey = np.array([155,165,160])/255.0
 
 
     main_Kpath = [[r'$\Gamma$', 'M', 'K', r'$\Gamma$'], [[0, 0, 0], [0.5, 0, 0], [1.0 / 3.0, 1.0 / 3.0, 0], [0, 0, 0]]]
@@ -122,6 +138,7 @@ if __name__=='__main__':
 
         E_fermi = GetFermiEnergy(Markdown)  # 提取费米能级
 
+
         # 利用这个循环提取DOS数据
         DOSCAR = main_dir+'/'+n+'/DOSCAR'
         DOS_data = GD.GetData(DOSCAR)
@@ -130,48 +147,72 @@ if __name__=='__main__':
         dos_y.append(GD.ShiftFermiEnergy(dos_energy, E_fermi))
         ###########################################
 
-        x,y,x_nodes = Ebands(EIGENVAL,main_Kpath[1],E_fermi)
+        # x,y,x_nodes = Ebands(EIGENVAL,main_Kpath[1],E_fermi)
+        # 提取能带计算结果以及各种参数
+        bands_dict = GE.GetEbands(EIGENVAL)
+        num_bands = bands_dict['num_bands']  # 提取能带总数
+        num_kpoints = bands_dict['num_kpoints']  # 提取K点总数
+        Kpath = bands_dict['Kpath']  # K点路径
+        bands = bands_dict['bands']  # 能带具体的能量值
 
-        bands_plot = bands_fig_list[bands_index]  # 确定要画的图
+        # 生成投影到一维的K点路径
+        num_segments = 3
+        Kpath_projected, Knodes_projected = GK.ProjectKpath(Kpath, num_segments, LatticeCorrection='True',Lattice=lattice)
 
-        for i in range(len(y)):
-            bands_plot.plot(x,y[i],color=color[bands_index])
+        # 费米面调零
+        Eg, Ev_max, Ec_min, extremum_location = GE.GetBandgap(EIGENVAL, mode='occupation')
 
-        bands_plot.set_xlim(min(x),max(x))
+        bands_shifted = GE.ShiftFermiSurface(bands, Ev_max)
+
+        # 正式开始画图
+        bands_plot = bands_fig_list[bands_index]  # 确定此循环中要画的子图
+
+        for i in range(len(bands_shifted)):
+            bands_plot.plot(Kpath_projected,bands_shifted[i],color=color[bands_index],linewidth=2.0)
+
+        bands_plot.set_xlim(min(Kpath_projected),max(Kpath_projected))
         bands_plot.set_ylim(ymin,ymax)
 
         bands_plot.set_title(r'$\mathcal{E}$ = '+Efield[bands_index],size=22)
-        bands_plot.tick_params(labelsize=12)
+        bands_plot.tick_params(labelsize=18)  # 更改刻度大小
 
-        bands_plot.hlines(0,min(x),max(x),linewidth=0.5, linestyles='dashed', colors='k')  # 费米能的位置
-        for i in range(len(x_nodes) - 1):  # 最后的一个高对称点跟图的右边界重合，所以不必作分割线
-            bands_plot.vlines(x_nodes[i], ymin, ymax, linewidth=0.5, linestyles='dashed', colors='k')
+        bands_plot.hlines(0,min(Kpath_projected),max(Kpath_projected),linewidth=2, linestyles='dashed', colors=grey)  # 费米能的位置
+        for i in range(1,len(Knodes_projected) - 1):  # 第一个高对称点与图的左边界重合，最后一个跟右边界重合，所以不必作分割线
+            bands_plot.vlines(Knodes_projected[i], ymin, ymax, linewidth=2, linestyles='dashed', colors=grey)
 
         # 对个别子图进行调整
         if bands_index >=1:
             bands_plot.set_yticklabels([])
-            nodes = [x_nodes[i+1] for i in range(3)]
+            nodes = [Knodes_projected[i+1] for i in range(3)]
             path = [main_Kpath[0][i+1] for i in range(3)]
         else:
             # bands_plot.set_ylabel('$E-E_{f}$ (eV)',size=20)
             bands_plot.set_ylabel('Energy (eV)', size=20)
-            nodes = x_nodes
+            nodes = Knodes_projected
             path = main_Kpath[0]
         bands_plot.set_xticks(nodes)
-        bands_plot.set_xticklabels(path,size=16)
+        bands_plot.set_xticklabels(path,size=18)
+
+    bands_fig_1.text(2.2,0.626,'$\Lambda_\mathrm{min}$',size=18)
 
     # 画DOS
-    dos_x_min,dos_x_max = (0,15)
+    DOS_fig.yaxis.set_major_locator(y_major_locator)
+    DOS_fig.yaxis.set_minor_locator(y_minor_locator)
+
+    dos_x_min,dos_x_max = (0,20)
     for i in range(3):
-        DOS_fig.plot(dos_x[i],dos_y[i],color=color[i],label=r'$\mathcal{E}$ = '+Efield[i])
-    DOS_fig.hlines(0,dos_x_min,dos_x_max,linewidth=0.5, linestyles='dashed', colors='k')
-    DOS_fig.legend(loc=(0.1,0.3),fontsize=12,frameon=False)
+        DOS_fig.plot(dos_x[i],dos_y[i],color=color[i],label=r'$\mathcal{E}$ = '+Efield[i],linewidth=2)
+    DOS_fig.hlines(0,dos_x_min,dos_x_max,linewidth=2, linestyles='dashed', colors=grey)
+    # DOS_fig.legend(loc=(0.1,0.3),fontsize=12,frameon=False)
     DOS_fig.set_yticklabels([])
     DOS_fig.set_xlim(dos_x_min,dos_x_max)
     DOS_fig.set_ylim(ymin,ymax)
-    DOS_fig.set_xticks([7.5])
+    DOS_fig.set_xticks([10])
     #Text properties for the labels. These take effect only if you pass labels. In other cases, please use tick_params.
-    DOS_fig.tick_params(color='w')  # 对于subplot，要调整刻度样式的话，需要采用tick_params函数
-    DOS_fig.set_xticklabels(['DOS (a.u.)'],size=16)
+    #DOS_fig.tick_params(color='w')  # 对于subplot，要调整刻度样式的话，需要采用tick_params函数
+    DOS_fig.set_xticklabels(['DOS (a.u.)'],size=18)
 
     plt.show()
+
+    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/Main figures/Gallery/raw data/'
+    plt.savefig(saving_directory + 'GSE_band evolution.png', dpi=300, format='png')
