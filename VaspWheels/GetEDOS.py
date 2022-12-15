@@ -2,9 +2,9 @@
 
 import codecs
 
-class EDOS:
+class edos:
     def __init__(self):
-        self.name = EDOS
+        self.name = edos
 
     # This function is designed to read out DOS data from DOSCAR
     def ReadDOS(self,DOSCAR):

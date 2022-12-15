@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from matplotlib.pyplot import MultipleLocator
 
-class Charge:
+class charge:
     """ This class of function is written for extracting charge density information from CHGCAR or CHGDIFF.vasp. """
     def __init__(self):
-        self.name = Charge
+        self.name = charge
 
     # 这个函数可以提取CHGCAR或者CHGDIFF.vasp文件中的数据，以字典的形式返回
     def ExtractCharge(self,CHGCAR):

@@ -235,7 +235,6 @@ class vasp:
         num_bands = data_dict['num_bands']  # 提取能带总数
         num_kpoints = data_dict['num_kpoints']  # 提取K点总数
         bands = data_dict['bands']  # 能带具体的能量值
-        occupation = data_dict['occupation']  # 能带的占据情况
 
         unoccupied = []  # 这个列表用于存放所有未被占据的能带数据
         occupied = []  # 这个列表用于存放所有已被占据的能带数据

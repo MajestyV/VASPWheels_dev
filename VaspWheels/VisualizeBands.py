@@ -9,14 +9,13 @@ from VaspWheels import Visualization
 VI = Visualization.plot()  # 调用Visualization模块
 #####################################################################################################################
 
-class plotting:
+class plot_bands:
     def __init__(self):
-        self.name = plotting
+        self.name = plot_bands
 
     #################################################################################################################
-    # 电子能带可视化模块
-
-    # 此函数利用Visualization模块可视化电子能带
+    # 能带可视化模块
+    # This function is designed for visualizing electronic bands. (此函数利用Visualization模块可视化电子能带)
     def Electron_bands(self,Kpath_projected,Bands,Knodes_projected,**kwargs):
         num_bands, num_kpoints = np.shape(Bands)  # 输入的能带数据Energy应该是一个num_bands行num_kpoints列的二维数组
         num_Knodes = len(Knodes_projected)         # K点路径端点的个数，即高对称点的个数
@@ -53,7 +52,7 @@ class plotting:
 
         return
 
-    # 此函数利用Visualization模块可视化声子能带
+    # This function is designed for visualizing phonon bands. (此函数利用Visualization模块可视化声子能带)
     def Phonon_bands(self, Kpath_projected, Frequency, Knodes_projected, **kwargs):
         return
 

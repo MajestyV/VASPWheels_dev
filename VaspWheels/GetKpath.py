@@ -3,7 +3,7 @@
 import numpy as np
 from VaspWheels import Crystallography
 
-crystal = Crystallography.Crystal()
+crystal = Crystallography.crystal()
 
 class vasp:
     def __init__(self):
@@ -44,18 +44,18 @@ class vasp:
     # 此函数可以通过指定端点（转折点）生成完整的K点路径
     # This function is designed to generate the K-points trajectory.
     # Example input: path=[[0,0,0],[0.5,0,0],[0.5,0.5,0],[0.5,0.5,0.5],[0,0,0]], npoints is the number of points between two neighboring nodes in the path
-    def GenerateKpath(self,path,npoints=100):
-        nnodes = len(path)  # number of K-point nodes in the path
+    def GenerateKpath(self,Knodes,npoints=100):
+        nnodes = len(Knodes)  # number of K-point nodes in the path
         Kpath = []
         for i in range(nnodes-1):  # n nodes indicating the whole is seperated into n-1 subpaths
-            subpath = np.array(path[i+1])-np.array(path[i])
+            subpath = np.array(Knodes[i+1])-np.array(Knodes[i])
             delta = subpath/(npoints+1)  # n points seperate the subpath into n+1 sections
-            Kpath.append(path[i])
+            Kpath.append(Knodes[i])
             for j in range(npoints):
-                k = np.array(path[i])+(j+1)*delta
+                k = np.array(Knodes[i])+(j+1)*delta
                 Kpath.append(list(k))
 
-        Kpath.append(path[nnodes-1])
+        Kpath.append(Knodes[nnodes-1])
         return Kpath
 
     # 此函数可以通过指定起点，方向，步数以及步长来获取一系列的K点路径段
@@ -75,7 +75,7 @@ class vasp:
             direction = destination - origin  # 计算起点指向终点的方向向量
             length = self.Length(origin, destination, reciprocal_lattice)  # 计算方向向量（direction）的长度
             interpolating_destination = origin + (step_length/length)*direction  # 通过step_length/length计算出插值的终点
-            # 应注意，如果要计算电子或者空穴的有效质量，step_length的长度通常在0.01-0.02 Å左右（当然，越密越好，不过要算的点就多了）
+            # 应注意，如果要计算电子或者空穴的有效质量，step_length的长度通常在0.05-0.1 Å左右（当然，越密越好，不过要算的点就多了）
             step_vec = (interpolating_destination-origin)/(num_step-1)  # 通过插点数num_point计算出插点的间隔量d_vec
 
             Kpoint_segment = []

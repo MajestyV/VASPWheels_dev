@@ -1,12 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
-import re
+from os import path
 
 class plot:
     """ This class of functions is designed to plot scientific figures in a uniform format."""
     def __init__(self):
         self.name = plot
+        self.default_directory = path.dirname(__file__) + '/'  # 设置这个代码文件所在的文件夹为默认读写目录
 
     ###############################################################################################################
     # 颜色模块
@@ -40,24 +41,32 @@ class plot:
         return color_dict[mode]
 
     # 莫兰迪色系
-    def MorandiColor(self,mode):
+    def MorandiColor(self,mode,**kwargs):
+        c, m, y, k =  kwargs['cmyk'] if 'cmyk' in kwargs else (1,1,1,1)      # 测试色值，通过输入这个值可以方便地测试新颜色的效果
+        c1,m1,y1,k1 = kwargs['custom'] if 'custom' in kwargs else (1,1,1,1)  # 自定义色值，通过这个值可以输入自定义颜色
+
         color_dict = {
-                      'Black':     self.CMYK_to_RGB(80,72,69,36),
-                      'Pinkgrey':  self.CMYK_to_RGB(0,10,10,30),
-                      'Grey':      self.CMYK_to_RGB(0,0,0,54),
-                      'LightGrey': self.CMYK_to_RGB(0,0,0,33),
-                      'Deepgrey':  self.CMYK_to_RGB(0,0,0,73),
-                      'Darkgrey':  self.CMYK_to_RGB(0,0,0,83),
-                      'Orangered': self.CMYK_to_RGB(0,81,81,30),
-                      'Red':       self.CMYK_to_RGB(0,75,75,35),
-                      'Wine':      self.CMYK_to_RGB(0,69,51,42),
-                      'Green':     self.CMYK_to_RGB(67,50,62,0),
-                      'Spring':    self.CMYK_to_RGB(32,22,27,0),
-                      'Forrest':   self.CMYK_to_RGB(87,70,82,0),
-                      'Blue':      self.CMYK_to_RGB(78,65,44,3),
-                      'Lightblue': self.CMYK_to_RGB(30,20,8,8),
-                      'Deepblue':  self.CMYK_to_RGB(86,73,46,8),
-                      'Paris':     self.CMYK_to_RGB(80,70,48,8),
+                      'Testing':    self.CMYK_to_RGB(c,m,y,k),
+                      'Custom':     self.CMYK_to_RGB(c1,m1,y1,k1),
+                      'Black':      self.CMYK_to_RGB(80,72,69,36),
+                      'Pinkgrey':   self.CMYK_to_RGB(0,10,10,30),
+                      'Grey':       self.CMYK_to_RGB(0,0,0,54),
+                      'LightGrey':  self.CMYK_to_RGB(0,0,0,33),
+                      'Deepgrey':   self.CMYK_to_RGB(0,0,0,73),
+                      'Darkgrey':   self.CMYK_to_RGB(0,0,0,83),
+                      'Orangered':  self.CMYK_to_RGB(0,81,81,30),
+                      'Redred':     self.CMYK_to_RGB(0,90,90,10),
+                      'Red':        self.CMYK_to_RGB(0,75,75,35),
+                      'Wine':       self.CMYK_to_RGB(0,69,51,42),
+                      'Green':      self.CMYK_to_RGB(67,50,62,0),
+                      'Spring':     self.CMYK_to_RGB(32,22,27,0),
+                      'Forrest':    self.CMYK_to_RGB(87,70,82,0),
+                      'Blue':       self.CMYK_to_RGB(78,65,44,3),
+                      'Lightblue':  self.CMYK_to_RGB(30,20,8,8),
+                      'Deepblue':   self.CMYK_to_RGB(86,73,46,8),
+                      'Paris':      self.CMYK_to_RGB(80,70,48,8),
+                      'Purpleblue': self.CMYK_to_RGB(40,30,8,8),
+                      'Red_n_Black': (self.CMYK_to_RGB(0,90,90,10),self.CMYK_to_RGB(80,72,69,36)),
                       'Five_color': (self.CMYK_to_RGB(0,32,38,38),self.CMYK_to_RGB(0,22,31,25),
                                      self.CMYK_to_RGB(16,28,0,22),self.CMYK_to_RGB(0,26,28,12),
                                      self.CMYK_to_RGB(6,21,0,51)),
@@ -136,8 +145,9 @@ class plot:
             pass
 
         # 设置全局字体选项
-        font_type = kwargs['font_type'] if 'font_type' in kwargs else 'Arial'  # 默认字体为sans-serif
-        font_config = {'font.family': font_type}  # font.family设定所有字体为font_type
+        # font_type = kwargs['font_type'] if 'font_type' in kwargs else 'Arial'  # 默认字体为sans-serif
+        font_type = kwargs['font_type'] if 'font_type' in kwargs else 'sans-serif'  # 默认字体为sans-serif
+        font_config = {'font.family': font_type, 'font.weight': 200}  # font.family设定所有字体为font_type
         plt.rcParams.update(font_config)  # 但是对于希腊字母(e.g. α, β, γ等)跟各种数学符号之类的不适用, Latex语法如Γ会被判断为None
         # plt.rcParams['mathtext.default'] = 'regular'  # 可以通过这个选项修改所有希腊字母以及数学符号为Times New Roman
         return
@@ -204,7 +214,7 @@ class plot:
             pass
 
         # 控制x轴跟y轴坐标轴名称的模块
-        label_size = kwargs['label_size'] if 'label_size' in kwargs else 20  # 控制坐标轴名称大小的参数
+        label_size = kwargs['label_size'] if 'label_size' in kwargs else 16  # 控制坐标轴名称大小的参数
         if 'xlabel' in kwargs:
             plt.xlabel(kwargs['xlabel'],fontsize=label_size)
         else:
@@ -227,7 +237,7 @@ class plot:
             pass
 
         # 控制x轴跟y轴刻度大小的模块
-        tick_size = kwargs['tick_size'] if 'tick_size' in kwargs else 18  # 控制x轴跟y轴刻度大小的参数
+        tick_size = kwargs['tick_size'] if 'tick_size' in kwargs else 16  # 控制x轴跟y轴刻度大小的参数
         plt.xticks(size=tick_size)
         plt.yticks(size=tick_size)
 
@@ -245,11 +255,23 @@ class plot:
 
         # 控制图标题的模块
         if 'title' in kwargs:
-            plt.title(kwargs['title'],size=20)
+            plt.title(kwargs['title'],size=18)
         else:
             pass
 
         plt.tight_layout()  # 防止画图时，图像分布失衡，部分文字显示被遮挡的情况
+
+        return
+
+    # 图像保存函数
+    def SavingFigure(self,saving_directory,**kwargs):
+        filename = kwargs['filename'] if 'filename' in kwargs else 'Untitled'  # 文件名
+        format = kwargs['format'] if 'format' in kwargs else 'eps'  # 储存格式
+        dpi = kwargs['dpi'] if 'dpi' in kwargs else 600  # 分辨率
+
+        saving_address = saving_directory+filename+'.'+format  # 图像文件要储存到的绝对地址
+
+        plt.savefig(saving_address, dpi=dpi, format=format)
 
         return
 

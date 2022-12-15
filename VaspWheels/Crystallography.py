@@ -4,9 +4,9 @@
 
 import numpy as np
 
-class Crystal:
+class crystal:
     def __init__(self):
-        self.name = Crystal
+        self.name = crystal
 
     # 简单的向量计算模块，所以向量都应该是三维的向量
     # 向量的点乘
