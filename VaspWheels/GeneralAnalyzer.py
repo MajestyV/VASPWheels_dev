@@ -4,71 +4,62 @@
 import codecs
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+from scipy.optimize import leastsq
 
 class functions:
     """ This class of functions is designed for general data analysis and computation in ab initio study. """
-    def __int__(self):
+    def __init__(self):
         self.name = functions
 
     ##############################################################################################################
     # 通用数据提取以及保存模块
-
-    # 此函数可以利用pandas提取txt文件（也适用于dat文件）中的数据
-    # txt或dat文件中的数据形式应为两列式，第一列为自变量，第二列为因变量
-    def GetData_txt(self,data_file, **kwargs):
+    # 此函数可以利用pandas提取文件中的数据，适用于txt、dat、csv等格式的文件
+    # 数据文件中的数据形式应为两列式，如：第一列为自变量，第二列为因变量
+    def GetData(self, data_file, **kwargs):
         header = kwargs['header'] if 'header' in kwargs else None  # 文件中的数据列，默认为没有列名，第一行作为数据读取
         sep = kwargs['sep'] if 'sep' in kwargs else '\s+'  # 数据分隔符，默认为'\s+'（指代\f\n\t\r\v这些）
         # 利用pandas提取数据，得到的结果为DataFrame格式
         data_DataFrame = pd.read_csv(data_file, header=header, sep=sep)  # 若header=None的话，则设置为没有列名
         data_array = data_DataFrame.values  # 将DataFrame格式的数据转换为数组
-        x = data_array[:, 0]  # 默认第一列为自变量
-        y = data_array[:, 1]  # 默认第二列为因变量
-        return x, y
 
-    # 此函数可以利用pandas提取csv文件中的数据
-    def GetData_csv(self, data_file, **kwargs):
-        # 一些关于数据文件的参数
-        header = kwargs['header'] if 'header' in kwargs else None  # 文件中的数据列，默认为没有列名，第一行作为数据读取
         x_col = kwargs['x_col'] if 'x_col' in kwargs else 0  # 默认第一列为自变量所在列
         y_col = kwargs['y_col'] if 'y_col' in kwargs else 1  # 默认第二列为因变量所在列
-
-        # 利用pandas提取数据，得到的结果为DataFrame格式
-        data_DataFrame = pd.read_csv(data_file, header=header)  # 若header=None的话，则设置为没有列名
-        data_array = data_DataFrame.values  # 将DataFrame格式的数据转换为数组
         x = data_array[:, x_col]  # 默认第一列为自变量
         y = data_array[:, y_col]  # 默认第二列为因变量
+        return x, y
 
-        return x,y
+    # 此函数可以利用pandas包记录数据，应注意输入的数据应为二维数组或是二维列表
+    def SaveData(self, saving_directory, data, **kwargs):
+        file_name = kwargs['file_name'] if 'file_name' in kwargs else 'Untitled'  # 文件名，默认为Untitled
+        format = kwargs['format'] if 'format' in kwargs else 'csv'  # 保存文件格式，默认为csv
+        saving_address = saving_directory + file_name + '.' + format
 
-    ##############################################################################################################
-    # 可视化分析模块
+        data = np.array(data)  # 确保输入数据为二维数组
+        shape = data.shape  # 获取data的维数
+        row_index = kwargs['row_index'] if 'row_index' in kwargs else [i + 1 for i in range(shape[0])]  # 行引索
+        col_index = kwargs['col_index'] if 'col_index' in kwargs else [i + 1 for i in range(shape[1])]  # 列引索
+        data_df = pd.DataFrame(data, index=row_index, columns=col_index)  # 将数据转换为pandas专用的DataFrame格式
 
-    # 此函数可以对数据进行三维曲线的可视化
-    def Visualize3D_curve(self,x,y,z):
-        # 定义图像和三维坐标轴
-        fig = plt.figure()
-        # ax = plt.axes(projection='3d')  # 也可以使用：ax=Axes3D(fig)
-        ax = Axes3D(fig)
-        ax.plot3D(x,y,z)
-        return
+        sep = kwargs['sep'] if 'sep' in kwargs else ','  # 数据分隔符，默认为','
+        data_df.to_csv(saving_address, index=True, header=True, sep=sep)  # 保存数据
 
-    # 此函数可以对数据进行三维可视化
-    def Visualize3D_surface(self, x, y, z):
-        # 定义图像和三维坐标轴
-        fig = plt.figure()
-        # ax = plt.axes(projection='3d')  # 也可以使用：ax=Axes3D(fig)
-        ax = Axes3D(fig)
-        ax.plot_surface(x, y, z)
-        return
-
-    # 此函数可以将三维数据投影成等高线图，适用于多种场景如：势能（能量）面分析，误差最小化等
-    def Visualiza_contour(self):
+        ### 在csv文件中第一行添加分隔符信息，这样子excel读取csv文件的时候才不会排版错乱
+        with open(saving_address, 'r+', encoding='utf-8') as file:
+            content = file.read()  # 将已有的内容读取出来
+            file.seek(0, 0)  # 找到数据文件的开头
+            file.write('sep=' + sep + '\n' + content)  # 写入分隔符信息
         return
 
     ##############################################################################################################
     # 常用的运算或是拟合函数
+
+    #coef_list = []
+    #EM_list = []
+    #for i in range(num_segment):
+        #coef = np.polyfit(Kpath_segment, band_segmented[i], 2)  # 利用polyfit对能带进行二次项拟合
+        #coef_list.append(coef)
+        #m_effective = 1 / (2 * coef[0])
+        #EM_list.append(m_effective)
 
 
     ##############################################################################################################
@@ -146,9 +137,43 @@ class functions:
 
         return np.sqrt(d_sqaure[0][0])
 
-
     ##############################################################################################################
-    # 电子和空穴有效质量计算模块
+    # Carrier transportation calculation module (载流子输运计算模块)
+
+    # 能带载流子有效质量计算，详见：N. W. Ashcroft, N. D. Mermin. Soild State Physics, ISBN-13: 978-0030839931.
+    # 以及面向维基科研：https://en.wikipedia.org/wiki/Effective_mass_(solid-state_physics)
+    # 此函数可以计算在能带中运动的载流子的有效质量
+    def CalculateEffectiveMass(self,Kstep,band,num_segment,**kwargs):
+        num_point_total = len(band)  # 能带总点数
+        num_point_segment = int(len(band)/num_segment)  # 每段能带中包含的点数
+        # 每一段能带中，用于计算有效质量的点数，如不设置，则默认每段能带所有点都用于计算有效质量
+        num_point_evaluating = kwargs['points_evaluating'] if 'points_evaluating' in kwargs else num_point_segment
+
+        # 应注意，V.A.S.P.中计算能带默认的长度单位是Å，能量单位是eV，为将最后结果以电子静止质量m_{e}表示，我们需将输入数据转换为原子单位制
+        # 在原子单位制中，长度单位为Bohr， 1 Bohr = 0.529177210903 Å, 1 Bohr^{-1} = 1.8897261246257702 Å^{-1}
+        # 能量单位为Hartree， 1 eV = 0.0367493 Hartree
+        Kstep = Kstep/1.8897261246257702  # K点路程中，每个点直接间隔的距离
+        band = 0.0367493*np.array(band)
+
+        Kpath_segment = np.array([i*Kstep for i in range(num_point_evaluating)])  # 生成衡量有效质量的能带的K空间路程点
+        band_segmented = [band[i:i+num_point_evaluating] for i in range(0,num_point_total,num_point_segment)]  # 能带分段
+
+        # 接下来我们对运动在能带上的载流子的有效质量进行计算（https://yh-phys.github.io/2019/10/26/vasp-2d-mobility/）
+        # 考虑到有效质量实际上就是能带曲率的倒数，我们先利用scipy的最小二乘法模块对能带进行二次项拟合，再对二次项的系数进行计算即可
+        # 要利用scipy进行拟合，我们首先要定义两个函数
+        # 由于我们的K点路径段平移到了原点开始，所以我们只需要考虑形如y=a*x^2+c的二次多项式，不需要考虑一次项（多项式关于y轴对称，没有平移项）
+        def polynomial(coefficient,x): return coefficient[0]*x**2+coefficient[1]
+        def error(coefficient,x,y): return polynomial(coefficient,x)-y  # 拟合误差
+
+        # scipy的最小二乘法拟合模块需要一个初猜值
+        initial_guess = kwargs['initial_guess'] if 'initial_guess' in kwargs else np.array([1, 1])
+        EffectiveMass_list = []
+        for i in range(num_segment):
+            coef = leastsq(error, initial_guess, args=(Kpath_segment, band_segmented[i]))
+            m_eff = 1.0/(2*coef[0][0])  # 计算有效质量
+            EffectiveMass_list.append(m_eff)
+
+        return EffectiveMass_list
 
 
     ##############################################################################################################
@@ -156,17 +181,3 @@ class functions:
 
     ##############################################################################################################
     # 未知领域
-
-    # 这个函数可以将GSE计算的有效质量数据写入excel文件
-    def ExportEffectiveMassData(self, saving_directory, data, Kpoint, Efield, filename='EffectiveMass'):
-        workbook = xlwt.Workbook()
-
-        sheet = workbook.add_sheet('ElectronEffectiveMass', cell_overwrite_ok=True)
-        for i in range(len(Efield)):
-            sheet.write(i + 1, 0, Efield[i])
-            for j in range(len(Kpoint)):
-                sheet.write(0, j + 1, Kpoint[j])
-                sheet.write(i + 1, j + 1, data[i][j])
-        workbook.save(saving_directory + filename + '.xls')
-        return
-

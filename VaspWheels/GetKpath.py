@@ -60,7 +60,7 @@ class vasp:
 
     # 此函数可以通过指定起点，方向，步数以及步长来获取一系列的K点路径段
     # 适用于计算电子能带的迁移率，声子能带的声速等需要获取指定能谷或能峰并对能量面进行计算（如求导数，曲率，散度，以及旋度等）的场景
-    def GenerateKpath_segment(self, origin_array, destination_array, num_step, step_length, reciprocal_lattice):
+    def GenerateKpath_segment(self, origin_array, destination_array, num_step, step_length, reciprocal_lattice):  # 大修
         x, y, z = reciprocal_lattice                   # 倒格矢在正交直角坐标系上的表示，用于计算K空间中向量的长度
         input = [x, y, z, origin_array, destination_array]
         input_reformed = [np.array(n) for n in input]  # 批量将所有输入数据转换成数组，防止后续计算出错
@@ -74,8 +74,9 @@ class vasp:
 
             direction = destination - origin  # 计算起点指向终点的方向向量
             length = self.Length(origin, destination, reciprocal_lattice)  # 计算方向向量（direction）的长度
-            interpolating_destination = origin + (step_length/length)*direction  # 通过step_length/length计算出插值的终点
-            # 应注意，如果要计算电子或者空穴的有效质量，step_length的长度通常在0.05-0.1 Å左右（当然，越密越好，不过要算的点就多了）
+            dlength = (num_step-1)*step_length
+            interpolating_destination = origin + (dlength/length)*direction  # 通过step_length/length计算出插值的终点
+            # 应注意，如果要计算电子或者空穴的有效质量，step_length的长度通常在0.01-0.02 Å左右（当然，越密越好，不过要算的点就多了）
             step_vec = (interpolating_destination-origin)/(num_step-1)  # 通过插点数num_point计算出插点的间隔量d_vec
 
             Kpoint_segment = []

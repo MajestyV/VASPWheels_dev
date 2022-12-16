@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
+from mpl_toolkits.mplot3d import Axes3D
 from os import path
 
 class plot:
@@ -79,7 +80,31 @@ class plot:
         return color_dict[mode]
 
     ###############################################################################################################
-    # 画图模块
+    # 快速可视化分析模块
+    # 此函数可以对数据进行三维可视化
+    def Visualize3D(self,x,y,z,**kwargs):
+        # 定义图像和三维坐标轴
+        fig = plt.figure()
+        ax = Axes3D(fig)  # 也可以使用：ax = plt.axes(projection='3d')
+
+        mode = kwargs['mode'] if 'mode' in kwargs else 'curve'  # 画图模式，默认为曲线
+        if mode == 'curve':
+            ax.plot3D(x, y, z)
+        elif mode == 'surface':
+            ax.plot_surface(x, y, z)
+        elif mode == 'scatter':
+            ax.scatter(x,y,z)
+        else:
+            pass
+
+        return
+
+    # 此函数可以将三维数据投影成等高线图，适用于多种场景如：势能（能量）面分析，误差最小化等
+    def Visualiza_contour(self):
+        return
+
+    ###############################################################################################################
+    # 精细画图模块
     # 一些用于文章级结果图的matplotlib参数，可以作为matplotlib的全局变量载入
     def GlobalSetting(self,**kwargs):
         # 设置刻度线方向
