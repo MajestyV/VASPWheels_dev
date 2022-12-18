@@ -138,9 +138,9 @@ class functions:
         return np.sqrt(d_sqaure[0][0])
 
     ##############################################################################################################
-    # Carrier transportation calculation module (载流子输运计算模块)
+    # Semiconductor conductivity calculation module (半导体导电性计算模块计算模块)
 
-    # 能带载流子有效质量计算，详见：N. W. Ashcroft, N. D. Mermin. Soild State Physics, ISBN-13: 978-0030839931.
+    # 能带载流子有效质量计算，详见：N. W. Ashcroft, N. D. Mermin. Solid State Physics, Chapter 12: 213-239.
     # 以及面向维基科研：https://en.wikipedia.org/wiki/Effective_mass_(solid-state_physics)
     # 此函数可以计算在能带中运动的载流子的有效质量
     def CalculateEffectiveMass(self,Kstep,band,num_segment,**kwargs):
@@ -174,6 +174,12 @@ class functions:
             EffectiveMass_list.append(m_eff)
 
         return EffectiveMass_list
+
+    # 此函数可以基于载流子有效质量，计算导带亦或是价带的有效状态密度（Effective Density of States, Effective DOS）
+    # S. M. Sze, K. K. Ng. Physics of Semiconductor Devices, Chapter 1: 7-72
+    # E. F. Schubert. Physics Foundations of Solid-State Devices, Chapter 12.
+    def EffectiveDOS(self,**kwargs):
+        return
 
 
     ##############################################################################################################
