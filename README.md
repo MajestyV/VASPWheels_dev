@@ -1,1 +1,1 @@
-## This is a new version of V.A.S.P. wheels which could help you move faster than possible, fight longer than possible. 
+## This is a new version of V.A.S.P. wheels that could inspire you the most powerful impulse in human nature: the desire to explore, driving you to move faster than possible, fight longer than possible. 
