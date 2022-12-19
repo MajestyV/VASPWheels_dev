@@ -86,4 +86,4 @@ for i in range(len(Efield_file)):
 #GA.SaveData('C:/Users/13682/OneDrive/桌面/Test/',EffectiveMass_data,
              #file_name='Hole_EffectiveMass_NegativeField',col_index=direction,row_index=Efield_positive)
 GA.SaveData('C:/Users/13682/OneDrive/桌面/Test/',EffectiveMass_data,
-            file_name='111',col_index=direction,row_index=Efield_negative)
+            filename='111',col_index=direction,row_index=Efield_negative)

@@ -10,6 +10,15 @@ class functions:
     """ This class of functions is designed for general data analysis and computation in ab initio study. """
     def __init__(self):
         self.name = functions
+        # 在这个函数类中，所有内嵌的物理常数都默认使用国际单位制（SI）
+        self.q = 1.602e-19  # 基本电荷，[=] C
+        self.m_e = 9.109e-31  # 电子静止质量，[=] kg
+        self.kB = 1.381e-23  # 玻尔兹曼常数，[=] J/K
+        self.h = 6.626e-34  # 普朗克常数，[=] J·s
+        self.hbar = 1.055e-34  # 约化普朗克常数，[=] J·s
+        # 常用的量纲转换因子
+        self.eV_to_J = 1.602e-19  # Electronvolt to Joule, eV to J
+        self.J_to_eV = 6.242e18   # Joule to Electronvolt, J to eV
 
     ##############################################################################################################
     # 通用数据提取以及保存模块
@@ -30,9 +39,9 @@ class functions:
 
     # 此函数可以利用pandas包记录数据，应注意输入的数据应为二维数组或是二维列表
     def SaveData(self, saving_directory, data, **kwargs):
-        file_name = kwargs['file_name'] if 'file_name' in kwargs else 'Untitled'  # 文件名，默认为Untitled
+        filename = kwargs['filename'] if 'filename' in kwargs else 'Untitled'  # 文件名，默认为Untitled
         format = kwargs['format'] if 'format' in kwargs else 'csv'  # 保存文件格式，默认为csv
-        saving_address = saving_directory + file_name + '.' + format
+        saving_address = saving_directory + filename + '.' + format
 
         data = np.array(data)  # 确保输入数据为二维数组
         shape = data.shape  # 获取data的维数
@@ -112,17 +121,14 @@ class functions:
     # 这个函数可以通过晶体的三个基矢a, b, c计算晶格常数，但是记得输入必须是个由三个基矢组成的列表：[[a],[b],[c]]，方便解压
     def LatticeParameter(self, lattice_vector):
         # lattice_vector = lattice_vector.tolist()     # 确保输入是个列表，可以解压
+        lattice_vector = [np.array(lattice_vector[i]) for i in range(len(lattice_vector))]  # 将晶格基矢转换为数组，防止出错
         a_vec, b_vec, c_vec = lattice_vector  # 解压a, b, c基矢
-        a_vec = np.array(a_vec)  # 将列表转换为数组，防止出错
-        b_vec = np.array(b_vec)
-        c_vec = np.array(c_vec)
-        a = np.linalg.norm(np.array(a_vec), ord=2)  # 向量的二范数即向量的模
-        b = np.linalg.norm(np.array(b_vec), ord=2)
-        c = np.linalg.norm(np.array(c_vec), ord=2)
-        alpha = np.arccos(np.dot(b_vec, c_vec) / (b * c))  # 利用 cos(<a,b>) = a·b/(|a|·|b|)计算向量夹角
-        beta = np.arccos(np.dot(a_vec, c_vec) / (a * c))  # 在python中，向量点乘（内积）可以通过np.dot()函数实现
-        gamma = np.arccos(np.dot(a_vec, b_vec) / (a * b))
-        return a, b, c, alpha, beta, gamma
+        # 计算三个晶格基矢的长度，向量的二范数即向量的模
+        a_len, b_len, c_len = [np.linalg.norm(lattice_vector[i],ord=2) for i in range(len(lattice_vector))]
+        alpha = np.arccos(np.dot(b_vec, c_vec) / (b_len * c_len))  # 利用 cos(<a,b>) = a·b/(|a|·|b|)计算向量夹角
+        beta = np.arccos(np.dot(a_vec, c_vec) / (a_len * c_len))  # 在python中，向量点乘（内积）可以通过np.dot()函数实现
+        gamma = np.arccos(np.dot(a_vec, b_vec) / (a_len * b_len))
+        return a_len, b_len, c_len, alpha, beta, gamma
 
     # 用于计算不同晶体坐标下的原子间距
     def BondLength(self, Atom_1, Atom_2, lattice_vector):
@@ -138,9 +144,12 @@ class functions:
         return np.sqrt(d_sqaure[0][0])
 
     ##############################################################################################################
+    # 弹性模量计算模块（应变-能量分析）
+
+    ##############################################################################################################
     # Semiconductor conductivity calculation module (半导体导电性计算模块计算模块)
 
-    # 能带载流子有效质量计算，详见：N. W. Ashcroft, N. D. Mermin. Solid State Physics, Chapter 12: 213-239.
+    # 能带载流子有效质量计算，详见：N. W. Ashcroft, N. D. Mermin. Solid State Physics, 1976: 213-239.
     # 以及面向维基科研：https://en.wikipedia.org/wiki/Effective_mass_(solid-state_physics)
     # 此函数可以计算在能带中运动的载流子的有效质量
     def CalculateEffectiveMass(self,Kstep,band,num_segment,**kwargs):
@@ -176,14 +185,63 @@ class functions:
         return EffectiveMass_list
 
     # 此函数可以基于载流子有效质量，计算导带亦或是价带的有效状态密度（Effective Density of States, Effective DOS）
-    # S. M. Sze, K. K. Ng. Physics of Semiconductor Devices, Chapter 1: 7-72
-    # E. F. Schubert. Physics Foundations of Solid-State Devices, Chapter 12.
-    def EffectiveDOS(self,**kwargs):
-        return
+    # S. M. Sze, K. K. Ng. Physics of Semiconductor Devices, 2006: 58-62.
+    # E. F. Schubert. Physics Foundations of Solid-State Devices, 2006: chapter 12.
+    # 为了方便配合上面的CalculateEffectiveMass()函数，输入的有效质量单位应为原子单位制，即以电子静止质量m_{e}表示
+    # 同时输出的态密度单位为cm^-1，方便分析载流子浓度
+    def EffectiveDOS(self,effective_mass,**kwargs):
+        pi = np.pi  # 圆周率
+        m_e = kwargs['electron_rest_mass'] if 'electron_rest_mass' in kwargs else self.m_e
+        kB = kwargs['Boltzmann_constant'] if 'Boltzmann_constant' in kwargs else self.kB
+        hbar = kwargs['reduced_Planck_constant'] if 'reduced_Planck_constant' in kwargs else self.hbar
+        T = kwargs['temperature'] if 'temperature' in kwargs else 300.0  # 默认温度为300K
+
+        # Number of equivalent energy minima (maxima) in conduction (valence) band
+        # 详见：https://docs.quantumatk.com/tutorials/effective_mass/effective_mass.html
+        M_c = kwargs['degeneracy_factor'] if 'degenracy_factor' in kwargs else 1.0
+        m_eff = effective_mass * m_e  # 计算载流子有效质量
+
+        dim = kwargs['dimension'] if 'dimension' in kwargs else '3D'
+        EffectiveDOS_dict = {'0D': 2.0,
+                             '1D': np.sqrt(m_eff*kB*T/(2.0*pi*hbar**2)),
+                             '2D': m_eff*kB*T/(pi*hbar**2),
+                             '3D': (1.0/np.sqrt(2))*(m_eff*kB*T/(pi*hbar**2))**(3.0/2.0)}
 
 
-    ##############################################################################################################
-    # 弹性模量计算模块（应变-能量分析）
+        scaling_dict =  {'0D':2.0, '1D': 1.0e-2, '2D': 1.0e-4, '3D': 1.0e-6}
+
+        return M_c*EffectiveDOS_dict[dim]*scaling_dict[dim]
+
+    # 通过玻尔兹曼统计，近似计算半导体的本征载流子浓度，详见：S. M. Sze, K. K. Ng. Physics of Semiconductor Devices, 2006: 16-21.
+    def IntrinsicCarrierConcentration(self,band_gap,electron_effective_DOS,hole_effective_dos,**kwargs):
+        kB = kwargs['Boltzmann_constant'] if 'Boltzmann_constant' in kwargs else self.kB
+        T = kwargs['temperature'] if 'temperature' in kwargs else 300.0  # 默认温度为300K
+        DOS_eff = np.sqrt(electron_effective_DOS*hole_effective_dos)
+        return DOS_eff*np.exp(-band_gap/(2.0*kB*T))
+
+    # 基于形变势理论（Deformation Theory）近似估算材料的载流子迁移率（J. Bardeen, W. Shockley. Phys. Rev. 80, 72 (1950).
+    # Z. Shuai, et al.. Theory of Charge Transport in Carbon Electronic Materials, 2012: 67-73.
+    def CarrierMobility(self,effective_mass,elastic_modulus,DP_constant,**kwargs):
+        pi = np.pi  # 圆周率
+        q = kwargs['elementary_charge'] if 'elementary_charge' in kwargs else self.q
+        m_e = kwargs['electron_rest_mass'] if 'electron_rest_mass' in kwargs else self.m_e
+        kB = kwargs['Boltzmann_constant'] if 'Boltzmann_constant' in kwargs else self.kB
+        hbar = kwargs['reduced_Planck_constant'] if 'reduced_Planck_constant' in kwargs else self.hbar
+        T = kwargs['temperature'] if 'temperature' in kwargs else 300.0  # 默认温度为300K
+
+        m_eff = effective_mass * m_e  # 计算载流子有效质量
+        C = elastic_modulus*self.eV_to_J  # 弹性模量（又称为stiffness），默认输入的单位为eV/m，方便配合V.A.S.P.计算
+        E = DP_constant*self.eV_to_J  # 形变势常量（deformation potential constant），默认输入的单位为eV，方便配合V.A.S.P.计算
+
+        dim = kwargs['dimension'] if 'dimension' in kwargs else '3D'
+        mobility_dict = {'1D': q*C*(hbar**2)/(np.sqrt(2*pi*kB*T)*(m_eff**1.5)*(E*2)),
+                         '2D': 2*q*C*(hbar**3)/((3.0*kB*T)*(m_eff**2.0)*(E*2)),
+                         '3D': 2*np.sqrt(pi)*q*C*(hbar**4)/((3.0*(kB*T)**1.5)*(m_eff**2.5)*(E*2))}
+
+        return mobility_dict[dim]
+
+    # 此函数可以粗略地估算半导体电导率
+    def Conductivity(self,n,p,electron_mobility,hole_mobility): return self.q*(n*electron_mobility+p*hole_mobility)
 
     ##############################################################################################################
     # 未知领域

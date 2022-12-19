@@ -83,22 +83,24 @@ def Evaluate(y,y_fit,reshaping='false'):
     return MSE, R2
 
 if __name__=='__main__':
-    data_directory = 'D:/PhD_research/Data/Simulation/MoS2/CarrierTransport/4/Gallery/strain/Set1_unoptimized fully/'
+    data_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/CarrierTransport/4/Ort_supercell/Manual optimization/strain-energy profile/'
 
-    file_name = ['4_x_strain_static', '4_x_strain_Poisson', '4_y_strain_static', '4_y_strain_Poisson']
+    filename = ['4_LocalMinimum_x_strain.dat','4_LocalMinimum_y_strain.dat']
 
-    x1,y1 = GetData_txt(data_directory+file_name[0])
-    x2, y2 = GetData_txt(data_directory + file_name[1])
+    x1,y1 = GetData_txt(data_directory+filename[0],header=0)  # 设置header=0，则第一列会作为列名读取
+    x2,y2 = GetData_txt(data_directory+filename[1],header=0)
 
     #parameter1 = PolynomialRegression(x1,y1)
     #parameter2 = PolynomialRegression(x2,y2)
+
+    # print(x1)
 
     coef1 = np.polyfit(x1,y1,2)  # 对于简单的二次项回归这个会更加robust
     coef2 = np.polyfit(x2,y2,2)  # 对于简单的二次项回归这个会更加robust
 
     #print(parameter1,parameter2)
     print(-coef1[1]/(2*coef1[0]))
-    print(-coef2[1] / (2 * coef2[0]))
+    print(-coef2[1]/(2*coef2[0]))
     print((0.01685448119947595+0.01952792991364153)/2)
 
     plt.scatter(x1,y1,color='b')
@@ -107,3 +109,6 @@ if __name__=='__main__':
     x = np.linspace(-0.1,0.1,100)
     plt.plot(x,np.polyval(coef1,x),color='b')
     plt.plot(x,np.polyval(coef2,x), color='r')
+
+    plt.xlim(-0.065,0.065)
+    plt.ylim(-174.5,-172.75)

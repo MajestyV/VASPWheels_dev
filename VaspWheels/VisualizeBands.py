@@ -22,8 +22,9 @@ class plot_bands:
 
         # 一些画图参数（以动态变量的形式传入）
         title = kwargs['title'] if 'title' in kwargs else ''  # 能带图标题，默认为无标题
-        color = kwargs['color'] if 'color' in kwargs else np.array([70,148,203])/255.0                     # 能带曲线颜色
-        color_split = kwargs['color_split'] if 'color_split' in kwargs else np.array([155,165,160])/255.0  # 分割线颜色
+        # color = kwargs['color'] if 'color' in kwargs else np.array([70,148,203])/255.0                     # 能带曲线颜色
+        color = kwargs['color'] if 'color' in kwargs else VI.MorandiColor('Magicblue')  # 能带曲线颜色
+        color_split = kwargs['color_split'] if 'color_split' in kwargs else VI.MorandiColor('Grey')  # 分割线颜色
         xlim = (min(Kpath_projected), max(Kpath_projected))       # X轴范围
         ylim = kwargs['ylim'] if 'ylim' in kwargs else (-20, 20)  # Y轴范围
         ylabel = kwargs['ylabel'] if 'ylabel' in kwargs else 'Energy (eV)'        # y轴名称
@@ -45,7 +46,7 @@ class plot_bands:
 
         # HighSymPoint - High Symmetry Point, 高对称性点
         HighSymPoint = kwargs['HighSymPoint'] if 'HighSymPoint' in kwargs else ['K'+str(n+1) for n in range(num_Knodes)]
-        plt.xticks(Knodes_projected, HighSymPoint, size=20)
+        plt.xticks(Knodes_projected, HighSymPoint, size=16)
 
         # 利用Visualization模块内置函数对能带图细节进行修改
         VI.FigureSetting(xlim=xlim, ylim=ylim, title=title, ylabel=ylabel)
