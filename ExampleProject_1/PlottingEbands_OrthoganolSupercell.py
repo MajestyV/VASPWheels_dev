@@ -9,10 +9,11 @@ VB = VisualizeBands.plot_bands()  # 调用VisualizeBands模块（能带可视化
 
 ################################################################################################################
 # 第一性原理计算结果的存放目录
-data_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/CarrierTransport/4/Ort_supercell/Ebands/2H_quadrilayer_ManualOptimized/'  # 办公室电脑
-# data_directory = 'D:/PhD_research/Data/Simulation/MoS2/CarrierTransport/4/Ort_supercell/Ebands/2H_quadrilayer_ManualOptimized/'  # 宿舍电脑
+# data_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/CarrierTransport/4/Ort_supercell/Ebands/2H_quadrilayer_ManualOptimized/'  # 办公室电脑
+data_directory = 'D:/PhD_research/Data/Simulation/MoS2/CarrierTransport/4/Ort_supercell/Ebands/2H_quadrilayer_ManualOptimized/'  # 宿舍电脑
+# data_directory = 'D:/PhD_research/Data/Simulation/MoS2/CarrierTransport/4/Ort_supercell/Ebands/2H_quadrilayer_14_8_1_shifted/'  # 宿舍电脑-VASP优化原胞
 
-result = ['result_D3BJ_SOC_OrtCell']
+result = ['result_D3BJ_SOC_OrtCell', 'result_D3BJ_SOC_DifferentPath']
 
 filename = 'EIGENVAL'
 
@@ -53,5 +54,6 @@ plt.vlines(0.9941748903765186*(2.0/3.0),-2.2,4.5, linewidth=2, linestyles='dashe
 plt.text(0.5,0.1,'K',size=16)
 
 # 数据保存
-saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/'
-VI.SavingFigure(saving_directory,filename='Ebands_OrthogonalSupercell',format='pdf')
+# saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/'  # 办公室电脑
+saving_directory = 'D:\PhD_research\Gallery\Carrier transportation\Orthogonal supercell/'  # 宿舍电脑
+VI.SavingFigure(saving_directory,filename='Ebands_OrtCell_Manual',format='pdf')
