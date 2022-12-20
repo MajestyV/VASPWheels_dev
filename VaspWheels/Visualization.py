@@ -192,7 +192,7 @@ class plot:
         linewidth = kwargs['linewidth'] if 'linewidth' in kwargs else 2.0  # 控制线宽的参数
         # 如果是图线为散点图，则可以通过下列两个参数设置样式
         marker = kwargs['marker'] if 'marker' in kwargs else '.'  # 散点参数，默认为圆点
-        markersize = kwargs['markersize'] if 'markersize' in kwargs else 100.0  # 散点大小参数
+        markersize = kwargs['markersize'] if 'markersize' in kwargs else 40.0  # 散点大小参数
         color = kwargs['color'] if 'color' in kwargs else 'k'      # 颜色参数，默认为黑色
         alpha = kwargs['alpha'] if 'alpha' in kwargs else 1.0      # 曲线透明度
 

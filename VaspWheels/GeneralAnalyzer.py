@@ -5,6 +5,7 @@ import codecs
 import numpy as np
 import pandas as pd
 from scipy.optimize import leastsq
+from sklearn.metrics import mean_squared_error, r2_score
 
 class functions:
     """ This class of functions is designed for general data analysis and computation in ab initio study. """
@@ -25,17 +26,17 @@ class functions:
     # 此函数可以利用pandas提取文件中的数据，适用于txt、dat、csv等格式的文件
     # 数据文件中的数据形式应为两列式，如：第一列为自变量，第二列为因变量
     def GetData(self, data_file, **kwargs):
-        header = kwargs['header'] if 'header' in kwargs else None  # 文件中的数据列，默认为没有列名，第一行作为数据读取
+        header = kwargs['header'] if 'header' in kwargs else None  # 文件中的数据列，默认没有列名，第一行作为数据读取
         sep = kwargs['sep'] if 'sep' in kwargs else '\s+'  # 数据分隔符，默认为'\s+'（指代\f\n\t\r\v这些）
         # 利用pandas提取数据，得到的结果为DataFrame格式
-        data_DataFrame = pd.read_csv(data_file, header=header, sep=sep)  # 若header=None的话，则设置为没有列名
+        data_DataFrame = pd.read_csv(data_file, header=header, sep=sep)  # 若设置header=0的话，则第一行为列名，从第二行开始读取
         data_array = data_DataFrame.values  # 将DataFrame格式的数据转换为数组
 
-        x_col = kwargs['x_col'] if 'x_col' in kwargs else 0  # 默认第一列为自变量所在列
-        y_col = kwargs['y_col'] if 'y_col' in kwargs else 1  # 默认第二列为因变量所在列
-        x = data_array[:, x_col]  # 默认第一列为自变量
-        y = data_array[:, y_col]  # 默认第二列为因变量
-        return x, y
+        rearrange = kwargs['rearrange'] if 'rearrange' in kwargs else 'row'  # 将数据数组重排为列表方便后续分析操作
+        nrow, ncol = data_array.shape  # 获取数据数组的维数
+        data = [data_array[:,i] for i in range(ncol)] if rearrange == 'row' else [data_array[i,:] for i in range(nrow)]
+
+        return data
 
     # 此函数可以利用pandas包记录数据，应注意输入的数据应为二维数组或是二维列表
     def SaveData(self, saving_directory, data, **kwargs):
@@ -54,22 +55,21 @@ class functions:
 
         ### 在csv文件中第一行添加分隔符信息，这样子excel读取csv文件的时候才不会排版错乱
         with open(saving_address, 'r+', encoding='utf-8') as file:
-            content = file.read()  # 将已有的内容读取出来
-            file.seek(0, 0)  # 找到数据文件的开头
+            content = file.read()                      # 将已有的内容读取出来
+            file.seek(0, 0)                            # 找到数据文件的开头
             file.write('sep=' + sep + '\n' + content)  # 写入分隔符信息
         return
 
     ##############################################################################################################
-    # 常用的运算或是拟合函数
-
-    #coef_list = []
-    #EM_list = []
-    #for i in range(num_segment):
-        #coef = np.polyfit(Kpath_segment, band_segmented[i], 2)  # 利用polyfit对能带进行二次项拟合
-        #coef_list.append(coef)
-        #m_effective = 1 / (2 * coef[0])
-        #EM_list.append(m_effective)
-
+    # 数据拟合相关模块
+    # 拟合结果分析函数，此函数可以对拟合结果进行分析，得到均方根误差跟决定因子
+    def Evaluate(self, y, y_fit, reshaping='false'):
+        # 将真实数据和拟合结果reshape为二维数组，方便sklearn包读取（不然会出错），默认为不需要reshape
+        y, y_fit = [y.reshape(-1, 1),y_fit.reshape(-1, 1)] if reshaping == 'True' else [y,y_fit]
+        # MSE-Mean Squared Error, R2-Coefficient of determination (R^2)
+        MSE, R2 = [mean_squared_error(y, y_fit),r2_score(y, y_fit)]
+        print(r'Mean Squared Error (MSE): %.5f'%MSE+r'; Coefficient of Determination (R^2): %.5f'%R2)  # 打印评估结果
+        return MSE, R2
 
     ##############################################################################################################
     #########################################接下来的部分为特定功能的实现模块###########################################
@@ -145,6 +145,14 @@ class functions:
 
     ##############################################################################################################
     # 弹性模量计算模块（应变-能量分析）
+    # 此函数可以通过分析strain-energy profile计算弹性模量
+    def ElasticModulus(self,strain,energy,structural_factor,**kwargs):
+        # 对于简单的二次项回归np.polyfit()函数会更加robust
+        coef = np.polyfit(strain,energy,2)  # 多项式系数系数的排列从高到低，比如对于二次多项式，系数对于的次数依次为：2、1、0
+        modulus = 2*coef[0]/structural_factor  # structural_factor随系统维数变化而变化：1D-长度，2D-面积，3D-体积
+        unit_transform = 1.602e-19/1.0e-20  # 量纲转换因子，使最后输出结果以N跟m表示
+        # unit_transform = 1.0
+        return unit_transform*modulus
 
     ##############################################################################################################
     # Semiconductor conductivity calculation module (半导体导电性计算模块计算模块)
