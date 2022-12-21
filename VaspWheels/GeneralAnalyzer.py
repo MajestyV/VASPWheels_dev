@@ -174,19 +174,22 @@ class functions:
 
         Kpath_segment = np.array([i*Kstep for i in range(num_point_evaluating)])  # 生成衡量有效质量的能带的K空间路程点
         band_segmented = [band[i:i+num_point_evaluating] for i in range(0,num_point_total,num_point_segment)]  # 能带分段
+        #print(band_segmented)
+        band_segmented_shifted = [np.array(band_segmented[i])-band_segmented[i][0] for i in range(num_segment)]  # 平移
+        #print(band_segmented_shifted)
 
         # 接下来我们对运动在能带上的载流子的有效质量进行计算（https://yh-phys.github.io/2019/10/26/vasp-2d-mobility/）
         # 考虑到有效质量实际上就是能带曲率的倒数，我们先利用scipy的最小二乘法模块对能带进行二次项拟合，再对二次项的系数进行计算即可
         # 要利用scipy进行拟合，我们首先要定义两个函数
-        # 由于我们的K点路径段平移到了原点开始，所以我们只需要考虑形如y=a*x^2+c的二次多项式，不需要考虑一次项（多项式关于y轴对称，没有平移项）
-        def polynomial(coefficient,x): return coefficient[0]*x**2+coefficient[1]
+        # 由于我们把能带段起点平移到了原点开始，所以我们只需要考虑形如y=a*x^2的二次多项式，不需要考虑零次项跟一次项（二次多项式的极值点为原点）
+        def polynomial(coefficient,x): return coefficient[0]*x**2
         def error(coefficient,x,y): return polynomial(coefficient,x)-y  # 拟合误差
 
         # scipy的最小二乘法拟合模块需要一个初猜值
-        initial_guess = kwargs['initial_guess'] if 'initial_guess' in kwargs else np.array([1, 1])
+        initial_guess = kwargs['initial_guess'] if 'initial_guess' in kwargs else np.array([1])
         EffectiveMass_list = []
         for i in range(num_segment):
-            coef = leastsq(error, initial_guess, args=(Kpath_segment, band_segmented[i]))
+            coef = leastsq(error, initial_guess, args=(Kpath_segment, band_segmented_shifted[i]))
             m_eff = 1.0/(2*coef[0][0])  # 计算有效质量
             EffectiveMass_list.append(m_eff)
 
