@@ -44,8 +44,8 @@ Kpoints_list = GK.GenerateKpath_segment(origin,destination,30,0.01,reciprocal_la
 #GK.GenKPOINTS(Kpath_directory+'K-path_EffectiveMass_22.12.16',Kpoints_list)  # 生成K点路径文件
 ##################################################################################################################
 # 计算电子跟空穴的有效质量
-# data_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/Conductivity/EffectiveMass/4/4_PositiveField_EffectiveMass/'  # 办公室电脑
-data_directory = 'D:/PhD_research/Data/Simulation/MoS2/CarrierTransport/4/EffectiveMass/Data/'  # 宿舍电脑
+data_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/CarrierTransport/4/EffectiveMass/Data/'  # 办公室电脑
+# data_directory = 'D:/PhD_research/Data/Simulation/MoS2/CarrierTransport/4/EffectiveMass/Data/'  # 宿舍电脑
 
 positive_field = '4_PositiveField_EffectiveMass_22.12.16'
 negative_field = '4_NegativeField_EffectiveMass_22.12.16'
@@ -54,21 +54,23 @@ total = 'EffectiveMass_Total'
 Efield_file = ['m0.300','m0.275','m0.250','m0.225','m0.200','m0.175','m0.150','m0.125','m0.100','m0.075','m0.050','m0.025',
                '0.000','0.025','0.050','0.075','0.100','0.125','0.150','0.175','0.200','0.225','0.250','0.275','0.300']
 
+##################################################################################################################
 # 检查数据
-E_test = '0.050'
-EIGENVAL = data_directory+total+'/'+E_test+'/'+'EIGENVAL'
-valence_band, conduction_band = GEB.GetBandEdges(EIGENVAL)
-print(conduction_band)
+# E_test = '0.025'
+# EIGENVAL = data_directory+total+'/'+E_test+'/'+'EIGENVAL'
+# valence_band, conduction_band = GEB.GetBandEdges(EIGENVAL)
+# print(conduction_band)
 
 # k = np.array([i for i in range(len(valence_band))])
 
-effective_mass = GA.CalculateEffectiveMass(0.01,valence_band,10,points_evaluating=10)  # 计算有效质量
-print(effective_mass)
+#effective_mass = GA.CalculateEffectiveMass(0.01,conduction_band,10,points_evaluating=12)  # 计算有效质量，取点个数很关键
+#print(effective_mass)
 
 #plt.plot(k,valence_band)
 #plt.plot(k,conduction_band)
 #plt.xlim(0,29)
 #plt.ylim(1.42,1.44)
+##################################################################################################################
 
 # 计算曲率时的取点方向
 # 计算曲率时的取点方向
@@ -83,17 +85,20 @@ EffectiveMass_data = np.zeros((len(Efield_file),len(direction)))  # 用于存放
 field = np.linspace(-1.5,1.5,25)  # 获取电场强度序列
 # print(field)
 Efield = [str(float(field[i]))+' V/nm' for i in range(len(Efield_file))]  # 电场强度列表
-#for i in range(len(Efield_file)):
+for i in range(len(Efield_file)):
     # EIGENVAL = data_directory+positive_field+'/'+Efield_file[i]+'/'+'EIGENVAL'  # 正电场数据文件
     # EIGENVAL = data_directory+negative_field+'/m'+Efield_file[i]+'/'+'EIGENVAL'  # 负电场数据文件
-    #EIGENVAL = data_directory + total + '/' + Efield_file[i] + '/' + 'EIGENVAL'  # 总数据文件
-    #valence_band, conduction_band = GEB.GetBandEdges(EIGENVAL)  # 提取导带跟价带
+    EIGENVAL = data_directory + total + '/' + Efield_file[i] + '/' + 'EIGENVAL'  # 总数据文件
+    valence_band, conduction_band = GEB.GetBandEdges(EIGENVAL)  # 提取导带跟价带
 
-    #effective_mass = GA.CalculateEffectiveMass(0.01,conduction_band,10,points_evaluating=6)  # 计算有效质量
+    effective_mass = GA.CalculateEffectiveMass(0.01,valence_band,10,points_evaluating=9)  # 计算有效质量
 
-    #EffectiveMass_data[i] = effective_mass
+    EffectiveMass_data[i] = effective_mass
 
 #GA.SaveData('C:/Users/13682/OneDrive/桌面/Test/',EffectiveMass_data,
              #file_name='Hole_EffectiveMass_NegativeField',col_index=direction,row_index=Efield_positive)
 #GA.SaveData('C:/Users/13682/OneDrive/桌面/Test/',EffectiveMass_data,
             #filename='1',col_index=direction,row_index=Efield)
+
+saving_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/CarrierTransport/4/EffectiveMass/Data/Summary/9 points_step 0.01/'
+GA.SaveData(saving_directory,EffectiveMass_data,filename='Hole_EffectiveMass_SOC',col_index=direction,row_index=Efield)
