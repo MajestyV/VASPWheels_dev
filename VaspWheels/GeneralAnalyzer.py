@@ -240,15 +240,17 @@ class functions:
         T = kwargs['temperature'] if 'temperature' in kwargs else 300.0  # 默认温度为300K
 
         m_eff = effective_mass * m_e  # 计算载流子有效质量
-        C = elastic_modulus*self.eV_to_J  # 弹性模量（又称为stiffness），默认输入的单位为eV/m，方便配合V.A.S.P.计算
+        # C = elastic_modulus*self.eV_to_J  # 弹性模量（又称为stiffness），默认输入的单位为eV/m，方便配合V.A.S.P.计算
+        C = elastic_modulus  # 输入的单位为N/m
         E = DP_constant*self.eV_to_J  # 形变势常量（deformation potential constant），默认输入的单位为eV，方便配合V.A.S.P.计算
+        print(E)
 
         dim = kwargs['dimension'] if 'dimension' in kwargs else '3D'
-        mobility_dict = {'1D': q*C*(hbar**2)/(np.sqrt(2*pi*kB*T)*(m_eff**1.5)*(E*2)),
-                         '2D': 2*q*C*(hbar**3)/((3.0*kB*T)*(m_eff**2.0)*(E*2)),
-                         '3D': 2*np.sqrt(pi)*q*C*(hbar**4)/((3.0*(kB*T)**1.5)*(m_eff**2.5)*(E*2))}
+        mobility_dict = {'1D': q*C*(hbar**2)/(np.sqrt(2*pi*kB*T)*(m_eff**1.5)*(E**2)),
+                         '2D': 2*q*C*(hbar**3)/((3.0*kB*T)*(m_eff**2.0)*(E**2)),
+                         '3D': 2*np.sqrt(pi)*q*C*(hbar**4)/((3.0*(kB*T)**1.5)*(m_eff**2.5)*(E**2))}
 
-        return mobility_dict[dim]
+        return mobility_dict[dim]*1e4
 
     # 此函数可以粗略地估算半导体电导率
     def Conductivity(self,n,p,electron_mobility,hole_mobility): return self.q*(n*electron_mobility+p*hole_mobility)
