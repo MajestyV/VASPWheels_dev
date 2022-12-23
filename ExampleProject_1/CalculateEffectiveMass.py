@@ -44,8 +44,8 @@ Kpoints_list = GK.GenerateKpath_segment(origin,destination,30,0.01,reciprocal_la
 #GK.GenKPOINTS(Kpath_directory+'K-path_EffectiveMass_22.12.16',Kpoints_list)  # 生成K点路径文件
 ##################################################################################################################
 # 计算电子跟空穴的有效质量
-data_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/CarrierTransport/4/EffectiveMass/Data/'  # 办公室电脑
-# data_directory = 'D:/PhD_research/Data/Simulation/MoS2/CarrierTransport/4/EffectiveMass/Data/'  # 宿舍电脑
+# data_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/CarrierTransport/4/EffectiveMass/Data/'  # 办公室电脑
+data_directory = 'D:/PhD_research/Data/Simulation/MoS2/CarrierTransport/4/EffectiveMass/Data/'  # 宿舍电脑
 
 positive_field = '4_PositiveField_EffectiveMass_22.12.16'
 negative_field = '4_NegativeField_EffectiveMass_22.12.16'
@@ -56,15 +56,15 @@ Efield_file = ['m0.300','m0.275','m0.250','m0.225','m0.200','m0.175','m0.150','m
 
 ##################################################################################################################
 # 检查数据
-# E_test = '0.025'
-# EIGENVAL = data_directory+total+'/'+E_test+'/'+'EIGENVAL'
-# valence_band, conduction_band = GEB.GetBandEdges(EIGENVAL)
-# print(conduction_band)
+E_test = 'EffectiveMass_ZeroField_noSOC'
+EIGENVAL = data_directory+total+'/'+E_test+'/'+'EIGENVAL'
+valence_band, conduction_band = GEB.GetBandEdges(EIGENVAL)
+print(conduction_band)
 
 # k = np.array([i for i in range(len(valence_band))])
 
-#effective_mass = GA.CalculateEffectiveMass(0.01,conduction_band,10,points_evaluating=12)  # 计算有效质量，取点个数很关键
-#print(effective_mass)
+effective_mass = GA.CalculateEffectiveMass(0.01,conduction_band,10,points_evaluating=12)  # 计算有效质量，取点个数很关键
+print(effective_mass)
 
 #plt.plot(k,valence_band)
 #plt.plot(k,conduction_band)
@@ -100,5 +100,5 @@ for i in range(len(Efield_file)):
 #GA.SaveData('C:/Users/13682/OneDrive/桌面/Test/',EffectiveMass_data,
             #filename='1',col_index=direction,row_index=Efield)
 
-saving_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/CarrierTransport/4/EffectiveMass/Data/Summary/9 points_step 0.01/'
-GA.SaveData(saving_directory,EffectiveMass_data,filename='Hole_EffectiveMass_SOC',col_index=direction,row_index=Efield)
+# saving_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/CarrierTransport/4/EffectiveMass/Data/Summary/9 points_step 0.01/'
+# GA.SaveData(saving_directory,EffectiveMass_data,filename='Hole_EffectiveMass_SOC',col_index=direction,row_index=Efield)

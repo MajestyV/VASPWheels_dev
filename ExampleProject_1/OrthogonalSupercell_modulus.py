@@ -7,7 +7,8 @@ VI = Visualization.plot()         # 调用Visualization模块
 
 ###################################################################################################################
 # 数据提取及处理
-data_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/CarrierTransport/4/Ort_supercell/Manual optimization/strain-energy profile/'  # 办公室电脑
+# data_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/CarrierTransport/4/Ort_supercell/Manual optimization/strain-energy profile/'  # 办公室电脑
+data_directory = 'D:/PhD_research/Data/Simulation/MoS2/CarrierTransport/4/Ort_supercell/Manual optimization/strain-energy profile/'  # 宿舍电脑
 
 filename = ['4_LocalMinimum_x_strain.dat','4_LocalMinimum_y_strain.dat']
 
@@ -27,8 +28,18 @@ print(y_coef)
 
 Area = 3.177889527334834*5.50431706707831
 
-print(GA.ElasticModulus(x_strain,x_energy,Area))
-print(GA.ElasticModulus(y_strain,y_energy,Area))
+Volume = Area*26
+
+# print(GA.ElasticModulus(x_strain,x_energy,Area))
+# print(GA.ElasticModulus(y_strain,y_energy,Area))
+
+a = GA.ElasticModulus(x_strain,x_energy,Volume,dim='3D')
+b = GA.ElasticModulus(y_strain,y_energy,Volume,dim='3D')
+
+print(a,b)
+print(a*26e-10,b*26e-10)
+
+
 
 #print(parameter1,parameter2)
 #print(-coef1[1]/(2*coef1[0]))
@@ -56,5 +67,5 @@ VI.FigureSetting(xlabel='Strain', ylabel='Energy (eV)',
                  xlim=(-0.065,0.065),ylim=(-0.1,1.75),
                  legend='True')
 
-saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/'  # 办公室电脑
-VI.SavingFigure(saving_directory,filename='Strain-energy profile',format='pdf')
+#saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/'  # 办公室电脑
+#VI.SavingFigure(saving_directory,filename='Strain-energy profile',format='pdf')

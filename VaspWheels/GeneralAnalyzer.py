@@ -150,9 +150,13 @@ class functions:
         # 对于简单的二次项回归np.polyfit()函数会更加robust
         coef = np.polyfit(strain,energy,2)  # 多项式系数系数的排列从高到低，比如对于二次多项式，系数对于的次数依次为：2、1、0
         modulus = 2*coef[0]/structural_factor  # structural_factor随系统维数变化而变化：1D-长度，2D-面积，3D-体积
-        unit_transform = 1.602e-19/1.0e-20  # 量纲转换因子，使最后输出结果以N跟m表示
-        # unit_transform = 1.0
-        return unit_transform*modulus
+
+        dim = kwargs['dim'] if 'dim' in kwargs else '3D'  # 系统的维数
+        # 量纲转换因子，转换过程为1D：eV/Å to N, 2D: eV/Å^2 to N/m, 3D: eV/Å^3 to N/m^2 = Pa
+        unit_transform = {'1D': 1.602e-19/1.0e-10,
+                          '2D': 1.602e-19/1.0e-20,
+                          '3D': 1.602e-19/1.0e-30}
+        return unit_transform[dim]*modulus
 
     ##############################################################################################################
     # Semiconductor conductivity calculation module (半导体导电性计算模块计算模块)

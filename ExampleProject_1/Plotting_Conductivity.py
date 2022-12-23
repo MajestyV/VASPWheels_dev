@@ -23,9 +23,16 @@ DP_x_h, DP_x_e, DP_y_h, DP_y_e = [5.51686,6.42578,5.52182,6.99736]  # Deformatio
 
 modulus_x, modulus_y, modulus_x_modified, modulus_y_modified = [630.6813919,627.7555134,157.670348,156.9388784]
 
-u_e = GA.CarrierMobility(2.3*0.55,modulus_y_modified,DP_y_e,dimension='2D')
-u_h = GA.CarrierMobility(0.7026,modulus_y_modified,DP_y_h,dimension='2D')
-print(u_e,u_h)
+bulk_modulus_x, bulk_modulus_y = [242569766118.07947,241444428236.0711]
+
+#u = GA.CarrierMobility(0.57,127.44,5.29,dimension='2D')
+#print(u)
+#u_e = GA.CarrierMobility(2.3*0.55,modulus_y_modified,DP_y_e,dimension='2D')
+#u_h = GA.CarrierMobility(0.7026,modulus_y_modified,DP_y_h,dimension='2D')
+u = GA.CarrierMobility(0.7026,bulk_modulus_y,DP_y_h)
+print(u)
+#print(u_e,u_h)
+
 
 ###################################################################################################################
 # 画图模块
