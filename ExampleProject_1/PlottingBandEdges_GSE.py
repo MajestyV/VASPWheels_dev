@@ -58,7 +58,7 @@ plt.vlines(29,-1.45,2.2,linewidth=2,linestyles='dashed',color=sepline_color)
 plt.vlines(80,-1.45,2.2,linewidth=2,linestyles='dashed',color=sepline_color)
 plt.vlines(128,-1.45,2.2,linewidth=2,linestyles='dashed',color=sepline_color)
 plt.text(27,-1.7,r'$\Gamma$',size=20)
-plt.text(78,-1.7,r'$\Lambda$',size=20)
+plt.text(74,-1.7,r'$\Lambda_\mathrm{min}$',size=20)
 plt.text(126,-1.7,'K',size=20)
 plt.ylim(-1.7,2.2)
 

@@ -1,8 +1,7 @@
-from VaspWheels import AnalyzeBandgap
-from VaspWheels import VisualizeEbands
+from VaspWheels import GetElectronicBands,VisualizeBands
 
-AB = AnalyzeBandgap.Bandgap()  # 调用AnalyzeBandgap模块
-VB = VisualizeEbands.Ebands()  # 调用VisualizeEbands模块
+AB = GetElectronicBands.Bandgap()  # 调用AnalyzeBandgap模块
+VB = VisualizeBands.Ebands()  # 调用VisualizeEbands模块
 
 ####################################################################################################################
 # 数据文件夹的地址的导入

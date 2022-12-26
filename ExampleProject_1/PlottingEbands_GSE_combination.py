@@ -3,14 +3,10 @@ import codecs
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
-from VaspWheels import GetElectronicBands
-from VaspWheels import GetEDOS
-from VaspWheels import GetKpath
-from VaspWheels import Visualization
+from VaspWheels import GetElectronicBands, GetKpath, Visualization
 
 ###############################################################################################################
-GD = GetEDOS.EDOS()             # 调用GetEDOS模块
-GE = GetElectronicBands.vasp()  # 调用GetElectronicbands模块
+GBE = GetElectronicBands.vasp()  # 调用GetElectronicbands模块
 GK = GetKpath.vasp()            # 调用GetKpath模块
 VI = Visualization.plot()       # 调用Visualization模块
 ###############################################################################################################
@@ -42,7 +38,7 @@ def ShiftFermi(energy, fermi_energy):
 # 此函数可以用于获取可用的能带数据
 def Ebands(EIGENVAL,Kpath,fermi_energy,lattice=('HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive')):
     # 提取能带计算结果以及各种参数
-    bands = GB.GetData(EIGENVAL)
+    bands = GBE.GetData(EIGENVAL)
     nbands = bands['number']  # 提取能带总数
     nkpoints_total = bands['num kpoints']  # 提取K点总数
     nnodes = len(Kpath)  # 高对称点数
@@ -58,7 +54,7 @@ def Ebands(EIGENVAL,Kpath,fermi_energy,lattice=('HEX', [3.16, 3.16, 12.9, 90, 90
 # 此函数可以用于能带截取
 def InterceptingEbands(EIGENVAL,InterceptedKpath,fermi_energy):
     # 提取能带计算结果以及各种参数
-    bands = GB.GetData(EIGENVAL)
+    bands = GBE.GetData(EIGENVAL)
     nbands = bands['number']  # 提取能带总数
     kpath = bands['kpath']  # K点路径
     print(kpath)
@@ -141,15 +137,15 @@ if __name__=='__main__':
 
         # 利用这个循环提取DOS数据
         DOSCAR = main_dir+'/'+n+'/DOSCAR'
-        DOS_data = GD.GetData(DOSCAR)
+        DOS_data = GBE.GetData(DOSCAR)
         dos_x.append(DOS_data['DOS'])
         dos_energy = DOS_data['energy']
-        dos_y.append(GD.ShiftFermiEnergy(dos_energy, E_fermi))
+        dos_y.append(GBE.ShiftFermiSurface(dos_energy, E_fermi))
         ###########################################
 
         # x,y,x_nodes = Ebands(EIGENVAL,main_Kpath[1],E_fermi)
         # 提取能带计算结果以及各种参数
-        bands_dict = GE.GetEbands(EIGENVAL)
+        bands_dict = GBE.GetEbands(EIGENVAL)
         num_bands = bands_dict['num_bands']  # 提取能带总数
         num_kpoints = bands_dict['num_kpoints']  # 提取K点总数
         Kpath = bands_dict['Kpath']  # K点路径
@@ -160,9 +156,9 @@ if __name__=='__main__':
         Kpath_projected, Knodes_projected = GK.ProjectKpath(Kpath, num_segments, LatticeCorrection='True',Lattice=lattice)
 
         # 费米面调零
-        Eg, Ev_max, Ec_min, extremum_location = GE.GetBandgap(EIGENVAL, mode='occupation')
+        Eg, Ev_max, Ec_min, extremum_location = GBE.GetBandgap(EIGENVAL, mode='occupation')
 
-        bands_shifted = GE.ShiftFermiSurface(bands, Ev_max)
+        bands_shifted = GBE.ShiftFermiSurface(bands, Ev_max)
 
         # 正式开始画图
         bands_plot = bands_fig_list[bands_index]  # 确定此循环中要画的子图
@@ -173,7 +169,7 @@ if __name__=='__main__':
         bands_plot.set_xlim(min(Kpath_projected),max(Kpath_projected))
         bands_plot.set_ylim(ymin,ymax)
 
-        bands_plot.set_title(r'$\mathcal{E}$ = '+Efield[bands_index],size=22)
+        bands_plot.set_title(r'$\mathcal{E}$ = '+Efield[bands_index],size=22, pad=15)  # 设置标题
         bands_plot.tick_params(labelsize=18)  # 更改刻度大小
 
         bands_plot.hlines(0,min(Kpath_projected),max(Kpath_projected),linewidth=2, linestyles='dashed', colors=grey)  # 费米能的位置
@@ -214,5 +210,5 @@ if __name__=='__main__':
 
     plt.show()
 
-    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/Main figures/Gallery/raw data/'
-    plt.savefig(saving_directory + 'GSE_band evolution.png', dpi=300, format='png')
+    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/Giant Stark Effect (GSE)/能带组图/'  # 办公室电脑
+    VI.SavingFigure(saving_directory, filename='GSE_combination', format='pdf')
