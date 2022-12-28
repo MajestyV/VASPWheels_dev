@@ -145,7 +145,7 @@ def DrawConcentration_n_Mobility():
     ax2.yaxis.set_minor_locator(y_minor_locator_r)
 
     ax2.plot(Efield, mobility(me_K_l,mh_G_l), marker='o', markersize=7,markerfacecolor='none',
-                                              color=red,label=r'$\mu \propto \frac{1}{|m_e^*|}+\frac{1}{|m_h^*|}$')
+                                              color=red,label=r'$\mu \propto \frac{1}{|m_e^*|^2}+\frac{1}{|m_h^*|^2}$')
     ax2.set_ylim(4.875,6.125)
     # ax2.set_ylabel(r'Mobility ($2q\hbar^{2}C/3k_\mathrm{B}T\mathrm{m_e^2}E_1^2$)',fontsize=fontsize,rotation=90,labelpad=22,color=red)
     ax2.set_ylabel(r'Carrier mobility (a.u.)',fontsize=fontsize,rotation=90,labelpad=8,color=red)
@@ -161,13 +161,14 @@ def DrawConcentration_n_Mobility():
     plt.tight_layout()  # 防止画图时，图像分布失衡，部分文字显示被遮挡的情况
 
     # 数据保存模块
-    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/'
+    # saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/'  # 办公室电脑
+    saving_directory = 'D:/PhD_research/Figures/Carrier transportation/Summary/selected/'  # 宿舍电脑
     VI.SavingFigure(saving_directory,filename='Concentration_n_mobility',format='pdf')
 
     return
 
 if __name__ == '__main__':
-    DrawEffectiveDOS()
+    # DrawEffectiveDOS()
     # DrawEffectiveMass()
-    # DrawConcentration_n_Mobility()
+    DrawConcentration_n_Mobility()
     plt.show()
