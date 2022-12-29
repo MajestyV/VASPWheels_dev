@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
-from VaspWheels import GeneralAnalyzer,Visualization
+from VaspWheels import GeneralAnalyzer,VisualizationSCI
 
-GA = GeneralAnalyzer.functions()  #
-VI = Visualization.plot()  # 调用Visualization模块
+GA = GeneralAnalyzer.functions()  # 调用GeneralAnalyzer模块
+VI = VisualizationSCI.plot()  # 调用VisualizationSCI模块（专为科研绘图而生）
 
 ###################################################################################################################
 # 数据
@@ -103,13 +103,15 @@ def DrawConcentration_n_Mobility():
     plt.rcParams['xtick.direction'] = 'in'  # 将x轴的刻度线方向设置向内
     plt.rcParams['ytick.direction'] = 'in'  # 将y轴的刻度线方向设置向内
     # 设置全局字体选项
-    font_config = {'font.family': 'sans-serif'}  # font.family设定所有字体为Arial
+    font_config = {'font.family': 'Arial','font.weight': 'light'}  # font.family设定所有字体为Arial
     plt.rcParams.update(font_config)  # 但是对于希腊字母(e.g. α, β, γ等)跟各种数学符号之类的不适用, Latex语法如Γ会被判断为None
 
-    fontsize = 16  # 字体大小
+    fontsize = 6  # 字体大小
+    markersize = 1.5  # 散点大小
+    linewidth = 0.5  # 线宽
 
     # 正式画图
-    fig = plt.figure()  # 创建matplotlib的fig对象
+    fig = plt.figure(figsize=(32.0/15.0,1.6))  # 创建matplotlib的fig对象
     ax1 = fig.add_subplot(111)  # 增加子图ax1为主图
 
     x_major_locator = MultipleLocator(0.2)  # 将x主刻度标签设置为x_major_tick的倍数
@@ -121,21 +123,22 @@ def DrawConcentration_n_Mobility():
     ax1.yaxis.set_major_locator(y_major_locator)
     ax1.yaxis.set_minor_locator(y_minor_locator)
 
-    plt.tick_params(which='major', length=5)  # 设置主刻度长度
-    plt.tick_params(which='minor', length=2)  # 设置次刻度长度
-
-    ax1.plot(Efield, concentration(Eg), marker='o',markersize=7,color=blue,
+    ax1.plot(Efield, concentration(Eg), linewidth=linewidth, marker='o',markersize=markersize,color=blue,
                                         label=r'$n_{i} \propto \mathrm{exp}(-\frac{E_g}{2k_\mathrm{B}T})$')
+    ax1.set_xlim(0.08,1.04)
     ax1.set_ylim(-0.05,0.45)
     ax1.set_xlabel('Electric field (V/nm)',fontsize=fontsize)
     # ax1.set_ylabel(r'Concentration ($(N_{c}N_{v})^{\frac{1}{2}}$)',fontsize=fontsize,color=blue)
-    ax1.set_ylabel(r'Carrier concentration (a.u.)',fontsize=fontsize,color=blue)
+    ax1.set_ylabel(r'Concentration (a.u.)',fontsize=fontsize,color=blue)
     # ax1.yaxis.set_ticks(labelsize=18)
     ax1.tick_params(labelsize=fontsize,axis='x')
     ax1.tick_params(labelsize=fontsize,axis='y',colors=blue)
-    ax1.tick_params(which='minor', colors=blue)  # 设置次刻度颜色
+    ax1.tick_params(axis='y', which='minor', colors=blue)  # 设置左y轴次刻度颜色
+    # 刻度长度需要定义完主次刻度才统一设置
+    ax1.tick_params(which='major', length=2, width=0.5)  # 设置主刻度长度
+    ax1.tick_params(which='minor', length=1, width=0.5)  # 设置次刻度长度
 
-    plt.legend(loc=(0.01,0.85),frameon=False,fontsize=fontsize)
+    plt.legend(loc=(0.01,0.79),frameon=False,fontsize=fontsize)
 
     ax2 = ax1.twinx()  # 在ax1中，增设第二纵轴，这个函数是画双坐标轴图的关键（this is the important function）
 
@@ -144,25 +147,29 @@ def DrawConcentration_n_Mobility():
     ax2.yaxis.set_major_locator(y_major_locator_r)
     ax2.yaxis.set_minor_locator(y_minor_locator_r)
 
-    ax2.plot(Efield, mobility(me_K_l,mh_G_l), marker='o', markersize=7,markerfacecolor='none',
+    # 设置markerfacecolor为白色，则可以保持空心效果；如果设置为none，则会看到后面的连接线
+    ax2.plot(Efield, mobility(me_K_l,mh_G_l), linewidth=linewidth, marker='o', markersize=markersize,markerfacecolor='w',
                                               color=red,label=r'$\mu \propto \frac{1}{|m_e^*|^2}+\frac{1}{|m_h^*|^2}$')
     ax2.set_ylim(4.875,6.125)
     # ax2.set_ylabel(r'Mobility ($2q\hbar^{2}C/3k_\mathrm{B}T\mathrm{m_e^2}E_1^2$)',fontsize=fontsize,rotation=90,labelpad=22,color=red)
-    ax2.set_ylabel(r'Carrier mobility (a.u.)',fontsize=fontsize,rotation=90,labelpad=8,color=red)
+    ax2.set_ylabel(r'Mobility (a.u.)',fontsize=fontsize,rotation=90,labelpad=5,color=red)
     ax2.tick_params(labelsize=fontsize,colors=red)
     ax2.tick_params(which='minor', colors=red)  # 设置次刻度颜色
+    # 刻度长度需要定义完主次刻度才统一设置
+    ax2.tick_params(which='major', length=2, width=0.5)  # 设置主刻度长度
+    ax2.tick_params(which='minor', length=1, width=0.5)  # 设置次刻度长度
 
     # 由于画双轴，所以ax2会把ax1的一些设置覆盖，我们只需要改ax2的设置就好
     ax2.spines['left'].set_color(blue)  # 设置左边框为蓝色
     ax2.spines['right'].set_color(red)  # 设置右边框为红色
 
-    plt.legend(loc=(0.01,0.72),frameon=False,fontsize=fontsize)
+    plt.legend(loc=(0.01,0.62),frameon=False,fontsize=fontsize)
 
     plt.tight_layout()  # 防止画图时，图像分布失衡，部分文字显示被遮挡的情况
 
     # 数据保存模块
     # saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/'  # 办公室电脑
-    saving_directory = 'D:/PhD_research/Figures/Carrier transportation/Summary/selected/'  # 宿舍电脑
+    saving_directory = 'D:/PhD_research/Figures/Carrier transportation/Summary/Version_22.12.29/'  # 宿舍电脑
     VI.SavingFigure(saving_directory,filename='Concentration_n_mobility',format='pdf')
 
     return
