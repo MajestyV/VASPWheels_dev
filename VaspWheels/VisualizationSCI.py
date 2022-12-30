@@ -103,10 +103,8 @@ class plot:
         # 创建图例对象
         ax = plt.subplot(111)  # 注意有些参数（比如刻度）一般都在ax中设置,不在plot中设置
 
-        ax.spines['top'].set_linewidth(0.5)  # 设置图像边框粗细
-        ax.spines['bottom'].set_linewidth(0.5)
-        ax.spines['left'].set_linewidth(0.5)
-        ax.spines['right'].set_linewidth(0.5)
+        for m in ['top', 'bottom', 'left', 'right']:
+            ax.spines[m].set_linewidth(0.5)  # 设置图像边框粗细
 
         # 刻度参数
         x_major_tick = kwargs['x_major_tick'] if 'x_major_tick' in kwargs else 10  # 设置x轴主刻度标签

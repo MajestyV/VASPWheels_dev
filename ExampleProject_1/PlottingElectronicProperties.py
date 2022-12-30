@@ -58,17 +58,19 @@ blue, red = [VI.MorandiColor('Paris'),VI.MorandiColor('Redred')]  # 常用色值
 def DrawEffectiveDOS():
     VI.GlobalSetting(x_major_tick=0.2,y_major_tick=0.2)  # 全局设置
 
-    plt.plot(Efield, effective_DOS(me_K_l), 'h', markersize=7, color=blue, label=r'$N_{c}$ at K')
-    plt.plot(Efield, effective_DOS(mh_G_l), 'h', markerfacecolor='none', markersize=7, color=red,label=r'$N_{v}$ at $\Gamma$')
+    markersize, markeredgewidth = [2, 0.25]
+
+    plt.plot(Efield, effective_DOS(me_K_l), 'h', markersize=markersize, markeredgewidth=markeredgewidth, color=blue, label=r'$N_{c}$ at K')
+    plt.plot(Efield, effective_DOS(mh_G_l), 'h', markerfacecolor='none', markersize=markersize, markeredgewidth=markeredgewidth, color=red,label=r'$N_{v}$ at $\Gamma$')
 
 
     VI.FigureSetting(xlabel='Electric field (V/nm)', ylabel='Effective DOS (a.u.)',
                      xlim=(0.08,1.04),ylim=(0.2,1.2),
                      legend='True')
 
-    plt.legend(loc='best',ncol=2,fontsize=16,frameon=False)
+    plt.legend(loc='best',ncol=2,fontsize=6,frameon=False)
 
-    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/'  # 办公室电脑
+    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
     # saving_directory = 'D:/PhD_research/Figures/Carrier transportation/Effective mass/'  # 宿舍电脑
     VI.SavingFigure(saving_directory,filename='Effective DOS',format='pdf')
 
@@ -78,19 +80,21 @@ def DrawEffectiveDOS():
 def DrawEffectiveMass():
     VI.GlobalSetting(x_major_tick=0.2,y_major_tick=0.4)  # 全局设置
 
-    plt.plot(Efield, me_K_l, 's', markersize=7, color=blue, label=r'$m_e^*$ at $\mathrm{K}_l$')
-    plt.plot(Efield, mh_G_l, '>', markerfacecolor='none', markersize=7, color=blue,label=r'$m_h^*$ at ${\Gamma}_l$')
-    plt.plot(Efield, me_K_t, 'D', markersize=7, color=red, label=r'$m_e^*$ at $\mathrm{K}_t$')
-    plt.plot(Efield, mh_G_t, '<', markerfacecolor='none', markersize=7, color=red,label=r'$m_h^*$ at ${\Gamma}_t$')
+    markersize, markeredgewidth = [2,0.25]
+
+    plt.plot(Efield, me_K_l, 's', markersize=markersize, markeredgewidth=markeredgewidth, color=blue, label=r'$m_e^*$ at $\mathrm{K}_l$')
+    plt.plot(Efield, mh_G_l, '>', markerfacecolor='none', markersize=markersize, markeredgewidth=markeredgewidth, color=blue,label=r'$m_h^*$ at ${\Gamma}_l$')
+    plt.plot(Efield, me_K_t, 'D', markersize=markersize, markeredgewidth=markeredgewidth, color=red, label=r'$m_e^*$ at $\mathrm{K}_t$')
+    plt.plot(Efield, mh_G_t, '<', markerfacecolor='none', markersize=markersize, markeredgewidth=markeredgewidth, color=red,label=r'$m_h^*$ at ${\Gamma}_t$')
 
 
     VI.FigureSetting(xlabel='Electric field (V/nm)', ylabel='Effective mass ($\mathrm{m_e}$)',
                      xlim=(0.08,1.04),ylim=(-1.2,0.8),
                      legend='True')
 
-    plt.legend(loc='best',ncol=2,fontsize=16,frameon=False)
+    plt.legend(loc='best',ncol=2,fontsize=6,frameon=False)
 
-    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/'  # 办公室电脑
+    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
     # saving_directory = 'D:/PhD_research/Figures/Carrier transportation/Effective mass/'  # 宿舍电脑
     VI.SavingFigure(saving_directory,filename='Effective mass',format='pdf')
 
@@ -107,7 +111,8 @@ def DrawConcentration_n_Mobility():
     plt.rcParams.update(font_config)  # 但是对于希腊字母(e.g. α, β, γ等)跟各种数学符号之类的不适用, Latex语法如Γ会被判断为None
 
     fontsize = 6  # 字体大小
-    markersize = 1.5  # 散点大小
+    markersize = 2  # 散点大小
+    markeredgewidth  = 0.25  # 散点的边缘宽度
     linewidth = 0.5  # 线宽
 
     # 正式画图
@@ -123,7 +128,8 @@ def DrawConcentration_n_Mobility():
     ax1.yaxis.set_major_locator(y_major_locator)
     ax1.yaxis.set_minor_locator(y_minor_locator)
 
-    ax1.plot(Efield, concentration(Eg), linewidth=linewidth, marker='o',markersize=markersize,color=blue,
+    ax1.plot(Efield, concentration(Eg), linewidth=linewidth, color=blue,
+                                        marker='o', markersize=markersize, markeredgewidth=markeredgewidth,
                                         label=r'$n_{i} \propto \mathrm{exp}(-\frac{E_g}{2k_\mathrm{B}T})$')
     ax1.set_xlim(0.08,1.04)
     ax1.set_ylim(-0.05,0.45)
@@ -138,7 +144,7 @@ def DrawConcentration_n_Mobility():
     ax1.tick_params(which='major', length=2, width=0.5)  # 设置主刻度长度
     ax1.tick_params(which='minor', length=1, width=0.5)  # 设置次刻度长度
 
-    plt.legend(loc=(0.01,0.79),frameon=False,fontsize=fontsize)
+    plt.legend(loc=(0.05,0.79),frameon=False,fontsize=fontsize)
 
     ax2 = ax1.twinx()  # 在ax1中，增设第二纵轴，这个函数是画双坐标轴图的关键（this is the important function）
 
@@ -148,8 +154,9 @@ def DrawConcentration_n_Mobility():
     ax2.yaxis.set_minor_locator(y_minor_locator_r)
 
     # 设置markerfacecolor为白色，则可以保持空心效果；如果设置为none，则会看到后面的连接线
-    ax2.plot(Efield, mobility(me_K_l,mh_G_l), linewidth=linewidth, marker='o', markersize=markersize,markerfacecolor='w',
-                                              color=red,label=r'$\mu \propto \frac{1}{|m_e^*|^2}+\frac{1}{|m_h^*|^2}$')
+    ax2.plot(Efield, mobility(me_K_l,mh_G_l), linewidth=linewidth,color=red,
+                                              marker='o', markersize=markersize,markerfacecolor='w',markeredgewidth=markeredgewidth,
+                                              label=r'$\mu \propto \frac{1}{|m_e^*|^2}+\frac{1}{|m_h^*|^2}$')
     ax2.set_ylim(4.875,6.125)
     # ax2.set_ylabel(r'Mobility ($2q\hbar^{2}C/3k_\mathrm{B}T\mathrm{m_e^2}E_1^2$)',fontsize=fontsize,rotation=90,labelpad=22,color=red)
     ax2.set_ylabel(r'Mobility (a.u.)',fontsize=fontsize,rotation=90,labelpad=5,color=red)
@@ -163,13 +170,17 @@ def DrawConcentration_n_Mobility():
     ax2.spines['left'].set_color(blue)  # 设置左边框为蓝色
     ax2.spines['right'].set_color(red)  # 设置右边框为红色
 
-    plt.legend(loc=(0.01,0.62),frameon=False,fontsize=fontsize)
+    plt.legend(loc=(0.05,0.62),frameon=False,fontsize=fontsize)
+
+    for n in [ax1,ax2]:
+        for m in ['top', 'bottom', 'left', 'right']:
+            n.spines[m].set_linewidth(0.5)  # 设置图像边框粗细
 
     plt.tight_layout()  # 防止画图时，图像分布失衡，部分文字显示被遮挡的情况
 
     # 数据保存模块
-    # saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/'  # 办公室电脑
-    saving_directory = 'D:/PhD_research/Figures/Carrier transportation/Summary/Version_22.12.29/'  # 宿舍电脑
+    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
+    #saving_directory = 'D:/PhD_research/Figures/Carrier transportation/Summary/Version_22.12.29/'  # 宿舍电脑
     VI.SavingFigure(saving_directory,filename='Concentration_n_mobility',format='pdf')
 
     return

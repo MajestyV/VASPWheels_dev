@@ -88,7 +88,8 @@ if __name__=='__main__':
 
     VI.GlobalSetting()  # 全局画图设定
 
-    fig = plt.figure(figsize=(18,5))  # 控制图像大小
+    # fig = plt.figure(figsize=(6.9291,1.6))  # 控制图像大小
+    fig = plt.figure(figsize=(7.7952,1.8))  # 控制图像大小
     # grid = plt.GridSpec(2,7,wspace=0)  # 创建柔性网格用于空间分配, wspace调整子图形之间的横向距离
 
     grid_shape = (3,17)
@@ -97,6 +98,10 @@ if __name__=='__main__':
     bands_fig_2 = plt.subplot2grid(grid_shape,(0,5),rowspan=num_row,colspan=5)
     bands_fig_3 = plt.subplot2grid(grid_shape,(0,10),rowspan=num_row,colspan=5)
     DOS_fig = plt.subplot2grid(grid_shape,(0,15),rowspan=num_row,colspan=2)
+
+    for n in [bands_fig_1,bands_fig_2,bands_fig_3,DOS_fig]:
+        for m in ['top', 'bottom', 'left', 'right']:
+            n.spines[m].set_linewidth(0.5)  # 设置图像边框粗细
 
     y_major_locator = MultipleLocator(1)
     y_minor_locator = MultipleLocator(0.5)
@@ -110,6 +115,8 @@ if __name__=='__main__':
     plt.subplots_adjust(wspace=0)
 
     # 画图参数
+    fontsize, linewidth = [6,0.5]
+
     ylim=(-2.1,2.1)
     ymin,ymax = ylim
     # color = [np.array([124,172,247])/255.0,np.array([128,138,248])/255.0,
@@ -164,17 +171,23 @@ if __name__=='__main__':
         bands_plot = bands_fig_list[bands_index]  # 确定此循环中要画的子图
 
         for i in range(len(bands_shifted)):
-            bands_plot.plot(Kpath_projected,bands_shifted[i],color=color[bands_index],linewidth=2.0)
+            bands_plot.plot(Kpath_projected,bands_shifted[i],color=color[bands_index],linewidth=linewidth)
 
         bands_plot.set_xlim(min(Kpath_projected),max(Kpath_projected))
         bands_plot.set_ylim(ymin,ymax)
 
-        bands_plot.set_title(r'$\mathcal{E}$ = '+Efield[bands_index],size=22, pad=15)  # 设置标题
-        bands_plot.tick_params(labelsize=18)  # 更改刻度大小
+        bands_plot.set_title(r'$\mathcal{E}$ = '+Efield[bands_index],size=fontsize, pad=5)  # 设置标题
+        bands_plot.tick_params(labelsize=fontsize)  # 更改刻度大小
+        bands_plot.tick_params(axis='x', color='w')  # 更改x轴刻度颜色
+        ################################################################################################
+        # 设置主次刻度线长度
+        plt.tick_params(which='major', length=3, width=0.5)  # 设置主刻度长度
+        bands_plot.tick_params(which='minor', length=1.5, width=0.5)  # 设置次刻度长度
+        ################################################################################################
 
-        bands_plot.hlines(0,min(Kpath_projected),max(Kpath_projected),linewidth=2, linestyles='dashed', colors=grey)  # 费米能的位置
+        bands_plot.hlines(0,min(Kpath_projected),max(Kpath_projected),linewidth=linewidth, linestyles='dashed', colors=grey)  # 费米能的位置
         for i in range(1,len(Knodes_projected) - 1):  # 第一个高对称点与图的左边界重合，最后一个跟右边界重合，所以不必作分割线
-            bands_plot.vlines(Knodes_projected[i], ymin, ymax, linewidth=2, linestyles='dashed', colors=grey)
+            bands_plot.vlines(Knodes_projected[i], ymin, ymax, linewidth=linewidth, linestyles='dashed', colors=grey)
 
         # 对个别子图进行调整
         if bands_index >=1:
@@ -183,13 +196,13 @@ if __name__=='__main__':
             path = [main_Kpath[0][i+1] for i in range(3)]
         else:
             # bands_plot.set_ylabel('$E-E_{f}$ (eV)',size=20)
-            bands_plot.set_ylabel('Energy (eV)', size=20)
+            bands_plot.set_ylabel('Energy (eV)', size=fontsize)
             nodes = Knodes_projected
             path = main_Kpath[0]
         bands_plot.set_xticks(nodes)
-        bands_plot.set_xticklabels(path,size=18)
+        bands_plot.set_xticklabels(path,size=fontsize)
 
-    bands_fig_1.text(2.2,0.626,'$\Lambda_\mathrm{min}$',size=18)
+    bands_fig_1.text(2.2,0.6,'$\Lambda_\mathrm{min}$',size=fontsize)
 
     # 画DOS
     DOS_fig.yaxis.set_major_locator(y_major_locator)
@@ -197,18 +210,24 @@ if __name__=='__main__':
 
     dos_x_min,dos_x_max = (0,20)
     for i in range(3):
-        DOS_fig.plot(dos_x[i],dos_y[i],color=color[i],label=r'$\mathcal{E}$ = '+Efield[i],linewidth=2)
-    DOS_fig.hlines(0,dos_x_min,dos_x_max,linewidth=2, linestyles='dashed', colors=grey)
+        DOS_fig.plot(dos_x[i],dos_y[i],color=color[i],label=r'$\mathcal{E}$ = '+Efield[i],linewidth=linewidth)
+    DOS_fig.hlines(0,dos_x_min,dos_x_max,linewidth=linewidth, linestyles='dashed', colors=grey)
     # DOS_fig.legend(loc=(0.1,0.3),fontsize=12,frameon=False)
     DOS_fig.set_yticklabels([])
     DOS_fig.set_xlim(dos_x_min,dos_x_max)
     DOS_fig.set_ylim(ymin,ymax)
     DOS_fig.set_xticks([10])
     #Text properties for the labels. These take effect only if you pass labels. In other cases, please use tick_params.
-    #DOS_fig.tick_params(color='w')  # 对于subplot，要调整刻度样式的话，需要采用tick_params函数
-    DOS_fig.set_xticklabels(['DOS (a.u.)'],size=18)
+    DOS_fig.tick_params(axis='x',color='w')  # 对于subplot，要调整刻度样式的话，需要采用tick_params函数
+    DOS_fig.set_xticklabels(['DOS (a.u.)'],size=fontsize)
 
+    ################################################################################################
+    # 设置主次刻度线长度
+    plt.tick_params(which='major', length=3, width=0.5)  # 设置主刻度长度
+    plt.tick_params(which='minor', length=1.5, width=0.5)  # 设置次刻度长度
+    ################################################################################################
     plt.show()
 
-    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/Giant Stark Effect (GSE)/能带组图/'  # 办公室电脑
+    # saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/Giant Stark Effect (GSE)/能带组图/'  # 办公室电脑
+    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
     VI.SavingFigure(saving_directory, filename='GSE_combination', format='pdf')

@@ -25,15 +25,15 @@ Efield = ['0.025','0.050','0.075','0.100','0.125','0.150','0.175','0.200']
 
 #################################################################################################################
 # 设置全局字体选项
-font_config = {'font.family': 'sans-serif', 'font.weight': 200}  # font.family设定所有字体为font_type
+font_config = {'font.family': 'Arial', 'font.weight': 'light'}  # font.family设定所有字体为font_type
 plt.rcParams.update(font_config)  # 但是对于希腊字母(e.g. α, β, γ等)跟各种数学符号之类的不适用, Latex语法如Γ会被判断为None
 # plt.rcParams['mathtext.default'] = 'regular'  # 可以通过这个选项修改所有希腊字母以及数学符号为Times New Roman
 
 # 创建matplotlib的figure对象（figsize = (宽，高），单位为英寸；frameon可以控制要不要外边框）
-fig = plt.figure(figsize=(8,6),frameon=False)
+fig = plt.figure(figsize=(32.0/15.0,1.6),frameon=False)
 
 # 画示意图主图
-main_fig = fig.add_axes([0.1,0.1,0.75,0.8])
+main_fig = fig.add_axes([0.03,0.1,0.7,0.8])
 
 plt.axis('off')  # 关掉所有外框线
 
@@ -50,20 +50,21 @@ for i in range(len(Efield)):
 
     color = VI.CMYK_to_RGB(24+i*8,20+i*8,8+i*6,8)
 
-    main_fig.plot(x,VB_schematic,color=color,linewidth=2)
-    main_fig.plot(x,CB_schematic,color=color,linewidth=2)
+    main_fig.plot(x,VB_schematic,color=color,linewidth=0.5)
+    main_fig.plot(x,CB_schematic,color=color,linewidth=0.5)
 
 sepline_color = VI.MorandiColor('Black')
-plt.vlines(29,-1.45,2.2,linewidth=2,linestyles='dashed',color=sepline_color)
-plt.vlines(80,-1.45,2.2,linewidth=2,linestyles='dashed',color=sepline_color)
-plt.vlines(128,-1.45,2.2,linewidth=2,linestyles='dashed',color=sepline_color)
-plt.text(27,-1.7,r'$\Gamma$',size=20)
-plt.text(74,-1.7,r'$\Lambda_\mathrm{min}$',size=20)
-plt.text(126,-1.7,'K',size=20)
+plt.vlines(29,-1.45,2.4,linewidth=1,linestyles='dashed',color=sepline_color)
+plt.vlines(80,-1.45,2.4,linewidth=1,linestyles='dashed',color=sepline_color)
+plt.vlines(128,-1.45,2.4,linewidth=1,linestyles='dashed',color=sepline_color)
+plt.text(26,-1.8,r'$\Gamma$',size=6)
+plt.text(74,-1.8,r'$\Lambda_\mathrm{min}$',size=6)
+plt.text(125,-1.8,'K',size=6)
 plt.ylim(-1.7,2.2)
 
 # 自定义colorbar
-colorbar = fig.add_axes([0.88,0.1,0.03,0.8])
+fig.subplots_adjust(right=0.8)
+colorbar = fig.add_axes([0.8,0.12,0.04,0.78])
 
 # print(VI.CMYK_to_RGB(30,20,8,8),VI.CMYK_to_RGB(80,70,48,8))  # RGB - [0.644  0.736  0.8464], [0.184  0.276  0.4784]
 # print(VI.CMYK_to_RGB(24,14,6,8),VI.CMYK_to_RGB(80,70,48,8))  # RGB - [0.6992 0.7912 0.8648], [0.184  0.276  0.4784]
@@ -77,9 +78,9 @@ norm = cm.colors.Normalize(vmin=0.125, vmax=1.000)
 cb = fig.colorbar(cm.ScalarMappable(cmap=cmap, norm=norm),cax=colorbar,orientation='vertical',
                     ticks=[0.125,0.250,0.375,0.500,0.625,0.750,0.875,1.000])
 cb.outline.set_color('none')
-cb.ax.set_title('Electric field (V/nm)',fontsize=12, pad = 20)
-cb.ax.tick_params(which='major',direction='in',length=4,width=1,color='white',left=False,labelsize=12)
+cb.ax.set_title('Electric field (V/nm)',fontsize=6, pad = 5)
+cb.ax.tick_params(which='major',direction='in',length=3,width=0.5,color='white',left=False,labelsize=6)
 
 # 保存模块
-saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/'
+saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
 VI.SavingFigure(saving_directory,filename='Band edge evolution',format='pdf')
