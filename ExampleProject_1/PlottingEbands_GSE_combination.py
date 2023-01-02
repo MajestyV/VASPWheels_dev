@@ -229,5 +229,7 @@ if __name__=='__main__':
     plt.show()
 
     # saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/Giant Stark Effect (GSE)/能带组图/'  # 办公室电脑
-    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
+    # saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
+    saving_directory = 'D:/Projects/PhaseTransistor/Gallery/Figures/All/'  # 办公室电脑汇总
     VI.SavingFigure(saving_directory, filename='GSE_combination', format='pdf')
+    VI.SavingFigure(saving_directory, filename='GSE_combination', format='eps')

@@ -25,7 +25,7 @@ Efield = ['0.025','0.050','0.075','0.100','0.125','0.150','0.175','0.200']
 
 #################################################################################################################
 # 设置全局字体选项
-font_config = {'font.family': 'Arial', 'font.weight': 'light'}  # font.family设定所有字体为font_type
+font_config = {'font.family': 'Arial', 'font.weight': 'normal'}  # font.family设定所有字体为font_type
 plt.rcParams.update(font_config)  # 但是对于希腊字母(e.g. α, β, γ等)跟各种数学符号之类的不适用, Latex语法如Γ会被判断为None
 # plt.rcParams['mathtext.default'] = 'regular'  # 可以通过这个选项修改所有希腊字母以及数学符号为Times New Roman
 
@@ -82,5 +82,7 @@ cb.ax.set_title('Electric field (V/nm)',fontsize=6, pad = 5)
 cb.ax.tick_params(which='major',direction='in',length=3,width=0.5,color='white',left=False,labelsize=6)
 
 # 保存模块
-saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
-VI.SavingFigure(saving_directory,filename='Band edge evolution',format='pdf')
+# saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
+saving_directory = 'D:/Projects/PhaseTransistor/Gallery/Figures/All/'  # 办公室电脑汇总
+VI.SavingFigure(saving_directory,filename='BandEdgeEvolution',format='pdf')
+VI.SavingFigure(saving_directory,filename='BandEdgeEvolution',format='eps')
