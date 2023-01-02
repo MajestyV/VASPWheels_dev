@@ -151,8 +151,10 @@ class plot:
 
         # 设置全局字体选项
         font_type = kwargs['font_type'] if 'font_type' in kwargs else 'Arial'  # 默认字体为Arial
+        # font_type = kwargs['font_type'] if 'font_type' in kwargs else 'Helvetica'  # 默认字体为Helvetica
         # font_type = kwargs['font_type'] if 'font_type' in kwargs else 'sans-serif'  # 默认字体为sans-serif
-        font_config = {'font.family': font_type, 'font.weight': 'light', 'font.size': 6}  # font.family设定所有字体为font_type
+        font_config = {'font.family': font_type, 'font.weight': 'normal', 'font.size': 6}  # font.family设定所有字体为font_type
+        # font_config = {'font.family': font_type, 'font.weight': 'normal', 'font.size': 6, 'font.stretch': 'semi-condensed'}
         plt.rcParams.update(font_config)  # 但是对于希腊字母(e.g. α, β, γ等)跟各种数学符号之类的不适用, Latex语法如Γ会被判断为None
         # plt.rcParams['mathtext.default'] = 'regular'  # 可以通过这个选项修改所有希腊字母以及数学符号为Times New Roman
         return
@@ -172,7 +174,7 @@ class plot:
         # 如果是图线为散点图，则可以通过下列两个参数设置样式
         marker = kwargs['marker'] if 'marker' in kwargs else '.'  # 散点参数，默认为圆点
         markersize = kwargs['markersize'] if 'markersize' in kwargs else 40.0  # 散点图散点大小参数
-        markersize_spline = kwargs['markersize_spline'] if 'markersize_spline' in kwargs else 6.0  # 点线图散点大小参数
+        markersize_spline = kwargs['markersize_spline'] if 'markersize_spline' in kwargs else 1.5  # 点线图散点大小参数
         color = kwargs['color'] if 'color' in kwargs else 'k'      # 颜色参数，默认为黑色
         alpha = kwargs['alpha'] if 'alpha' in kwargs else 1.0      # 曲线透明度
 
@@ -204,6 +206,7 @@ class plot:
     # 对于特定Figure的独特参数设置
     def FigureSetting(self,**kwargs):
         fontsize = 6  # 通过这个参数可以统一图片字体大小
+        # linespacing = 6  # 字体间距
 
         # 控制是否生成对数y轴坐标图，应注意：如果启用这个选项，所有的y轴输入都应该取正数
         log_scale = kwargs['log_scale'] if 'log_scale' in kwargs else 0
@@ -276,7 +279,7 @@ class plot:
     def SavingFigure(self,saving_directory,**kwargs):
         filename = kwargs['filename'] if 'filename' in kwargs else 'Untitled'  # 文件名
         format = kwargs['format'] if 'format' in kwargs else 'eps'  # 储存格式
-        dpi = kwargs['dpi'] if 'dpi' in kwargs else 600  # 分辨率
+        dpi = kwargs['dpi'] if 'dpi' in kwargs else 1200  # 分辨率
 
         saving_address = saving_directory+filename+'.'+format  # 图像文件要储存到的绝对地址
 

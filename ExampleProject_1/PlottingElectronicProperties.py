@@ -70,9 +70,11 @@ def DrawEffectiveDOS():
 
     plt.legend(loc='best',ncol=2,fontsize=6,frameon=False)
 
-    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
+    # saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
     # saving_directory = 'D:/PhD_research/Figures/Carrier transportation/Effective mass/'  # 宿舍电脑
+    saving_directory = 'C:/Users/13682/OneDrive/桌面/Gallery/Figures/All/'  # 宿舍电脑汇总
     VI.SavingFigure(saving_directory,filename='Effective DOS',format='pdf')
+    VI.SavingFigure(saving_directory, filename='Effective DOS', format='eps')
 
     return
 
@@ -94,9 +96,11 @@ def DrawEffectiveMass():
 
     plt.legend(loc='best',ncol=2,fontsize=6,frameon=False)
 
-    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
+    # saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
     # saving_directory = 'D:/PhD_research/Figures/Carrier transportation/Effective mass/'  # 宿舍电脑
+    saving_directory = 'C:/Users/13682/OneDrive/桌面/Gallery/Figures/All/'  # 宿舍电脑汇总
     VI.SavingFigure(saving_directory,filename='Effective mass',format='pdf')
+    VI.SavingFigure(saving_directory, filename='Effective mass', format='eps')
 
     return
 
@@ -179,14 +183,16 @@ def DrawConcentration_n_Mobility():
     plt.tight_layout()  # 防止画图时，图像分布失衡，部分文字显示被遮挡的情况
 
     # 数据保存模块
-    saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
+    # saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
     #saving_directory = 'D:/PhD_research/Figures/Carrier transportation/Summary/Version_22.12.29/'  # 宿舍电脑
+    saving_directory = 'C:/Users/13682/OneDrive/桌面/Gallery/Figures/All/'  # 宿舍电脑汇总
     VI.SavingFigure(saving_directory,filename='Concentration_n_mobility',format='pdf')
+    VI.SavingFigure(saving_directory, filename='Concentration_n_mobility', format='eps')
 
     return
 
 if __name__ == '__main__':
-    # DrawEffectiveDOS()
+    DrawEffectiveDOS()
     # DrawEffectiveMass()
-    DrawConcentration_n_Mobility()
+    # DrawConcentration_n_Mobility()
     plt.show()
