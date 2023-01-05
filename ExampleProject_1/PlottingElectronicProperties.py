@@ -82,7 +82,7 @@ def DrawEffectiveDOS():
 def DrawEffectiveMass():
     VI.GlobalSetting(x_major_tick=0.2,y_major_tick=0.4)  # 全局设置
 
-    markersize, markeredgewidth = [2,0.25]
+    markersize, markeredgewidth = [4,0.5]
 
     plt.plot(Efield, me_K_l, 's', markersize=markersize, markeredgewidth=markeredgewidth, color=blue, label=r'$m_e^*$ at $\mathrm{K}_l$')
     plt.plot(Efield, mh_G_l, '>', markerfacecolor='none', markersize=markersize, markeredgewidth=markeredgewidth, color=blue,label=r'$m_h^*$ at ${\Gamma}_l$')
@@ -115,8 +115,8 @@ def DrawConcentration_n_Mobility():
     plt.rcParams.update(font_config)  # 但是对于希腊字母(e.g. α, β, γ等)跟各种数学符号之类的不适用, Latex语法如Γ会被判断为None
 
     fontsize = 6  # 字体大小
-    markersize = 2  # 散点大小
-    markeredgewidth  = 0.25  # 散点的边缘宽度
+    markersize = 4  # 散点大小
+    markeredgewidth  = 0.5  # 散点的边缘宽度
     linewidth = 0.5  # 线宽
 
     # 正式画图
@@ -125,8 +125,8 @@ def DrawConcentration_n_Mobility():
 
     x_major_locator = MultipleLocator(0.2)  # 将x主刻度标签设置为x_major_tick的倍数
     x_minor_locator = MultipleLocator(0.04)  # 将x主刻度标签设置为x_major_tick的倍数
-    y_major_locator = MultipleLocator(0.1)  # 将y主刻度标签设置为y_major_tick的倍数
-    y_minor_locator = MultipleLocator(0.02)  # 将y主刻度标签设置为y_major_tick/5.0的倍数
+    y_major_locator = MultipleLocator(0.2)  # 将y主刻度标签设置为y_major_tick的倍数
+    y_minor_locator = MultipleLocator(0.04)  # 将y主刻度标签设置为y_major_tick/5.0的倍数
     ax1.xaxis.set_major_locator(x_major_locator)
     ax1.xaxis.set_minor_locator(x_minor_locator)
     ax1.yaxis.set_major_locator(y_major_locator)
@@ -152,8 +152,8 @@ def DrawConcentration_n_Mobility():
 
     ax2 = ax1.twinx()  # 在ax1中，增设第二纵轴，这个函数是画双坐标轴图的关键（this is the important function）
 
-    y_major_locator_r = MultipleLocator(0.25)  # 将y主刻度标签设置为y_major_tick的倍数
-    y_minor_locator_r = MultipleLocator(0.05)  # 将y主刻度标签设置为y_major_tick/5.0的倍数
+    y_major_locator_r = MultipleLocator(0.5)  # 将y主刻度标签设置为y_major_tick的倍数
+    y_minor_locator_r = MultipleLocator(0.1)  # 将y主刻度标签设置为y_major_tick/5.0的倍数
     ax2.yaxis.set_major_locator(y_major_locator_r)
     ax2.yaxis.set_minor_locator(y_minor_locator_r)
 
@@ -192,7 +192,7 @@ def DrawConcentration_n_Mobility():
     return
 
 if __name__ == '__main__':
-    DrawEffectiveDOS()
-    # DrawEffectiveMass()
+    # DrawEffectiveDOS()
+    DrawEffectiveMass()
     # DrawConcentration_n_Mobility()
     plt.show()
