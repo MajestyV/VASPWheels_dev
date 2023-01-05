@@ -73,10 +73,10 @@ nbins = 100
 cmap_name = 'example'  # colormap名
 
 cmap = cm.colors.LinearSegmentedColormap.from_list(cmap_name, colors, N=nbins)  # 创建 colormap
-norm = cm.colors.Normalize(vmin=0.125, vmax=1.000)
+norm = cm.colors.Normalize(vmin=0.1, vmax=1.000)
 # n_bin 越小，插值得到的颜色区间越少
 cb = fig.colorbar(cm.ScalarMappable(cmap=cmap, norm=norm),cax=colorbar,orientation='vertical',
-                    ticks=[0.125,0.250,0.375,0.500,0.625,0.750,0.875,1.000])
+                    ticks=[0.1,0.4,0.7,1.0])
 cb.outline.set_color('none')
 cb.ax.set_title('Electric field (V/nm)',fontsize=6, pad = 5)
 cb.ax.tick_params(which='major',direction='in',length=3,width=0.5,color='white',left=False,labelsize=6)
