@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-
 from VaspWheels import GetKpath,GetElectronicBands,Visualization,VisualizeBands
 
 GK = GetKpath.vasp()              # 调用GetKpath模块
