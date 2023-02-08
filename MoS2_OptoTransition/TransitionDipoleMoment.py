@@ -9,10 +9,10 @@ VB = VisualizeBands.plot_bands()  # 调用VisualizeBands模块（能带可视化
 
 ########################################################################################################################
 # 程序输入（通过改变这一部分的变量，我们可以调整程序的运行结果，更细致地说，此部分代码决定了程序的总输入，我们可以在这控制我们想画的曲线及样式）
-working_station = 'C221'  # 工作地点，选项有Office, C221, 以及Macbook
+working_station = 'Office'  # 工作地点，选项有Office, C221, 以及Macbook
 target_data = ('Bulk',0)  # (子目录名称,子目录下的数据文件夹名称在sub_dir_dict中的引索)
 bands_setting = ('HEX','HEX_3D')  # (crystal lattice, high symmetry point (HSP) path)
-saving_filename = 'Bulk_MoS2'  # 数据文件保存时的名称
+saving_filename = 'Bulk_MoS2_CrudeRelax'  # 数据文件保存时的名称
 
 ########################################################################################################################
 # 导入V.A.S.P.计算结果文件
@@ -21,7 +21,7 @@ main_dir_dict = {'Office': 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStruc
                  'C221': 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure'}    # 宿舍电脑
 
 # 以字典的形式记录的子目录
-sub_dir_dict = {'Bulk': ['bulk_CrudeRelax','bulk_FineRelax']}  # 键指代子目录，值中的列表列出子目录下所有构型计算所得的结果
+sub_dir_dict = {'Bulk': ['bulk_CrudeRelax','bulk_FineRelax','bulk_FineRelax_SOC']}  # 键指代子目录，值中的列表列出子目录下所有构型计算所得的结果
 sub_dir, data_dir_index = target_data  # 从target_data中解压出子目录名称以及子目录下的数据文件夹的引索
 
 # 能带计算结果（EIGENVAL）的绝对地址
@@ -67,7 +67,7 @@ VB.Electron_bands(Kpath_projected,bands_shifted,Knodes_projected,ylim=(-2,5),y_m
 #plt.text(0.5,0.1,'K',size=16)
 
 # 数据保存
-saving_dir_dict = {'Office': 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure',  # 办公室电脑
+saving_dir_dict = {'Office': 'D:/Projects/OptoTransition/Data/Figures/Band structure',  # 办公室电脑
                    'C221': 'D:/Projects/OptoTransition/Data/Figures/Band structure'}    # 宿舍电脑
 VI.SavingFigure(saving_dir_dict[working_station]+'/',filename=saving_filename,format='eps')
 VI.SavingFigure(saving_dir_dict[working_station]+'/',filename=saving_filename,format='pdf')
