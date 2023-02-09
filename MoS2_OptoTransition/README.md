@@ -1,4 +1,4 @@
-# Light-electron interaction of $\mathrm{MoS_2}$ in presence of external electric field
+# Light-electron interaction inside $\mathrm{MoS_2}$ in presence of external electric field
 
 ## I. Introduction
 
