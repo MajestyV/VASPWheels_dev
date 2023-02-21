@@ -85,7 +85,8 @@ VB = VisualizeBands.plot_bands()  # 调用VisualizeBands模块（能带可视化
 
 if __name__=='__main__':
     # data_file = '/Users/liusongwei/Desktop/OptoTransition/Data/TDM/monolayer/TDM_monolayer_SOC/TDM.dat'  # 数据文件的地址
-    data_file = '/Users/liusongwei/Desktop/TDM/result/TDM.dat'
+    # data_file = '/Users/liusongwei/Desktop/TDM/result/TDM.dat'
+    data_file = 'D:/Projects/OptoTransition/Data/Temporary/TDM.dat'  # MMW 502
 
     data_DataFrame = pd.read_csv(data_file,header=0,sep='\s+')  # pandas利用读取数据文件中的数据，返回的数据格式为pandas包专有的DataFrame格式
 
@@ -99,6 +100,9 @@ if __name__=='__main__':
     # print(k_projected)
 
     plt.plot(k_projected,TDM)
+
+    plt.vlines(1.15113,0,500)
+    plt.vlines(1.81573,0,500)
 
 
 
