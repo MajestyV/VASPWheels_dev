@@ -3,8 +3,9 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from VaspWheels import GetKpath,GetElectronicBands,Visualization,VisualizeBands
+from VaspWheels import GeneralAnalyzer,GetKpath,GetElectronicBands,Visualization,VisualizeBands
 
+# GA = GeneralAnalyzer.functions()  # 调用GeneralAnalyzer模块（通用数据分析包）
 GK = GetKpath.vasp()              # 调用GetKpath模块（可以获取K点路径）
 GE = GetElectronicBands.vasp()    # 调用GetElectronicBands模块（可以获取能带数据）
 VI = Visualization.plot()         # 调用Visualization模块（可视化基础包）
@@ -86,20 +87,24 @@ VB = VisualizeBands.plot_bands()  # 调用VisualizeBands模块（能带可视化
 if __name__=='__main__':
     # data_file = '/Users/liusongwei/Desktop/OptoTransition/Data/TDM/monolayer/TDM_monolayer_SOC/TDM.dat'  # 数据文件的地址
     # data_file = '/Users/liusongwei/Desktop/TDM/result/TDM.dat'
-    data_file = 'D:/Projects/OptoTransition/Data/Temporary/TDM.dat'  # MMW 502
+    # data_file = 'D:/Projects/OptoTransition/Data/Temporary/TDM_bilayer_band24to25.dat'  # MMW 502
 
-    data_DataFrame = pd.read_csv(data_file,header=0,sep='\s+')  # pandas利用读取数据文件中的数据，返回的数据格式为pandas包专有的DataFrame格式
+    data_gallery = 'D:/Projects/OptoTransition/Data/TDM/monolayer/TDM_monolayer_EDIFF_6/'
+    file_name = ['TDM_band11-13.dat','TDM_band11-14.dat','TDM_band12-13.dat','TDM_band12-14.dat']
+    file_list = [data_gallery+n for n in file_name]
 
-    data_array = data_DataFrame.values
+    data_total = []
+    for n in file_list:
+        data_DataFrame = pd.read_csv(n,header=0,sep='\s+')  # pandas利用读取数据文件中的数据，返回的数据格式为pandas包专有的DataFrame格式
+        data_array = data_DataFrame.values  # 将数据从DataFrame格式转换为数组格式
+        data_total.append(data_array)
 
     # print(data_DF)
     # print(np.array(data_DF))
 
-    k_projected, TDM = (data_array[:,0],data_array[:,1])
-
-    # print(k_projected)
-
-    plt.plot(k_projected,TDM)
+    for i in range(len(file_name)):
+        k_projected, TDM = (data_total[i][:,0],data_total[i][:,1])
+        plt.plot(k_projected,TDM)
 
     plt.vlines(1.15113,0,500)
     plt.vlines(1.81573,0,500)
