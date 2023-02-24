@@ -89,8 +89,12 @@ if __name__=='__main__':
     # data_file = '/Users/liusongwei/Desktop/TDM/result/TDM.dat'
     # data_file = 'D:/Projects/OptoTransition/Data/Temporary/TDM_bilayer_band24to25.dat'  # MMW 502
 
-    data_gallery = 'D:/Projects/OptoTransition/Data/TDM/monolayer/TDM_monolayer_EDIFF_6/'
-    file_name = ['TDM_band11-13.dat','TDM_band11-14.dat','TDM_band12-13.dat','TDM_band12-14.dat']
+    # Monolayer
+    # data_gallery = 'D:/Projects/OptoTransition/Data/TDM/monolayer/TDM_monolayer_EDIFF_6/'
+    # file_name = ['TDM_band11-13.dat','TDM_band11-14.dat','TDM_band12-13.dat','TDM_band12-14.dat']
+    # Bilayer_临时
+    data_gallery = 'D:/Projects/OptoTransition/Data/TDM/bilayer/Temporary/'
+    file_name = ['TDM_bilayer_band23to25.dat','TDM_bilayer_band24to25.dat','TDM_bilayer_band23to26.dat','TDM_bilayer_band24to26.dat']
     file_list = [data_gallery+n for n in file_name]
 
     data_total = []
@@ -102,9 +106,13 @@ if __name__=='__main__':
     # print(data_DF)
     # print(np.array(data_DF))
 
-    for i in range(len(file_name)):
-        k_projected, TDM = (data_total[i][:,0],data_total[i][:,1])
-        plt.plot(k_projected,TDM)
+    Kpath_origin, Kpath_destination = [min(data_total[0][:, 0]), max(data_total[0][:, 0])]  # 获取投影K点路径的起点跟终点
 
+    for i in range(len(file_name)):
+        Kpath_projected, TDM = (data_total[i][:,0],data_total[i][:,1])
+        plt.plot(Kpath_projected,TDM)
+
+    plt.xlim(Kpath_origin,Kpath_destination)
+    plt.ylim(0,400)
     plt.vlines(1.15113,0,500)
     plt.vlines(1.81573,0,500)
