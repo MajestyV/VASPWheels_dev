@@ -3,6 +3,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from .colors import xkcd_rgb, crayons
 from VaspWheels import Visualization
 
 ####################################################################################################################
@@ -23,7 +24,8 @@ class plot_bands:
         # 一些画图参数（以动态变量的形式传入）
         title = kwargs['title'] if 'title' in kwargs else ''  # 能带图标题，默认为无标题
         # color = kwargs['color'] if 'color' in kwargs else np.array([70,148,203])/255.0                     # 能带曲线颜色
-        color = kwargs['color'] if 'color' in kwargs else VI.MorandiColor('Paris')  # 能带曲线颜色
+        # color = kwargs['color'] if 'color' in kwargs else VI.MorandiColor('Paris')  # 能带曲线颜色
+        color = kwargs['color'] if 'color' in kwargs else crayons['Navy Blue']  # 能带曲线颜色
         color_split = kwargs['color_split'] if 'color_split' in kwargs else VI.MorandiColor('Grey')  # 分割线颜色
         xlim = (min(Kpath_projected), max(Kpath_projected))       # X轴范围
         ylim = kwargs['ylim'] if 'ylim' in kwargs else (-20, 20)  # Y轴范围

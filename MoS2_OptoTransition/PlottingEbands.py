@@ -20,7 +20,7 @@ class data_analysis:
 
         # 能带图保存目录
         saving_directory_dict = {'MMW502': 'D:/Projects/OptoTransition/Data/Figures/Band structure',  # 办公室电脑
-                                 'JCPGH1': 'D:/Projects/OptoTransition/Data/Figures/Band structure',    # 宿舍电脑
+                                 'JCPGH1': 'D:/Projects/OptoTransition/Gallery',    # 宿舍电脑
                                  'Macbook': '/Users/liusongwei/Desktop/OptoTransition/Data/Figures/Band structure'}    # Macbook
 
         self.saving_directory = saving_directory_dict[working_place]  # 如要保存数据图像，要指定保存路径
@@ -62,21 +62,22 @@ class data_analysis:
             VB.Electron_bands(Kpath_projected, bands, Knodes_projected, ylim=(-2, 5), y_major_tick=1,HighSymPoint=self.HSP_path)
 
     # 用于保存图像的函数
-    def SavingFigure(self,filename,dpi=600,format=('eps','jpg')):
-
-        address = self.saving_directory+'/'+filename
-
+    def Save_Figure(self,filename,dpi=600,format=('eps','jpg')):
         if isinstance(format,str):
+            address = self.saving_directory + '/' + filename + '.' + str(format)
             plt.savefig(address, dpi=dpi, format=format)
         else:
             for i in format:
+                address = self.saving_directory + '/' + filename + '.' + str(i)
                 plt.savefig(address, dpi=dpi, format=i)
 
 if __name__=='__main__':
-    saving_filename = 'Bilayer_MoS2_SOC'  # 数据文件保存时的名称
+    saving_filename = 'MoS2_bilayer_0.500'  # 数据文件保存时的名称
 
-    data_location = 'Stark_effect/DipoleSheet/GSE_Bilayer/E_0.225'
+    data_location = 'Stark_effect/DipoleSheet/GSE_Bilayer/E_0.500'
 
-    DA = data_analysis('MMW502',data_location,'HEX','HEX_2D',shift_Fermi=False)
+    DA = data_analysis('JCPGH1',data_location,'HEX','HEX_2D',shift_Fermi=True)
 
     DA.Plot_EnergyBands()
+
+    DA.Save_Figure(saving_filename)
