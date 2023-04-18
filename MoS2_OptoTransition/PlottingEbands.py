@@ -41,25 +41,30 @@ class data_analysis:
         # 控制是否进行费米面调零的选项
         self.shift_Fermi = shift_Fermi
 
-    def Plot_EnergyBands(self):
+        # 从VASP计算结果中提取数据
         # 分析整理能带计算结果
-        bands_dict = GE.GetEbands(self.EIGENVAL)  # 提取能带计算结果以及各种参数
-        num_bands = bands_dict['num_bands']  # 提取能带总数
-        num_kpoints = bands_dict['num_kpoints']  # 提取K点总数
-        Kpath = bands_dict['Kpath']  # K点路径
-        bands = bands_dict['bands']  # 能带具体的能量值
+        bands_dict = GE.GetEbands(self.EIGENVAL)  # 调用GetElectronicBands.vasp()中的函数提取能带计算数据
+        self.num_bands = bands_dict['num_bands']  # 提取能带总数
+        self.num_kpoints = bands_dict['num_kpoints']  # 提取K点总数
+        self.Kpath = bands_dict['Kpath']  # K点路径
+        self.bands = bands_dict['bands']  # 能带具体的能量值
 
+        # 调用GetElectronicBands.vasp()中的函数对能带计算结果进行分析（寻找价带顶跟导带底以及计算带隙等）
+        Eg, Ev_max, Ec_min, extremum_location = GE.GetBandgap(self.EIGENVAL, mode='occupation')
+        self.Eg, self.Ev_max, self.Ec_min, self.extremum_location = [Eg, Ev_max, Ec_min, extremum_location]  # 转换为实例函数
+
+    def GetBandgap(self): return self.Eg
+
+    def Plot_EnergyBands(self):
         # 生成投影到一维的K点路径
-        num_segments = len(self.HSP_path)-1
-        Kpath_projected, Knodes_projected = GK.ProjectKpath(Kpath, num_segments, LatticeCorrection='True', Lattice=self.lattice)
-
-        Eg, Ev_max, Ec_min, extremum_location = GE.GetBandgap(self.EIGENVAL, mode='occupation')  # 寻找价带顶跟导带底以及计算带隙
+        num_segments = len(self.HSP_path) - 1
+        Kpath_projected, Knodes_projected = GK.ProjectKpath(self.Kpath, num_segments, LatticeCorrection='True', Lattice=self.lattice)
 
         if self.shift_Fermi:
-            bands_shifted = GE.ShiftFermiSurface(bands, Ev_max)  # 费米面调零
-            VB.Electron_bands(Kpath_projected, bands_shifted, Knodes_projected, ylim=(-2, 5), y_major_tick=1,HighSymPoint=self.HSP_path)
+            bands_shifted = GE.ShiftFermiSurface(self.bands, self.Ev_max)  # 费米面调零
+            VB.Electron_bands(Kpath_projected, bands_shifted, Knodes_projected, ylim=(-2, 5), y_major_tick=1, HighSymPoint=self.HSP_path)
         else:
-            VB.Electron_bands(Kpath_projected, bands, Knodes_projected, ylim=(-2, 5), y_major_tick=1,HighSymPoint=self.HSP_path)
+            VB.Electron_bands(Kpath_projected, self.bands, Knodes_projected, ylim=(-2, 5), y_major_tick=1, HighSymPoint=self.HSP_path)
 
     # 用于保存图像的函数
     def Save_Figure(self,filename,dpi=600,format=('eps','jpg')):
@@ -74,10 +79,21 @@ class data_analysis:
 if __name__=='__main__':
     saving_filename = 'MoS2_bilayer_0.500'  # 数据文件保存时的名称
 
-    data_location = 'Stark_effect/DipoleSheet/GSE_Bilayer/E_0.500'
+    data_directory = 'Stark_effect/DipoleSheet/GSE_Bilayer'
 
-    DA = data_analysis('JCPGH1',data_location,'HEX','HEX_2D',shift_Fermi=True)
+    # E_field = ['E_0.025', 'E_0.050', 'E_0.075', 'E_0.100', 'E_0.125', 'E_0.150', 'E_0.175', 'E_0.200', 'E_0.225', 'E_0.250',
+               # 'E_0.275', 'E_0.300', 'E_0.325', 'E_0.350', 'E_0.375', 'E_0.400', 'E_0.425', 'E_0.450', 'E_0.475', 'E_0.500',
+               # 'E_0.525', 'E_0.550']
+    E_field = ['E_0.500']
 
-    DA.Plot_EnergyBands()
+    Bandgap = []
+    for i in E_field:
+        data_location = data_directory+'/'+i
+        DA = data_analysis('JCPGH1',data_location,'HEX','HEX_2D',shift_Fermi=True)
+        # Bandgap.append(DA.GetBandgap())
 
-    DA.Save_Figure(saving_filename)
+        DA.Plot_EnergyBands()
+
+    # DA.Save_Figure(saving_filename)
+
+    print(Bandgap)
