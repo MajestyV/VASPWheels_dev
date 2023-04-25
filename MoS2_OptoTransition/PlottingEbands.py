@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import numpy as np
+
 from VaspWheels import GetKpath,GetElectronicBands,Visualization,VisualizeBands
 
 GK = GetKpath.vasp()              # 调用GetKpath模块（可以获取K点路径）
@@ -68,6 +70,15 @@ class data_analysis:
         else:
             VB.Electron_bands(Kpath_projected, self.bands, Knodes_projected, ylim=(-2, 5), y_major_tick=1, HighSymPoint=self.HSP_path)
 
+class data_recording:
+    ''' This class of function is designed for recording data. '''  #  这一行的缩进也要跟下一行对齐
+    def __init__(self):
+        self.name = data_recording
+
+    # 用于保存数据的函数
+    def Save_Data(self,file_name,data,sep=' '):
+        np.savetxt(file_name,data,delimiter=sep)
+
     # 用于保存图像的函数
     def Save_Figure(self,file_name,dpi=600,format=('eps','jpg')):
         if isinstance(format,str):
@@ -81,8 +92,8 @@ class data_analysis:
 if __name__=='__main__':
     saving_filename = 'MoS2_bilayer_0.500'  # 数据文件保存时的名称
 
-    # data_directory = 'Stark_effect/DipoleSheet/GSE_Bilayer'
-    data_directory = 'GSE/2_layer/GSE_Bilayer_SYM'
+    data_directory = 'Stark_effect/2-layer/GSE_Bilayer_SYM'
+    # data_directory = 'GSE/2_layer/GSE_Bilayer_SYM'
 
     E_field = ['E_0.025', 'E_0.050', 'E_0.075', 'E_0.100', 'E_0.125', 'E_0.150', 'E_0.175', 'E_0.200', 'E_0.225', 'E_0.250',
                'E_0.275', 'E_0.300', 'E_0.325', 'E_0.350', 'E_0.375', 'E_0.400', 'E_0.425', 'E_0.450', 'E_0.475', 'E_0.500',
@@ -92,11 +103,13 @@ if __name__=='__main__':
     Bandgap = []
     for i in E_field:
         data_location = data_directory+'/'+i
-        DA = data_analysis('Zhuhai',data_location,'HEX','HEX_2D',shift_Fermi=True)
+        DA = data_analysis('MMW502',data_location,'HEX','HEX_2D',shift_Fermi=True)
         Bandgap.append(DA.GetBandgap())
 
         # DA.Plot_EnergyBands()
 
     # DA.Save_Figure(saving_filename)
 
-    print(Bandgap)
+    # print(Bandgap)
+    DR = data_recording()
+    DR.Save_Data('D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Test/test.txt',Bandgap)
