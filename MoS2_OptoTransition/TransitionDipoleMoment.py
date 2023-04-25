@@ -1,74 +1,74 @@
 ########################################################################################################################
 # 模块调用
-from VaspWheels import GetKpath,GetElectronicBands,Visualization,VisualizeBands
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from VaspWheels import GeneralAnalyzer,GetKpath,GetElectronicBands,Visualization,VisualizeBands
 
+# GA = GeneralAnalyzer.functions()  # 调用GeneralAnalyzer模块（通用数据分析包）
 GK = GetKpath.vasp()              # 调用GetKpath模块（可以获取K点路径）
 GE = GetElectronicBands.vasp()    # 调用GetElectronicBands模块（可以获取能带数据）
 VI = Visualization.plot()         # 调用Visualization模块（可视化基础包）
 VB = VisualizeBands.plot_bands()  # 调用VisualizeBands模块（能带可视化专用包）
 
-########################################################################################################################
-# 程序输入（通过改变这一部分的变量，我们可以调整程序的运行结果，更细致地说，此部分代码决定了程序的总输入，我们可以在这控制我们想画的曲线及样式）
-working_station = 'Office'  # 工作地点，选项有Office, C221, 以及Macbook
-target_data = ('Bulk',0)  # (子目录名称,子目录下的数据文件夹名称在sub_dir_dict中的引索)
-bands_setting = ('HEX','HEX_3D')  # (crystal lattice, high symmetry point (HSP) path)
-saving_filename = 'Bulk_MoS2_CrudeRelax'  # 数据文件保存时的名称
+class TDM:
+    ''' TDM - short for Transition Dipole Moment '''
+    def __init__(self):
+        self.name = TDM
 
-########################################################################################################################
-# 导入V.A.S.P.计算结果文件
-# 计算结果的存放主目录 # 办公室电脑
-main_dir_dict = {'Office': 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure',  # 办公室电脑
-                 'C221': 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure'}    # 宿舍电脑
+        # 以字典形式记录的计算结果所在的主目录
+        data_directory = {'MMW502': 'D:/Projects/OptoTransition/Data',  # 办公室电脑
+                          'JCPGH1': 'D:/Projects/OptoTransition/Data',  # 宿舍电脑
+                          'Macbook': '/Users/liusongwei/Desktop/OptoTransition/Data',
+                          'Zhuhai': 'D:/PhD_research\OptoTransition/Data'}  # Macbook
 
-# 以字典的形式记录的子目录
-sub_dir_dict = {'Bulk': ['bulk_CrudeRelax','bulk_FineRelax','bulk_FineRelax_SOC']}  # 键指代子目录，值中的列表列出子目录下所有构型计算所得的结果
-sub_dir, data_dir_index = target_data  # 从target_data中解压出子目录名称以及子目录下的数据文件夹的引索
+    def GetTDM(self,data_file):
+        data_DataFrame = pd.read_csv(data_file, header=0, sep='\s+')  # pandas利用读取数据文件中的数据，返回的数据格式为pandas包专有的DataFrame格式
+        data_array = data_DataFrame.values  # 将数据从DataFrame格式转换为数组格式
+        return data_array
 
-# 能带计算结果（EIGENVAL）的绝对地址
-EIGENVAL = main_dir_dict[working_station]+'/'+sub_dir+'/'+sub_dir_dict[sub_dir][data_dir_index]+'/EIGENVAL'
+    def GetTDM_batch(self,file_list):
+        data_dict = {}
+        for i in file_list:
+            data_dict[i] = self.GetTDM(i)
+        return data_dict
 
-########################################################################################################################
-# 分析整理能带计算结果
-bands_dict = GE.GetEbands(EIGENVAL)      # 提取能带计算结果以及各种参数
-num_bands = bands_dict['num_bands']      # 提取能带总数
-num_kpoints = bands_dict['num_kpoints']  # 提取K点总数
-Kpath = bands_dict['Kpath']  # K点路径
-bands = bands_dict['bands']  # 能带具体的能量值
+if __name__=='__main__':
+    # 以字典形式记录的计算结果所在的主目录
+    data_directory = {'MMW502': 'D:/Projects/OptoTransition/Data',  # 办公室电脑
+                      'JCPGH1': 'D:/Projects/OptoTransition/Data',  # 宿舍电脑
+                      'Macbook': '/Users/liusongwei/Desktop/OptoTransition/Data',  # Macbook
+                      'Zhuhai': 'D:/PhD_research/OptoTransition/Data'}  # 珠海电脑
+    val_band_index = [21,22,23,24]  # valence band index
+    con_band_index = [25,26,27,28]  # conduction band index
 
-# 存放晶体结构参数的字典
-lattice_dict = {'HEX': ['HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive'],
-                'ORT': ['ORT', [3.16, 5.47, 12.9, 90, 90, 90], 'unitcell']}
+    Efield = 'E_0.525'
 
-# 存放高对称点路径的字典
-HighSymPoint_dict = {'HEX_2D': [r'$\Gamma$', 'M', 'K', r'$\Gamma$'],
-                     'HEX_3D': [r'$\Gamma$','M', 'K', r'$\Gamma$', 'A', 'L', 'H', 'A'],
-                     'ORT': [r'$\Gamma$', 'X', 'S', 'Y', r'$\Gamma$', 'S'],
-                     'ORT_1': [r'$\Gamma$', 'Y', 'S', 'X', r'$\Gamma$', 'S'],
-                     'ORT_2': [r'$\Gamma$', 'X', 'S', r'$\Gamma$', 'Y']}
+    data_file = data_directory['Zhuhai']+'/TDM/2-layer/GSE_Bilayer_TDM/'+Efield+'/'+str(val_band_index[3])+'-'+str(con_band_index[0])+'/TDM.dat'
 
-lattice, HSP = bands_setting  # 从bands_setting中解压出画能带所需的结构参数
+    data_file_list = [data_directory['Zhuhai']+'/TDM/2-layer/GSE_Bilayer_TDM/'+Efield+'/'+str(val_band_index[i])+'-'+str(con_band_index[j])+'/TDM.dat'
+                       for i in range(len(val_band_index)) for j in range(len(con_band_index))]
 
-# 生成投影到一维的K点路径
-num_segments = 7
-Kpath_projected,Knodes_projected = GK.ProjectKpath(Kpath,num_segments,LatticeCorrection='True',Lattice=lattice_dict[lattice])
-# print(Kpath_projected)
-# print(Knodes_projected)
+    TDM = TDM()
+    data = TDM.GetTDM(data_file)
+    data_dict = TDM.GetTDM_batch(data_file_list)
 
-########################################################################################################################
-# 绘制能带图
+    # print(data_DF)
+    # print(np.array(data_DF))
 
-Eg, Ev_max, Ec_min, extremum_location = GE.GetBandgap(EIGENVAL,mode='occupation')  # 寻找价带顶跟导带底以及计算带隙
-bands_shifted = GE.ShiftFermiSurface(bands,Ev_max)  # 费米面调零
+    Kpath_origin, Kpath_destination = [min(data[:, 0]), max(data[:, 0])]  # 获取投影K点路径的起点跟终点
 
-VB.Electron_bands(Kpath_projected,bands_shifted,Knodes_projected,ylim=(-2,5),y_major_tick=1,
-                  HighSymPoint=HighSymPoint_dict[HSP])
+    for file in data_file_list:
+        data = data_dict[file]
+        plt.plot(data[:,0],data[:,1])
+        #Kpath_projected, TDM = (data[i][:,0],data[i][:,1])
+        #plt.plot(Kpath_projected,TDM)
 
-#plt.vlines(0.9941748903765186*(2.0/3.0),-2.2,4.5, linewidth=2, linestyles='dashed',colors=VI.MorandiColor('Black'))
-#plt.text(0.5,0.1,'K',size=16)
+    # plt.plot(data[:,0],data[:,1])
 
-# 数据保存
-saving_dir_dict = {'Office': 'D:/Projects/OptoTransition/Data/Figures/Band structure',  # 办公室电脑
-                   'C221': 'D:/Projects/OptoTransition/Data/Figures/Band structure'}    # 宿舍电脑
-VI.SavingFigure(saving_dir_dict[working_station]+'/',filename=saving_filename,format='eps')
-VI.SavingFigure(saving_dir_dict[working_station]+'/',filename=saving_filename,format='pdf')
-VI.SavingFigure(saving_dir_dict[working_station]+'/',filename=saving_filename,format='png')
+    plt.xlim(Kpath_origin,Kpath_destination)
+    plt.ylim(0,400)
+    plt.vlines(1.15113,0,500)
+    plt.vlines(1.81573,0,500)
+
+    plt.show()
