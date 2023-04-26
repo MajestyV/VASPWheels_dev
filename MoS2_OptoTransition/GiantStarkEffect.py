@@ -21,7 +21,7 @@ if __name__=='__main__':
 
     # 画图模块
     # color = ["#6495ED", "#F08080"]
-    color = ['#1f77b4', '#d62728', '#2ca02c',  '#9467bd']
+    color = ['#4878d0', '#d65f5f', '#ee854a', '#6acc64']
     symbol = ['s','o','^','p']
     label = ['no SOC + no sym.', 'no SOC + sym.', 'SOC + no sym.', 'SOC + sym.']
 

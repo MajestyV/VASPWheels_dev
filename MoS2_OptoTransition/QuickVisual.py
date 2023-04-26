@@ -93,18 +93,19 @@ if __name__=='__main__':
     QV = QuickVisual(x_major=1.5, y_major=1.0)
 
     # color = ["#6495ED", "#F08080"]
-    color = ['#1f77b4', '#d62728', '#2ca02c',  '#9467bd']
+    # color = ['#1f77b4', '#d62728', '#2ca02c',  '#9467bd']
+    color = ['#4878d0', '#d65f5f', '#ee854a', '#6acc64', '#956cb4', '#8c613c', '#dc7ec0', '#797979', '#d5bb67', '#82c6e2']
     symbol = ['s','o','^','p']
     label = ['no SOC + no sym.', 'no SOC + sym.', 'SOC + no sym.', 'SOC + sym.']
 
-    for i in [0,1]:
-        indexing = i+2
+    for i in [2,3]:
+        indexing = i
         x = data_total[i][:,0]*10
         y = data_total[i][:,1]
         plt.plot(x,y,c=color[indexing],marker=symbol[indexing],label=label[indexing])
 
     plt.xlim(0,5.5)
-    plt.ylim(-46,-43)
+    plt.ylim(-46.5,-43.5)
 
     plt.xlabel('Electric field (V/nm)')
     plt.ylabel('Total Energy (eV)')

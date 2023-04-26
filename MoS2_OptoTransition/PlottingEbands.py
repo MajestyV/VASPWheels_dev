@@ -93,7 +93,7 @@ class data_recording:
 if __name__=='__main__':
     saving_filename = 'MoS2_bilayer_0.500'  # 数据文件保存时的名称
 
-    data_directory = 'Stark_effect/2-layer/GSE_Bilayer_SOC'
+    data_directory = 'Stark_effect/2-layer/GSE_Bilayer_SOC_SYM'
     # data_directory = 'GSE/2_layer/GSE_Bilayer_SYM'
 
     #E_field = ['E_0.025', 'E_0.050', 'E_0.075', 'E_0.100', 'E_0.125', 'E_0.150', 'E_0.175', 'E_0.200', 'E_0.225', 'E_0.250',
@@ -101,22 +101,28 @@ if __name__=='__main__':
                #'E_0.525', 'E_0.550']
     #E_field = ['0.000', '0.025', '0.050', '0.075', '0.100', '0.125', '0.150', '0.175', '0.200', '0.225','0.250',
                #'0.275', '0.300', '0.325', '0.350', '0.375', '0.400', '0.425', '0.450', '0.475','0.500','0.525', '0.550']
-    E_field = ['0.200']
+    E_field = ['0.000','0.100','0.200']
 
-    color = ['#1f77b4', '#d62728', '#2ca02c', '#9467bd']
+    color = ['#4878d0', '#d65f5f', '#ee854a', '#6acc64']
 
     Bandgap = []
     for i in E_field:
         data_location = data_directory+'/E_'+i
-        DA = data_analysis('MMW502',data_location,'HEX','HEX_2D',shift_Fermi=True,color=color[2])
+        DA = data_analysis('MMW502',data_location,'HEX','HEX_2D',shift_Fermi=True,color=color[3])
         Bandgap.append([float(i)*10.0,DA.GetBandgap()])
 
         DA.Plot_EnergyBands()
 
+        # print(Bandgap)
+        DR = data_recording()
+        saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Test'
+        # DR.Save_Data(saving_directory,'GSE_2_SOC_SYM',Bandgap)
+        DR.Save_Figure(saving_directory, 'GSE_2_SOC_SYM_'+i)
+
     # DA.Save_Figure(saving_filename)
 
     # print(Bandgap)
-    DR = data_recording()
-    saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Test'
+    #DR = data_recording()
+    #saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Test'
     # DR.Save_Data(saving_directory,'GSE_2_SOC_SYM',Bandgap)
-    DR.Save_Figure(saving_directory,'GSE_2_SOC_0.200')
+    #DR.Save_Figure(saving_directory,'GSE_2_SOC_0.200')
