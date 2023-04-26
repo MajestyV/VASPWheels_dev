@@ -63,10 +63,23 @@ class QuickVisual:
 
     # def plot(self,x,y,xlim,ylim):
 
+class data_recording:
+    ''' This class of function is designed for recording data. '''
+    def __init__(self):
+        self.name = data_recording
+
+    # 用于保存图像的函数
+    def Save_Figure(self,saving_directory,file_name,dpi=600,format=('eps','jpg')):
+        for i in format:
+            file_address = saving_directory + '/' + file_name + '.' + str(i)
+            plt.savefig(file_address, dpi=dpi, format=i)
+
 if __name__=='__main__':
-    data_directory = 'D:/Projects/OptoTransition/Data/ElectricField/TOTEN'
+    # data_directory = 'D:/Projects/OptoTransition/Data/ElectricField/TOTEN'  # JCPGH1
+    data_directory = 'D:/Projects/OptoTransition/Data/Total/TOTEN'  # MMW502
+
     file_list = ['GSE_Bilayer_TOTEN.dat','GSE_Bilayer_SYM_TOTEN.dat',
-                     'GSE_Bilayer_SOC_TOTEN.dat','GSE_Bilayer_SOC_SYM_TOTEN.dat']
+                 'GSE_Bilayer_SOC_TOTEN.dat','GSE_Bilayer_SOC_SYM_TOTEN.dat']
 
     data_total = []
     for file in file_list:
@@ -81,14 +94,28 @@ if __name__=='__main__':
 
     # color = ["#6495ED", "#F08080"]
     color = ['#1f77b4', '#d62728', '#2ca02c',  '#9467bd']
+    symbol = ['s','o','^','p']
+    label = ['no SOC + no sym.', 'no SOC + sym.', 'SOC + no sym.', 'SOC + sym.']
 
     for i in [0,1]:
+        indexing = i+2
         x = data_total[i][:,0]*10
         y = data_total[i][:,1]
-        plt.plot(x,y,c=color[i+2])
+        plt.plot(x,y,c=color[indexing],marker=symbol[indexing],label=label[indexing])
 
     plt.xlim(0,5.5)
     plt.ylim(-46,-43)
+
+    plt.xlabel('Electric field (V/nm)')
+    plt.ylabel('Total Energy (eV)')
+    plt.legend(frameon=False)
+
+    # 数据保存
+    # print(Bandgap)
+    DR = data_recording()
+    saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Test'
+    DR.Save_Figure(saving_directory, 'TOTEN_SOC')
+
 
 
 
