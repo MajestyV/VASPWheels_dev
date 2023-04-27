@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm,colors
 
 if __name__=='__main__':
-    # data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Monolayer/Mo1/PBAND_SUM.dat'  # MMW502
+    # data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Monolayer/Projected_bands/Mo1/PBAND_SUM.dat'  # MMW502
     data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Monolayer/S/PBAND_SUM.dat'  # JCPGH1
 
     info = [linecache.getline(data_file,i+1) for i in range(2)]
