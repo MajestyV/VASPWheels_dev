@@ -9,7 +9,7 @@ VI = VisualizationSCI.plot()  # 调用VisualizationSCI模块（专为科研绘�
 ###################################################################################################################
 # 数据
 # 电场强度
-Efield = [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0]
+Efield = np.array([0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0])*0.80645
 # 载流子有效质量
 me_K_l = [0.527487997,0.510721018,0.505257208,0.502294246,0.50028786,0.498763335,0.49752238,0.496454326]
 me_K_t = [0.535576244,0.523794681,0.519838387,0.51762134,0.516065013,0.514855135,0.513847424,0.512964043]
@@ -65,7 +65,7 @@ def DrawEffectiveDOS():
 
 
     VI.FigureSetting(xlabel='Electric field (V/nm)', ylabel='Effective DOS (a.u.)',
-                     xlim=(0.08,1.04),ylim=(0.2,1.2),
+                     xlim=(0,0.9),ylim=(0.2,1.2),
                      legend='True')
 
     plt.legend(loc='best',ncol=2,fontsize=6,frameon=False)
@@ -91,7 +91,7 @@ def DrawEffectiveMass():
 
 
     VI.FigureSetting(xlabel='Electric field (V/nm)', ylabel='Effective mass ($\mathrm{m_e}$)',
-                     xlim=(0.08,1.04),ylim=(-1.2,0.8),
+                     xlim=(0,0.9),ylim=(-1.2,0.8),
                      legend='True')
 
     plt.legend(loc='best',ncol=2,fontsize=6,frameon=False)
@@ -135,7 +135,7 @@ def DrawConcentration_n_Mobility():
     ax1.plot(Efield, concentration(Eg), linewidth=linewidth, color=blue,
                                         marker='o', markersize=markersize, markeredgewidth=markeredgewidth,
                                         label=r'$n_{i} \propto \mathrm{exp}(-\frac{E_g}{2k_\mathrm{B}T})$')
-    ax1.set_xlim(0.08,1.04)
+    ax1.set_xlim(0,0.9)
     ax1.set_ylim(-0.05,0.45)
     ax1.set_xlabel('Electric field (V/nm)',fontsize=fontsize)
     # ax1.set_ylabel(r'Concentration ($(N_{c}N_{v})^{\frac{1}{2}}$)',fontsize=fontsize,color=blue)
@@ -184,8 +184,8 @@ def DrawConcentration_n_Mobility():
 
     # 数据保存模块
     # saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
-    #saving_directory = 'D:/PhD_research/Figures/Carrier transportation/Summary/Version_22.12.29/'  # 宿舍电脑
-    saving_directory = 'C:/Users/13682/OneDrive/桌面/Gallery/Figures/All/'  # 宿舍电脑汇总
+    saving_directory = 'D:/Projects/PhaseTransistor/Gallery/GSE/'  # 宿舍电脑
+    # saving_directory = 'C:/Users/13682/OneDrive/桌面/Gallery/Figures/All/'  # 宿舍电脑汇总
     VI.SavingFigure(saving_directory,filename='Concentration_n_mobility',format='pdf')
     VI.SavingFigure(saving_directory, filename='Concentration_n_mobility', format='eps')
 
@@ -193,6 +193,6 @@ def DrawConcentration_n_Mobility():
 
 if __name__ == '__main__':
     # DrawEffectiveDOS()
-    DrawEffectiveMass()
-    # DrawConcentration_n_Mobility()
+    # DrawEffectiveMass()
+    DrawConcentration_n_Mobility()
     plt.show()
