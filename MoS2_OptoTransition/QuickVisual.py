@@ -3,7 +3,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
-from VaspWheels.colors import xkcd_rgb, crayons
+
+
 # from VaspWheels import GetKpath,GetElectronicBands,Visualization,VisualizeBands
 
 # GK = GetKpath.vasp()              # 调用GetKpath模块（可以获取K点路径）

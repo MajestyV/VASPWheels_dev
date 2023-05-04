@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from VaspWheels.colors import xkcd_rgb, crayons
+from VaspWheels.Gallery.colors import crayons
 from VaspWheels import GetKpath,GetElectronicBands,Visualization,VisualizeBands
 
 GK = GetKpath.vasp()              # 调用GetKpath模块（可以获取K点路径）
@@ -93,8 +93,8 @@ class data_recording:
 if __name__=='__main__':
     saving_filename = 'MoS2_bilayer_0.500'  # 数据文件保存时的名称
 
-    data_directory = 'Stark_effect/2-layer/GSE_Bilayer_SOC_SYM'
-    # data_directory = 'GSE/2_layer/GSE_Bilayer_SYM'
+    # data_directory = 'Stark_effect/2-layer/GSE_Bilayer_SOC_SYM'
+    data_directory = 'GSE/2_layer/GSE_Bilayer_SYM'
 
     #E_field = ['E_0.025', 'E_0.050', 'E_0.075', 'E_0.100', 'E_0.125', 'E_0.150', 'E_0.175', 'E_0.200', 'E_0.225', 'E_0.250',
                #'E_0.275', 'E_0.300', 'E_0.325', 'E_0.350', 'E_0.375', 'E_0.400', 'E_0.425', 'E_0.450', 'E_0.475', 'E_0.500',
@@ -108,16 +108,16 @@ if __name__=='__main__':
     Bandgap = []
     for i in E_field:
         data_location = data_directory+'/E_'+i
-        DA = data_analysis('MMW502',data_location,'HEX','HEX_2D',shift_Fermi=True,color=color[3])
+        DA = data_analysis('JCPGH1',data_location,'HEX','HEX_2D',shift_Fermi=True,color=color[3])
         Bandgap.append([float(i)*10.0,DA.GetBandgap()])
 
         DA.Plot_EnergyBands()
 
         # print(Bandgap)
-        DR = data_recording()
-        saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Test'
+        # DR = data_recording()
+        # saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Test'
         # DR.Save_Data(saving_directory,'GSE_2_SOC_SYM',Bandgap)
-        DR.Save_Figure(saving_directory, 'GSE_2_SOC_SYM_'+i)
+        # DR.Save_Figure(saving_directory, 'GSE_2_SOC_SYM_'+i)
 
     # DA.Save_Figure(saving_filename)
 

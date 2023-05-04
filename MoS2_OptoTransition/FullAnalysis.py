@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import VaspWheels as vasp
 from VaspWheels import GetKpath,GetElectronicBands,Visualization,VisualizeBands
 
 GE = GetElectronicBands.vasp()    # 调用GetElectronicBands模块（可以获取能带数据）
@@ -6,7 +7,7 @@ GK = GetKpath.vasp()              # 调用GetKpath模块（可以获取K点路�
 
 class full_analysis:
     ''' This class of function is designed for full analysis of electronic structure of target systems.  '''
-    def __init__(self,EIGENVAL,DOSCAR,TDM,lattice,HSP_type):
+    def __init__(self,EIGENVAL,DOSCAR,TDM,lattice,HSP_type,dimension='3D'):
         self.name = full_analysis
 
         # 存放晶体结构参数的字典
@@ -14,13 +15,8 @@ class full_analysis:
                         'ORT': ['ORT', [3.16, 5.47, 12.9, 90, 90, 90], 'unitcell']}
         lattice_param = lattice_dict[lattice]
 
-        # 存放高对称点路径的字典
-        HighSymPoint = {'HEX_2D': [r'$\Gamma$', 'M', 'K', r'$\Gamma$'],
-                        'HEX_3D': [r'$\Gamma$', 'M', 'K', r'$\Gamma$', 'A', 'L', 'H', 'A'],
-                        'ORT': [r'$\Gamma$', 'X', 'S', 'Y', r'$\Gamma$', 'S'],
-                        'ORT_1': [r'$\Gamma$', 'Y', 'S', 'X', r'$\Gamma$', 'S'],
-                        'ORT_2': [r'$\Gamma$', 'X', 'S', r'$\Gamma$', 'Y']}
-        HSP_path = HighSymPoint[HSP_type]  # HSP - short for High Symmetry Point
+        HighSymPoint = {'2D': vasp.HighSymPoint_2D, '3D': vasp.HighSymPoint_3D}  # 从VaspWheels读取高对称点数据并存为字典，方便调用
+        HSP_path = HighSymPoint[dimension][HSP_type]  # HSP - short for High Symmetry Point
 
         # 数据提取模块
         # 从EIGENVAL中分析整理能带计算结果
@@ -37,6 +33,7 @@ class full_analysis:
         # 生成投影到一维的K点路径
         num_segments = len(HSP_path) - 1
         self.Kpath_projected, self.Knodes_projected = GK.ProjectKpath(self.Kpath, num_segments, LatticeCorrection='True',Lattice=lattice_param)
+        # self.Kpath_projected = self.Kpath
 
         # 从DOSCAR中提取态密度计算结果
         DOS_data = GE.GetData(DOSCAR,spin_polarized='False')  # 非自旋极化版本
@@ -113,9 +110,10 @@ class full_analysis:
 #x_hist.invert_xaxis()
 
 if __name__=='__main__':
-    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Trilayer/E_prop_SYM'
+    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Trilayer/E_prop_SYM'  # MMW502
+    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bilayer/E_prop_SYM'  # JCPGH1
     EIGENVAL = data_directory+'/EIGENVAL'
     DOSCAR = data_directory+'/DOSCAR'
 
-    FA = full_analysis(EIGENVAL,DOSCAR,1,'HEX','HEX_2D')
+    FA = full_analysis(EIGENVAL,DOSCAR,1,'HEX','HEX',dimension='2D')
     FA.Visualize()

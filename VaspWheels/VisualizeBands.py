@@ -3,7 +3,8 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from .colors import xkcd_rgb, crayons
+# from Gallery.colors import crayons, xkcd_rgb
+from .Gallery import crayons, xkcd_rgb
 from VaspWheels import Visualization
 
 ####################################################################################################################
