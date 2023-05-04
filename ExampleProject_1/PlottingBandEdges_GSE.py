@@ -17,11 +17,11 @@ def MakeSchematic(band_edge):
     band_extracted_3 = band_edge[201:220]
     return band_extracted_2+band_extracted_1+band_extracted_3
 
-# data_directory = 'D:/PhD_research/Data/Simulation/MoS2/GSE/4/4_D3BJ_GSE_1_more_bands/'  # 宿舍电脑
-data_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/4/4_D3BJ_GSE_1_more_bands/'  # 办公室电脑
+data_directory = 'D:/PhD_research/Data/Simulation/MoS2/GSE/4/4_D3BJ_GSE_1_more_bands/'  # 宿舍电脑
+# data_directory = 'D:/Projects/PhaseTransistor/Data/Simulation/GSE/4/4_D3BJ_GSE_1_more_bands/'  # 办公室电脑
 
-# Efield = ['0.000','0.025','0.050','0.075','0.100','0.125','0.150','0.175','0.200']
-Efield = ['0.025','0.050','0.075','0.100','0.125','0.150','0.175','0.200']
+Efield = ['0.000','0.025','0.050','0.075','0.100','0.125','0.150','0.175','0.200']
+# Efield = ['0.025','0.050','0.075','0.100','0.125','0.150','0.175','0.200']
 
 #################################################################################################################
 # 设置全局字体选项
@@ -73,16 +73,16 @@ nbins = 100
 cmap_name = 'example'  # colormap名
 
 cmap = cm.colors.LinearSegmentedColormap.from_list(cmap_name, colors, N=nbins)  # 创建 colormap
-norm = cm.colors.Normalize(vmin=0.1, vmax=1.000)
+norm = cm.colors.Normalize(vmin=0, vmax=0.8)
 # n_bin 越小，插值得到的颜色区间越少
 cb = fig.colorbar(cm.ScalarMappable(cmap=cmap, norm=norm),cax=colorbar,orientation='vertical',
-                    ticks=[0.1,0.4,0.7,1.0])
+                    ticks=[0,0.2,0.4,0.6,0.8])
 cb.outline.set_color('none')
 cb.ax.set_title('Electric field (V/nm)',fontsize=6, pad = 5)
 cb.ax.tick_params(which='major',direction='in',length=3,width=0.5,color='white',left=False,labelsize=6)
 
 # 保存模块
-# saving_directory = 'D:/Projects/PhaseTransistor/Data/Figures/CarrierTransportation/Version_22.12.30/'  # 办公室电脑
-saving_directory = 'D:/Projects/PhaseTransistor/Gallery/Figures/All/'  # 办公室电脑汇总
+saving_directory = 'D:/Projects/PhaseTransistor/Gallery/GSE/'  # 办公室电脑
+# saving_directory = 'D:/Projects/PhaseTransistor/Gallery/Figures/All/'  # 办公室电脑汇总
 VI.SavingFigure(saving_directory,filename='BandEdgeEvolution',format='pdf')
 VI.SavingFigure(saving_directory,filename='BandEdgeEvolution',format='eps')
