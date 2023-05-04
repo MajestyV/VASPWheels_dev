@@ -113,7 +113,7 @@ class full_analysis:
 #x_hist.invert_xaxis()
 
 if __name__=='__main__':
-    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Monolayer/monolayer_FineRelax'
+    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Trilayer/E_prop_SYM'
     EIGENVAL = data_directory+'/EIGENVAL'
     DOSCAR = data_directory+'/DOSCAR'
 
