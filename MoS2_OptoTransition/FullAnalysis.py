@@ -15,7 +15,8 @@ class full_analysis:
                         'ORT': ['ORT', [3.16, 5.47, 12.9, 90, 90, 90], 'unitcell']}
         lattice_param = lattice_dict[lattice]
 
-        HighSymPoint = {'2D': vasp.HighSymPoint_2D, '3D': vasp.HighSymPoint_3D}  # 从VaspWheels读取高对称点数据并存为字典，方便调用
+        # 从VaspWheels读取高对称点数据并存为字典，方便调用
+        HighSymPoint = {'2D': vasp.HighSymPoint_2D, '3D': vasp.HighSymPoint_3D}
         HSP_path = HighSymPoint[dimension][HSP_type]  # HSP - short for High Symmetry Point
 
         # 数据提取模块
@@ -56,6 +57,37 @@ class full_analysis:
         #else:
             #VB.Electron_bands(Kpath_projected, self.bands, Knodes_projected, ylim=(-2, 5), y_major_tick=self.y_major, HighSymPoint=self.HSP_path, color=self.color)
 
+
+    def Visualize_band_n_dos(self,shift_Fermi=True,figsize=(4.5,6)):
+        if shift_Fermi:  # 默认进行费米面调零
+            bands = GE.ShiftFermiSurface(self.bands, self.Ev_max)  # 对能带数据进行费米面调零
+            energy = self.energy-self.Ev_max  # 对DOS数据进行费米面调零
+        else:
+            bands = self.bands
+            energy = self.energy
+
+
+        # 设置坐标轴和网格配置
+        fig = plt.figure(figsize=figsize)
+        grid = plt.GridSpec(3, 4, hspace=0.2, wspace=0.1)
+
+        # main_plot = fig.add_subplot(grid[:-1, 1:])
+        # subplot_x = fig.add_subplot(grid[-1, 1:], yticklabels=[], sharex=main_plot)
+        # subplot_y = fig.add_subplot(grid[:-1, 0], xticklabels=[], sharey=main_plot)
+
+        plot_bands = fig.add_subplot(grid[:-1, :3])
+        # subplot_x = fig.add_subplot(grid[-1, :3], yticklabels=[], sharex=main_plot)
+        plot_dos = fig.add_subplot(grid[:-1, 3], xticklabels=[], sharey=plot_bands)
+
+        # 画图
+        for i in range(self.num_bands):
+            plot_bands.plot(self.Kpath_projected,bands[i],linewidth=0.5)
+        plot_dos.plot(self.DOS,energy)
+
+        plot_bands.set_xlim(min(self.Kpath_projected),max(self.Kpath_projected))
+        plot_dos.set_ylim(-2,5)
+
+        plot_dos.set_xlim(0,10)
 
     def Visualize(self,shift_Fermi=True,figsize=(6,6)):
         if shift_Fermi:  # 默认进行费米面调零
@@ -110,10 +142,10 @@ class full_analysis:
 #x_hist.invert_xaxis()
 
 if __name__=='__main__':
-    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Trilayer/E_prop_SYM'  # MMW502
-    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bilayer/E_prop_SYM'  # JCPGH1
+    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Trilayer/E_prop_SYM'  # MMW502
+    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bilayer/E_prop_SYM'  # JCPGH1
     EIGENVAL = data_directory+'/EIGENVAL'
     DOSCAR = data_directory+'/DOSCAR'
 
     FA = full_analysis(EIGENVAL,DOSCAR,1,'HEX','HEX',dimension='2D')
-    FA.Visualize()
+    FA.Visualize_band_n_dos()
