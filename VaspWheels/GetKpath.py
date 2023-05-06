@@ -137,8 +137,11 @@ class vasp:
             Kpath_projected.append(K_distance)
 
         # 接下来，我们将K点路径转折点对应的路程端点取出，以在能带图上分块，方便分析
-        inter = int((num_kpoints-1)/num_segments)  # 总点数 = 分段数*间隔点数+1
-        Knodes_projected = Kpath_projected[0:num_kpoints:inter]  # K点路程端点
+        # inter = int((num_kpoints-1)/num_segments)  # 总点数 = 分段数*间隔点数+1  -- for old version of VaspWheels
+        # Knodes_projected = Kpath_projected[0:num_kpoints:inter]  # K点路程端点
+
+        inter = int((num_kpoints)/num_segments)  # 总点数 = 分段数*间隔点数  -- for linemode K-path
+        Knodes_projected = [Kpath_projected[0]]+[Kpath_projected[inter*i-1] for i in range(1,num_segments+1)]  # K点路程端点
 
         return Kpath_projected, Knodes_projected
 

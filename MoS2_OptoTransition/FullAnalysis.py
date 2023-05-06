@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import VaspWheels as vasp
+import VaspWheels as vw
 from VaspWheels import GetKpath,GetElectronicBands,Visualization,VisualizeBands
 
 GE = GetElectronicBands.vasp()    # 调用GetElectronicBands模块（可以获取能带数据）
@@ -16,8 +16,8 @@ class full_analysis:
         lattice_param = lattice_dict[lattice]
 
         # 从VaspWheels读取高对称点数据并存为字典，方便调用
-        HighSymPoint = {'2D': vasp.HighSymPoint_2D, '3D': vasp.HighSymPoint_3D}
-        HSP_path = HighSymPoint[dimension][HSP_type]  # HSP - short for High Symmetry Point
+        HighSymPoint = {'2D': vw.HSP.HighSymPoint_2D, '3D': vw.HSP.HighSymPoint_3D}
+        self.HSP_path = HighSymPoint[dimension][HSP_type]  # HSP - short for High Symmetry Point
 
         # 数据提取模块
         # 从EIGENVAL中分析整理能带计算结果
@@ -32,7 +32,7 @@ class full_analysis:
         self.Eg, self.Ev_max, self.Ec_min, self.extremum_location = [Eg, Ev_max, Ec_min, extremum_location]  # 转换为实例函数
 
         # 生成投影到一维的K点路径
-        num_segments = len(HSP_path) - 1
+        num_segments = len(self.HSP_path) - 1
         self.Kpath_projected, self.Knodes_projected = GK.ProjectKpath(self.Kpath, num_segments, LatticeCorrection='True',Lattice=lattice_param)
         # self.Kpath_projected = self.Kpath
 
@@ -46,30 +46,24 @@ class full_analysis:
 
     def GetBandgap(self): return self.Eg
 
-    #def Plot_EnergyBands(self,):
-        # 生成投影到一维的K点路径
-        #num_segments = len(self.HSP_path) - 1
-        #Kpath_projected, Knodes_projected = GK.ProjectKpath(self.Kpath, num_segments, LatticeCorrection='True', Lattice=self.lattice)
-
-        #if shift_Fermi:  # 默认进行费米面调零
-            #bands_shifted = GE.ShiftFermiSurface(self.bands, self.Ev_max)  # 费米面调零
-            #VB.Electron_bands(Kpath_projected, bands_shifted, Knodes_projected, ylim=(-2, 5), y_major_tick=self.y_major, HighSymPoint=self.HSP_path, color=self.color)
-        #else:
-            #VB.Electron_bands(Kpath_projected, self.bands, Knodes_projected, ylim=(-2, 5), y_major_tick=self.y_major, HighSymPoint=self.HSP_path, color=self.color)
-
-
-    def Visualize_band_n_dos(self,shift_Fermi=True,figsize=(4.5,6)):
+    def Visualize_band_n_dos(self,energy_range=(-3,5),dos_range=(0,15),shift_Fermi=True,figsize=(4.5,6)):
         if shift_Fermi:  # 默认进行费米面调零
             bands = GE.ShiftFermiSurface(self.bands, self.Ev_max)  # 对能带数据进行费米面调零
             energy = self.energy-self.Ev_max  # 对DOS数据进行费米面调零
         else:
             bands = self.bands
             energy = self.energy
-
+        Kpath, Knodes = (self.Kpath_projected,self.Knodes_projected)  # 将实例变量的值赋予本地变量
 
         # 设置坐标轴和网格配置
         fig = plt.figure(figsize=figsize)
         grid = plt.GridSpec(3, 4, hspace=0.2, wspace=0.1)
+
+        # 设置刻度线方向
+        plt.rcParams['xtick.direction'] = 'in'  # 将x轴的刻度线方向设置向内
+        plt.rcParams['ytick.direction'] = 'in'  # 将y轴的刻度线方向设置向内
+        #plt.tick_params(bottom=False, top=False, left=True, right=True)
+
 
         # main_plot = fig.add_subplot(grid[:-1, 1:])
         # subplot_x = fig.add_subplot(grid[-1, 1:], yticklabels=[], sharex=main_plot)
@@ -81,13 +75,29 @@ class full_analysis:
 
         # 画图
         for i in range(self.num_bands):
-            plot_bands.plot(self.Kpath_projected,bands[i],linewidth=0.5)
-        plot_dos.plot(self.DOS,energy)
+            plot_bands.plot(Kpath,bands[i],color=vw.colors.crayons['Navy Blue'])
+        plot_dos.plot(self.DOS,energy,color=vw.colors.crayons['Navy Blue'])
 
-        plot_bands.set_xlim(min(self.Kpath_projected),max(self.Kpath_projected))
-        plot_dos.set_ylim(-2,5)
+        # 能带图辅助分割线以及各种细节设置
+        K_min, K_max = (min(Kpath), max(Kpath))  # 投影K空间路径的范围
+        ymin, ymax = energy_range  # 从输入参数中读取要展示的能量范围
 
-        plot_dos.set_xlim(0,10)
+        print(Knodes)
+        print(K_min, K_max)
+
+        # 画高对称点分割线
+        for i in range(len(Knodes) - 2):  # 第一跟最后的一个高对称点跟能带图的左右边界重合，所以不必作分割线
+            plot_bands.vlines(Knodes[i + 1], ymin, ymax, linestyles='dashed', colors=vw.colors.crayons['Gray'])
+        # 画费米面分割线
+        plot_bands.hlines(0, K_min, K_max, linestyles='dashed', colors=vw.colors.crayons['Gray'])
+        plot_bands.set_xticks(Knodes, self.HSP_path)
+        plot_bands.set_xlim(K_min,K_max)
+        plot_bands.set_ylim(ymin,ymax)
+
+        plot_dos.set_xticks([])
+        plot_dos.set_yticklabels([])
+        dos_min, dos_max = dos_range  # 从输入参数中读取要展示的态密度范围
+        plot_dos.set_xlim(dos_min,dos_max)
 
     def Visualize(self,shift_Fermi=True,figsize=(6,6)):
         if shift_Fermi:  # 默认进行费米面调零
@@ -121,7 +131,6 @@ class full_analysis:
         subplot_y.set_xlim(0,10)
 
 
-
 # 正态分布数据的多子图显示
 
 #mean = [0,0]
@@ -142,10 +151,22 @@ class full_analysis:
 #x_hist.invert_xaxis()
 
 if __name__=='__main__':
-    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Trilayer/E_prop_SYM'  # MMW502
-    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bilayer/E_prop_SYM'  # JCPGH1
+    # main_dir = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Trilayer/E_prop_SYM'  # MMW502
+    # main_dir = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bilayer/E_prop_SYM'  # JCPGH1
+    main_dir = 'D:/PhD_research/OptoTransition/Data/MoS2/Electronic_structure'  # Zhuhai
+    structure = 'Bilayer'
+    target_dir = 'E_prop_SYM'
+
+    data_directory = main_dir+'/'+structure+'/'+target_dir
+
     EIGENVAL = data_directory+'/EIGENVAL'
     DOSCAR = data_directory+'/DOSCAR'
 
     FA = full_analysis(EIGENVAL,DOSCAR,1,'HEX','HEX',dimension='2D')
-    FA.Visualize_band_n_dos()
+    FA.Visualize_band_n_dos(dos_range=(0,12.5))
+    # 1-2 layer n bulk (0,12.5); 3-5 layer (0,30)
+
+    saving_directory = 'D:/PhD_research/OptoTransition/Data/临时存放文件夹'  # Zhuhai
+    vw.Save_Figure(saving_directory,structure)
+
+
