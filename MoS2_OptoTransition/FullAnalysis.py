@@ -154,19 +154,26 @@ if __name__=='__main__':
     # main_dir = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Trilayer/E_prop_SYM'  # MMW502
     # main_dir = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bilayer/E_prop_SYM'  # JCPGH1
     main_dir = 'D:/PhD_research/OptoTransition/Data/MoS2/Electronic_structure'  # Zhuhai
-    structure = 'Bilayer'
-    target_dir = 'E_prop_SYM'
+    # structure = 'Bilayer'
+    structure_list = ['Monolayer', 'Bilayer', 'Trilayer', 'Quadrilayer', 'Pentalayer', 'Bulk']
+    # structure_list = ['Trilayer', 'Quadrilayer', 'Pentalayer']
+    # structure_list = ['Bulk']
+    target_dir = 'E_prop_SOC_SYM'
 
-    data_directory = main_dir+'/'+structure+'/'+target_dir
+    dimension_list = ['2D', '2D', '2D', '2D', '2D', '3D']
+    dos_range_list = [(0,12.5),(0,12.5),(0,30),(0,30),(0,30),(0,12.5)]
 
-    EIGENVAL = data_directory+'/EIGENVAL'
-    DOSCAR = data_directory+'/DOSCAR'
+    for i in range(len(structure_list)):
+        data_directory = main_dir+'/'+structure_list[i]+'/'+target_dir
 
-    FA = full_analysis(EIGENVAL,DOSCAR,1,'HEX','HEX',dimension='2D')
-    FA.Visualize_band_n_dos(dos_range=(0,12.5))
-    # 1-2 layer n bulk (0,12.5); 3-5 layer (0,30)
+        EIGENVAL = data_directory+'/EIGENVAL'
+        DOSCAR = data_directory+'/DOSCAR'
 
-    saving_directory = 'D:/PhD_research/OptoTransition/Data/临时存放文件夹'  # Zhuhai
-    vw.Save_Figure(saving_directory,structure)
+        FA = full_analysis(EIGENVAL,DOSCAR,1,'HEX','HEX',dimension=dimension_list[i])
+        FA.Visualize_band_n_dos(dos_range=dos_range_list[i])
+        # 1-2 layer n bulk (0,12.5); 3-5 layer (0,30)
+
+        saving_directory = 'D:/PhD_research/OptoTransition/Data/临时存放文件夹'  # Zhuhai
+        vw.Save_Figure(saving_directory,structure_list[i])
 
 
