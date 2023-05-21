@@ -5,7 +5,6 @@ from MoS2_OptoTransition import QuickVisual
 QV = QuickVisual.QuickVisual(x_major=1.5, y_major=0.4)
 DR = QuickVisual.data_recording()
 
-
 if __name__=='__main__':
     # data_directory = 'D:/Projects/OptoTransition/Data/ElectricField/TOTEN'  # JCPGH1
     data_directory = 'D:/Projects/OptoTransition/Data/Total/GSE/2'  # MMW502
