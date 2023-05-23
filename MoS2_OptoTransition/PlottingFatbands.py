@@ -17,8 +17,8 @@ Orbitals_dict ={'s':[2], 'p': [3,4,5], 'd': [6,7,8,9,10],
                 'px pnm ipy': [3, 5]}
 
 if __name__=='__main__':
-    data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Pentalayer_SYM/S/PBAND_SUM.dat'  # MMW502
-    # data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/PBANDS_SOC/Mo/PBAND_SUM_SOC.dat'  # JCPGH1
+    # data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Pentalayer_SYM/S/PBAND_SUM.dat'  # MMW502
+    data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Pentalayer_SYM/Mo/PBAND_SUM.dat'  # JCPGH1
 
     info = [linecache.getline(data_file,i+1) for i in range(2)]
     info_list = [info[i].split() for i in range(len(info))]
@@ -51,8 +51,8 @@ if __name__=='__main__':
     Fermi_factor = 0.20  # 费米面调零参数
     # Fermi_factor = 0
 
-    # Orbital_list = ['dx2-y2 pnm idxy','dz2']
-    Orbital_list = ['px pnm ipy','pz']
+    Orbital_list = ['dx2-y2 pnm idxy','dz2']
+    # Orbital_list = ['px pnm ipy','pz']
     Orbital_weight_list = []
     for i in range(len(Orbital_list)):
         Orbital_weight = sum(data_array[:,:,k] for k in Orbitals_dict[Orbital_list[i]])  # 计算原子轨道对能带贡献的占比
@@ -66,14 +66,16 @@ if __name__=='__main__':
 
     x_band,y_band,w_band = Band_point_coordinate
 
-    # cmap = 'bwr'
-    # cmap = 'BrBG'
-    # 热度图及colorbar的颜色设置
-    color_range = [VI.CMYK_to_RGB(68, 53, 61, 5), VI.CMYK_to_RGB(3, 3, 3, 3), VI.CMYK_to_RGB(21, 33, 70, 0)]  # coolwarm_custom
-    nbins = 100  # nbins越小，插值得到的颜色区间越少；反之，nbins越大，色谱越连续可分
-    cmap_name = 'coolwarm_custom'  # colormap名
+    cmap = 'bwr'
+    # cmap = 'PRGn'
 
-    cmap = cm.colors.LinearSegmentedColormap.from_list(cmap_name, color_range, N=nbins)  # 创建colormap
+    # 热度图及colorbar的颜色设置
+    # color_range = ['#450D54', '#FFFFFF', '#29AF7F']  # viridis_custom
+    # color_range = [VI.CMYK_to_RGB(75, 45, 0, 40), VI.CMYK_to_RGB(0, 0, 0, 0), VI.CMYK_to_RGB(0, 82, 88, 16)]  # coolwarm_custom
+    #nbins = 100  # nbins越小，插值得到的颜色区间越少；反之，nbins越大，色谱越连续可分
+    #cmap_name = 'coolwarm_custom'  # colormap名
+    #cmap = cm.colors.LinearSegmentedColormap.from_list(cmap_name, color_range, N=nbins)  # 创建colormap
+
     cmap_norm = colors.Normalize(-1, 1)
     # 画投影能带
     # https://blog.shishiruqi.com//2019/05/19/pymatgen-band/
@@ -89,7 +91,7 @@ if __name__=='__main__':
     plt.vlines(1.81573, -5, 5, linewidth=1,linestyles='dashed',colors='k')
 
     # 生成颜色条
-    #fig, ax = plt.subplots(figsize=(6, 1))
-    #fig.subplots_adjust(bottom=0.5)
+    fig, ax = plt.subplots(figsize=(6, 1))
+    fig.subplots_adjust(bottom=0.5)
 
-    #fig.colorbar(mpl.cm.ScalarMappable(cmap=cmap,norm=cmap_norm),cax=ax, orientation='horizontal', label='Weight')
+    fig.colorbar(mpl.cm.ScalarMappable(cmap=cmap,norm=cmap_norm),cax=ax, orientation='horizontal', label='Weight')
