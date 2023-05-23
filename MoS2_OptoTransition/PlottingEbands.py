@@ -10,24 +10,10 @@ VB = VisualizeBands.plot_bands()  # 调用VisualizeBands模块（能带可视化
 
 class data_analysis:
     ''' This class of functions are designed to analyze energy band data. '''
-    def __init__(self,working_place,data_location,lattice,HSP_path,shift_Fermi=True,color=crayons['Navy Blue'],y_major=2):
+    def __init__(self,data_directory,lattice,HSP_path,shift_Fermi=True,color=crayons['Navy Blue'],y_major=2):
         self.name = data_analysis
 
-        # 以字典形式记录的计算结果所在的主目录
-        data_directory = {'MMW502': 'D:/Projects/OptoTransition/Data',  # 办公室电脑
-                          'JCPGH1': 'D:/Projects/OptoTransition/Data',  # 宿舍电脑
-                          'Macbook': '/Users/liusongwei/Desktop/OptoTransition/Data',  # Macbook
-                          'Zhuhai': 'D:/PhD_research/OptoTransition/Data'}  # 珠海电脑
-
-        self.EIGENVAL = data_directory[working_place] + '/' + data_location + '/EIGENVAL'  # 数据文件（EIGENVAL）的绝对地址
-
-        # 能带图保存目录
-        saving_directory_dict = {'MMW502': 'D:/Projects/OptoTransition/Data/Figures/Band structure',  # 办公室电脑
-                                 'JCPGH1': 'D:/Projects/OptoTransition/Gallery',    # 宿舍电脑
-                                 'Macbook': '/Users/liusongwei/Desktop/OptoTransition/Data/Figures/Band structure',  # Macbook
-                                 'Zhuhai': 'D:/PhD_research/OptoTransition/Data'}   # 珠海电脑
-
-        self.saving_directory = saving_directory_dict[working_place]  # 如要保存数据图像，要指定保存路径
+        self.EIGENVAL = data_directory + '/EIGENVAL'  # 数据文件（EIGENVAL）的绝对地址
 
         # 存放晶体结构参数的字典
         lattice_dict = {'HEX': ['HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive'],
@@ -93,9 +79,32 @@ class data_recording:
 if __name__=='__main__':
     saving_filename = 'MoS2_bilayer_0.500'  # 数据文件保存时的名称
 
+    # 以字典形式记录的计算结果所在的主目录
+    data_directory = {'MMW502': 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bulk/bulk_FineRelax_SOC',  # 办公室电脑
+                      'JCPGH1': 'D:/Projects/OptoTransition/Data',  # 宿舍电脑
+                      'Macbook': '/Users/liusongwei/Desktop/OptoTransition/Data',  # Macbook
+                      'Zhuhai': 'D:/PhD_research/OptoTransition/Data'}  # 珠海电脑
+
     # data_directory = 'Stark_effect/2-layer/GSE_Bilayer_SOC_SYM'
     # data_directory = 'GSE/2_layer/GSE_Bilayer_SYM'
-    data_directory = 'GSE/5_layer/GSE_Pentalayer'  # Zhuhai
+    # data_directory = 'GSE/5_layer/GSE_Pentalayer'  # Zhuhai
+
+    # 能带图保存目录
+    saving_directory_dict = {'MMW502': 'D:/Projects/OptoTransition/Data/Figures/Band structure',  # 办公室电脑
+                             'JCPGH1': 'D:/Projects/OptoTransition/Gallery',  # 宿舍电脑
+                             'Macbook': '/Users/liusongwei/Desktop/OptoTransition/Data/Figures/Band structure',
+                             # Macbook
+                             'Zhuhai': 'D:/PhD_research/OptoTransition/Data'}  # 珠海电脑
+
+    # 画单个能带图
+    DA = data_analysis(data_directory['MMW502'], 'HEX', 'HEX_3D', shift_Fermi=True, color='b')
+    # Bandgap.append([float(i)*10.0,DA.GetBandgap()])
+
+    DA.Plot_EnergyBands()
+
+
+    # self.saving_directory = saving_directory_dict[working_place]  # 如要保存数据图像，要指定保存路径
+
 
     #E_field = ['E_0.025', 'E_0.050', 'E_0.075', 'E_0.100', 'E_0.125', 'E_0.150', 'E_0.175', 'E_0.200', 'E_0.225', 'E_0.250',
                #'E_0.275', 'E_0.300', 'E_0.325', 'E_0.350', 'E_0.375', 'E_0.400', 'E_0.425', 'E_0.450', 'E_0.475', 'E_0.500',
@@ -103,15 +112,15 @@ if __name__=='__main__':
     #E_field = ['0.000', '0.025', '0.050', '0.075', '0.100', '0.125', '0.150', '0.175', '0.200', '0.225','0.250',
                #'0.275', '0.300', '0.325', '0.350', '0.375', '0.400', '0.425', '0.450', '0.475','0.500','0.525', '0.550']
     #E_field = ['0.000','0.100','0.200']
-    E_field = ['0.01', '0.02', '0.03', '0.04', '0.05', '0.06', '0.07', '0.08', '0.09', '0.10', '0.11', '0.12', '0.13', '0.14', '0.15']
+    #E_field = ['0.01', '0.02', '0.03', '0.04', '0.05', '0.06', '0.07', '0.08', '0.09', '0.10', '0.11', '0.12', '0.13', '0.14', '0.15']
 
-    color = ['#4878d0', '#d65f5f', '#ee854a', '#6acc64']
+    #color = ['#4878d0', '#d65f5f', '#ee854a', '#6acc64']
 
-    Bandgap = []
-    for i in E_field:
-        data_location = data_directory+'/E_'+i
-        DA = data_analysis('Zhuhai',data_location,'HEX','HEX_2D',shift_Fermi=True,color=color[3])
-        Bandgap.append([float(i)*10.0,DA.GetBandgap()])
+    #Bandgap = []
+    #for i in E_field:
+        #data_location = data_directory+'/E_'+i
+        #DA = data_analysis('Zhuhai',data_location,'HEX','HEX_2D',shift_Fermi=True,color=color[3])
+        #Bandgap.append([float(i)*10.0,DA.GetBandgap()])
 
         #DA.Plot_EnergyBands()
 
@@ -123,9 +132,9 @@ if __name__=='__main__':
 
     # DA.Save_Figure(saving_filename)
 
-    print(Bandgap)
-    DR = data_recording()
+    #print(Bandgap)
+    #DR = data_recording()
     # saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/Test'
-    saving_directory = 'D:/PhD_research/OptoTransition/Data/GSE/Summary'
-    DR.Save_Data(saving_directory,'GSE_Pentalayer',Bandgap)
+    #saving_directory = 'D:/PhD_research/OptoTransition/Data/GSE/Summary'
+    #DR.Save_Data(saving_directory,'GSE_Pentalayer',Bandgap)
     # DR.Save_Figure(saving_directory,'GSE_2_SOC_0.200')

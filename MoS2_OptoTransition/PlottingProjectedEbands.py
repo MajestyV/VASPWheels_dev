@@ -6,9 +6,8 @@ import matplotlib.pyplot as plt
 from matplotlib import cm,colors
 
 if __name__=='__main__':
-    # data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Monolayer/Projected_bands/Mo1/PBAND_SUM.dat'  # MMW502
-    data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/PBANDS_SOC/Mo/PBAND_SUM_SOC.dat'  # JCPGH1
-
+    data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Pentalayer_SYM/Mo/PBAND_SUM.dat'  # MMW502
+    # data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/PBANDS_SOC/Mo/PBAND_SUM_SOC.dat'  # JCPGH1
 
     info = [linecache.getline(data_file,i+1) for i in range(2)]
     info_list = [info[i].split() for i in range(len(info))]
@@ -41,7 +40,7 @@ if __name__=='__main__':
             #y_band.append(data_array[i,j,1])
             #weight_band.append(data_array[i,j,11])
 
-    Orbital = 'd'
+    Orbital = 'dz2'
     Orbitals_index ={'s':[2], 'p': [3,4,5], 'd': [6,7,8,9,10],
                      'py':[3], 'pz':[4], 'px':[5],
                      'dxy':[6], 'dyz':[7], 'dz2':[8], 'dxz':[9], 'x2-y2':[10]}
