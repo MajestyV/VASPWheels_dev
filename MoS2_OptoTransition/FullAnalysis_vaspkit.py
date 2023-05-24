@@ -6,18 +6,18 @@ VI = Visualization.plot()  # 调用Visualization模块
 
 if __name__=='__main__':
     # 指定数据文件总目录
-    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Bulk_SYM'  # MMW502
+    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Pentalayer_SYM'  # MMW502
 
     # 全局设定
-    # Fermi_factor = 0.20  # 费米面调零参数
-    Fermi_factor = 0.185
+    Fermi_factor = 0.20  # 费米面调零参数
+    # Fermi_factor = 0.185
 
-    num_segment = 7  # 能带分段数
+    num_segment = 3  # 能带分段数
 
     # 画图参数
     figsize = (4.5, 6)
     energy_range = (-5,5)
-    dos_range = (0,12.5)
+    dos_range = (0,30)
 
     # 提取态密度数据
     data_tdos = data_directory+'/dos/tot/TDOS.dat'
@@ -77,11 +77,13 @@ if __name__=='__main__':
 
     # 画费米面分割线
     plot_bands.hlines(0, K_min, K_max, linewidth=1, linestyles='dashed', colors='k')
-    plot_bands.set_xticks(Kpath_nodes, vw.HSP.HighSymPoint_3D['HEX'])  # 更换2D或者3D体系记得要改这里
+    plot_bands.set_xticks(Kpath_nodes, vw.HSP.HighSymPoint_2D['HEX'])  # 更换2D或者3D体系记得要改这里
+    plot_bands.set_yticks([-5.0, -2.5, 0, 2.5, 5.0])
     plot_bands.set_xlim(K_min, K_max)
     plot_bands.set_ylim(ymin, ymax)
 
     plot_dos.set_xticks([])
     plot_dos.set_yticklabels([])
     dos_min, dos_max = dos_range  # 从输入参数中读取要展示的态密度范围
+    plot_dos.hlines(0, dos_min, dos_max, linewidth=1, linestyles='dashed', colors='k')
     plot_dos.set_xlim(dos_min, dos_max)
