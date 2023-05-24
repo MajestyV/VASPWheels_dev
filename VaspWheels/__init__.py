@@ -14,3 +14,6 @@ from .DataRecording import Save_Data, Save_Figure
 
 # from VisualizeBands import plot_bands
 # from GetElectronicBands import vasp
+
+# 导入用于处理外部软件数据的API函数
+from .API_for_external import API_vaspkit as API_vaspkit  # API for VASPKIT (https://vaspkit.com/)
