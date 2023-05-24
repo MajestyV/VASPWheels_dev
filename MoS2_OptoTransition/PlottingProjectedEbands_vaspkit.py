@@ -12,11 +12,15 @@ GK = GetKpath.vasp()  # 调用GetKpath模块
 VI = Visualization.plot()  # 调用Visualization模块
 
 if __name__=='__main__':
-    # data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Pentalayer_SYM/S/PBAND_SUM.dat'  # MMW502
-    data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Bulk_SYM/S/PBAND_SUM.dat'  # JCPGH1
+    # SOC
+
+
+    # Non SOC
+    data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Pentalayer_SYM/S/PBAND_SUM.dat'  # MMW502
+    # data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Bulk_SYM/S/PBAND_SUM.dat'  # JCPGH1
 
     Fermi_factor = 0.185  # 费米面调零参数
-    # Fermi_factor = 0
+    # Fermi_factor = 0.20
 
     num_segment = 7  # 能带分段数
 
