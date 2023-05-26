@@ -7,7 +7,9 @@ from . import HighSymmetryPath as HSP
 # 导入画图色彩数据
 #from .Gallery.colors.Seaborn_crayons import crayons
 #from .Gallery.colors.Seaborn_xkcd import xkcd_rgb
-from .Gallery import colors as colors
+from .Gallery import colors as colors  # 导入预设色值库
+# 从colors中导入函数库
+from .Gallery.colors import ColorConvertion as ColorConvertion  # 色值格式转换函数库
 
 # 导入常用函数类
 from .DataRecording import Save_Data, Save_Figure
