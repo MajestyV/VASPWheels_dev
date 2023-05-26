@@ -6,6 +6,11 @@
 ## Theory
 
 ## Important knowledge
+
+### Unit conversion
+
+VASP的电荷密度文件CHG跟CHGCAR的默认电荷单位为Bohr，若要转变为Angstrom
+
 （有些关于单位转换啊，还有各种小技巧啊之类的，事实上就是杂记）
 
 ## API
