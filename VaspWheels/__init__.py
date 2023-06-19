@@ -1,3 +1,6 @@
+import ElectronicStructure
+
+
 # . 代表当前文件所在的文件夹路径（跟Linux shell script一样）
 # 子package导入模块，方便外部调用
 # 导入High symmetry point path数据
