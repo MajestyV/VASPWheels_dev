@@ -81,7 +81,7 @@ if __name__=='__main__':
 
     # 以字典形式记录的计算结果所在的主目录
     data_directory = {'MMW502': 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bulk/bulk_FineRelax_SOC',  # 办公室电脑
-                      'JCPGH1': 'D:/Projects/OptoTransition/Data',  # 宿舍电脑
+                      'JCPGH1': 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bulk/E_prop_SOC_SYM',  # 宿舍电脑
                       'Macbook': '/Users/liusongwei/Desktop/OptoTransition/Data',  # Macbook
                       'Zhuhai': 'D:/PhD_research/OptoTransition/Data'}  # 珠海电脑
 
@@ -97,7 +97,7 @@ if __name__=='__main__':
                              'Zhuhai': 'D:/PhD_research/OptoTransition/Data'}  # 珠海电脑
 
     # 画单个能带图
-    DA = data_analysis(data_directory['MMW502'], 'HEX', 'HEX_3D', shift_Fermi=True, color='b')
+    DA = data_analysis(data_directory['JCPGH1'], 'HEX', 'HEX_3D', shift_Fermi=True, color='b')
     # Bandgap.append([float(i)*10.0,DA.GetBandgap()])
 
     DA.Plot_EnergyBands()

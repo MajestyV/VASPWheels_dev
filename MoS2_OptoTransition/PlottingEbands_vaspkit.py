@@ -7,6 +7,7 @@ VI = Visualization.plot()  # 调用Visualization模块
 if __name__=='__main__':
     # SOC
 
+
     # Non SOC
     data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Bulk_SYM/bands/Mo/PBAND_SUM.dat'  # MMW502
     # data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Bulk_SYM/S/PBAND_SUM.dat'  # JCPGH1
