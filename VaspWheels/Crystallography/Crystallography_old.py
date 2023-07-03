@@ -95,30 +95,31 @@ def Bravais_lattice(lattice, lattice_parameter, lattice_type='primitive'):
 # 计算实空间的度规张量(Metric Tensor)
 def MetricTensor(lattice,lattice_parameter,lattice_type='primitive'):
     a1, a2, a3 = Bravais_lattice(lattice,lattice_parameter,lattice_type)
-    g = [[np.dot(a1,a1), np.dot(a1,a2), np.dot(a1,a3)],
-         [np.dot(a2,a1), np.dot(a2,a2), np.dot(a2,a3)],
-         [np.dot(a3,a1), np.dot(a3,a2), np.dot(a3,a3)]]
+    g = [[dot_product(a1,a1), dot_product(a1,a2), dot_product(a1,a3)],
+         [dot_product(a2,a1), dot_product(a2,a2), dot_product(a2,a3)],
+         [dot_product(a3,a1), dot_product(a3,a2), dot_product(a3,a3)]]
     return np.array(g)
 
 # 计算倒易空间基矢
 def Reciprocal_lattice(lattice,lattice_parameter,lattice_type='primitive'):
-    a1, a2, a3 = Bravais_lattice(lattice,lattice_parameter,lattice_type)  # 计算正空间基矢
-    a1_x_a2, a2_x_a3, a3_x_a1 = (np.cross(a1,a2),np.cross(a2,a3), np.cross(a3,a1))  # 提前算好基矢的交叉叉乘结果，方便调用以减少代码计算量
+    # 计算正空间基矢
+    a1, a2, a3 = Bravais_lattice(lattice,lattice_parameter,lattice_type)
 
-    V = np.inner(a1,a2_x_a3)  # 计算实空间晶胞的体积
+    # 这实际上就是实空间晶胞的体积
+    V = dot_product(a1,cross_product(a2,a3))
 
-    # 倒空间基矢计算公式：b1 = 2*pi*(a2xa3)/[a1·(a2xa3)], b2 = 2*pi*(a3xa1)/[a1·(a2xa3)], b3 = 2*pi*(a1xa2)/[a1·(a2xa3)]
+    # b1 = 2*pi*(a2xa3)/[a1·(a2xa3)], b2 = 2*pi*(a3xa1)/[a1·(a2xa3)], b3 = 2*pi*(a1xa2)/[a1·(a2xa3)]
     pi = np.pi
-    b1 = [(2.0*pi/V)*a2_x_a3[n] for n in range(len(a2_x_a3))]
-    b2 = [(2.0*pi/V)*a3_x_a1[n] for n in range(len(a3_x_a1))]
-    b3 = [(2.0*pi/V)*a1_x_a2[n] for n in range(len(a1_x_a2))]
+    b1 = [(2.0*pi/V)*cross_product(a2,a3)[n] for n in range(len(cross_product(a2,a3)))]
+    b2 = [(2.0*pi/V)*cross_product(a3,a1)[n] for n in range(len(cross_product(a3,a1)))]
+    b3 = [(2.0*pi/V)*cross_product(a1,a2)[n] for n in range(len(cross_product(a1,a2)))]
 
     return np.array([b1,b2,b3])
 
 # 计算倒易空间的度规张量
-def Reciprocal_MetricTensor(lattice,lattice_parameter,lattice_type='primitive'):
-    b1, b2, b3 = Reciprocal_lattice(lattice,lattice_parameter,lattice_type)
-    g_star = [[np.inner(b1,b1), self.dot_product(b1,b2), self.dot_product(b1,b3)],
+def Reciprocal_MetricTensor(self,lattice,lattice_parameter,lattice_type='primitive'):
+    b1, b2, b3 = self.Reciprocal_lattice(lattice,lattice_parameter,lattice_type)
+    g_star = [[self.dot_product(b1,b1), self.dot_product(b1,b2), self.dot_product(b1,b3)],
               [self.dot_product(b2,b1), self.dot_product(b2,b2), self.dot_product(b2,b3)],
               [self.dot_product(b3,b1), self.dot_product(b3,b2), self.dot_product(b3,b3)]]
     return np.array(g_star)
