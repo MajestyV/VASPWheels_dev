@@ -15,7 +15,7 @@ import numpy as np
 # There are two types of lattice vectors: unitcell and primitive.
 # unitcell - The conventional lattice usually used in crystallography analysis.
 # primitive - The lattice consistent with the stoichiometry, used in first-principle calculations.
-def Bravais_lattice(lattice, lattice_parameter, lattice_type='primitive'):
+def BravaisLattice(lattice, lattice_parameter, lattice_type='primitive'):
     # 提取晶格常数
     a, b, c, alpha, beta, gamma = lattice_parameter
 
@@ -77,15 +77,15 @@ def Bravais_lattice(lattice, lattice_parameter, lattice_type='primitive'):
 
 # 计算实空间的度规张量(Metric Tensor)
 def MetricTensor(lattice,lattice_parameter,lattice_type='primitive'):
-    a1, a2, a3 = Bravais_lattice(lattice,lattice_parameter,lattice_type)
+    a1, a2, a3 = BravaisLattice(lattice,lattice_parameter,lattice_type)
     g = [[np.dot(a1,a1), np.dot(a1,a2), np.dot(a1,a3)],
          [np.dot(a2,a1), np.dot(a2,a2), np.dot(a2,a3)],
          [np.dot(a3,a1), np.dot(a3,a2), np.dot(a3,a3)]]
     return np.array(g)
 
 # 计算倒易空间基矢
-def Reciprocal_lattice(lattice,lattice_parameter,lattice_type='primitive'):
-    a1, a2, a3 = Bravais_lattice(lattice,lattice_parameter,lattice_type)  # 计算正空间基矢
+def Reciprocal_Lattice(lattice,lattice_parameter,lattice_type='primitive'):
+    a1, a2, a3 = BravaisLattice(lattice,lattice_parameter,lattice_type)  # 计算正空间基矢
     a1_x_a2, a2_x_a3, a3_x_a1 = (np.cross(a1,a2),np.cross(a2,a3), np.cross(a3,a1))  # 提前算好基矢的交叉叉乘结果，方便调用以减少代码计算量
 
     V = np.inner(a1,a2_x_a3)  # 计算实空间晶胞的体积
@@ -100,7 +100,7 @@ def Reciprocal_lattice(lattice,lattice_parameter,lattice_type='primitive'):
 
 # 计算倒易空间的度规张量
 def Reciprocal_MetricTensor(lattice,lattice_parameter,lattice_type='primitive'):
-    b1, b2, b3 = Reciprocal_lattice(lattice,lattice_parameter,lattice_type)
+    b1, b2, b3 = Reciprocal_Lattice(lattice,lattice_parameter,lattice_type)
     g_star = [[np.inner(b1,b1), np.inner(b1,b2), np.inner(b1,b3)],
               [np.inner(b2,b1), np.inner(b2,b2), np.inner(b2,b3)],
               [np.inner(b3,b1), np.inner(b3,b2), np.inner(b3,b3)]]
@@ -120,9 +120,9 @@ def Length(vector,metric_tensor=np.array([[1.0,0,0],[0,1.0,0],[0,0,1.0]])):
 def Volume(lattice,lattice_parameter,lattice_type='primitive',space='real'):
     x, y, z = (np.zeros(3),np.zeros(3),np.zeros(3))  # 初始化晶胞基矢
     if space == 'real':
-        x, y, z = Bravais_lattice(lattice,lattice_parameter,lattice_type)
+        x, y, z = BravaisLattice(lattice,lattice_parameter,lattice_type)
     elif space == 'reciprocal':
-        x, y, z = Reciprocal_lattice(lattice,lattice_parameter,lattice_type)
+        x, y, z = Reciprocal_Lattice(lattice,lattice_parameter,lattice_type)
 
     V = np.inner(x, np.cross(y,z))  # 计算晶胞体积
 

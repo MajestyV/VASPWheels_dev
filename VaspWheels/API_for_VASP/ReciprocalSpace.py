@@ -56,7 +56,7 @@ def GetKpath(saving_address,nodes,npoints=100):
 # 将沿这个路程计算得到的能量值展开，我们就得到了经常能看到的能带图
 def ProjectKpath(Kpath,num_segments,lattice_param=('Cubic', [1, 1, 1, 90, 90, 90], 'primitive')):
     lattice, parameters, type = lattice_param  # 输入晶格常数，默认为立方单位晶格，即不作任何的晶格修正
-    b1,b2,b3 = vw.Crystallography.Reciprocal_lattice(lattice,parameters,type)  # 计算倒空间基矢
+    b1,b2,b3 = vw.Crystallography.Reciprocal_Lattice(lattice,parameters,type)  # 计算倒空间基矢
     # 通过倒空间基矢的长度，对K点路程进行晶格修正
     scaling = np.array([np.linalg.norm(b1,ord=2),np.linalg.norm(b2,ord=2),np.linalg.norm(b3,ord=2)])
 
