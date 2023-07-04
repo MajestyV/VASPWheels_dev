@@ -110,11 +110,11 @@ def Reciprocal_MetricTensor(lattice,lattice_parameter,lattice_type='primitive'):
 # 晶体学运算高阶模块
 
 # 利用度规张量（metric tensor）计算不同空间坐标下向量的长度
-def length(vector,metric_tensor=np.array([[1.0,0,0],[0,1.0,0],[0,0,1.0]])):
+def Length(vector,metric_tensor=np.array([[1.0,0,0],[0,1.0,0],[0,0,1.0]])):
     vec = np.array([vector])            # 将输入的向量转变为二维数组，方便利用numpy进行矩阵运算
-    d_square = vec@metric_tensor@vec.T  # 利用度规张量计算向量的模（In NumPy, the @ operator means matrix multiplication）
-    d = np.sqrt(d_square[0,0])          # 由于numpy二维数组的运算结果仍是二维数组，所以需要先提取元素再开方
-    return d
+    l_square = vec@metric_tensor@vec.T  # 利用度规张量计算向量的模（In NumPy, the @ operator means matrix multiplication）
+    l = np.sqrt(l_square[0,0])          # 由于numpy二维数组的运算结果仍是二维数组，所以需要先提取元素再开方
+    return l
 
 # 计算晶胞的体积
 def Volume(lattice,lattice_parameter,lattice_type='primitive',space='real'):
