@@ -5,25 +5,11 @@
 import numpy as np
 
 ########################################################################################################################
-# 简单的向量计算模块，所有向量都应该是三维的向量
-# 向量的点乘
-def dot_product(x,y): return np.array(x[0]*y[0]+x[1]*y[1]+x[2]*y[2])
 
-# 向量的叉乘
-def cross_product(x,y):
-    product = [x[1]*y[2]-x[2]*y[1],
-               x[2]*y[0]-x[0]*y[2],
-               x[0]*y[1]-x[1]*y[0]]
-    return np.array(product)
 
-# 计算不同晶格坐标中向量的模
-def length(vector,metric_tensor=np.array([[1.0,0,0],[0,1.0,0],[0,0,1.0]])):
-    d_square = 0
-    for i in range(len(vector)):
-        for j in range(len(vector)):
-            d_square = d_square+vector[i]*metric_tensor[i][j]*vector[j]
-    d = np.sqrt(d_square)
-    return d
+
+
+
 
 ########################################################################################################################
 # There are 14 kinds of Bravais lattice within 7 kinds of lattice system. (7大晶系，14种布拉菲晶格）
@@ -37,7 +23,7 @@ def Bravais_lattice(lattice, lattice_parameter, lattice_type='primitive'):
     # 提取晶格常数
     a, b, c, alpha, beta, gamma = lattice_parameter
 
-    # 构建unitcell的晶格向量
+    # 从晶格常数计算对应晶格unitcell的基矢，并以字典形式储存
     unitcell_vectors = {'Orthorhombic': [[a, 0, 0],
                                          [0, b, 0],
                                          [0, 0, c]],
@@ -53,15 +39,15 @@ def Bravais_lattice(lattice, lattice_parameter, lattice_type='primitive'):
                         'Hexagonal': [[a / 2.0, -a * np.sqrt(3) / 2.0, 0],
                                       [a / 2.0, a * np.sqrt(3) / 2.0, 0],
                                       [0, 0, c]]}
-    # 把缩写的选项也增加进去
+    # 将缩写的键指向全称的值，并以字典形式记录
     unitcell_abbreviate = {'ORT': unitcell_vectors['Orthorhombic'],
                            'CUB': unitcell_vectors['Cubic'],
                            'FCC': unitcell_vectors['Face-centered cubic'],
                            'BCC': unitcell_vectors['Body-centered cubic'],
                            'HEX': unitcell_vectors['Hexagonal']}
-    unitcell_vectors.update(unitcell_abbreviate)
+    unitcell_vectors.update(unitcell_abbreviate)  # 将记录缩写字典中的键值对更新的基矢字典中，方便外部调用
 
-    # 构建primitive晶向
+    # 从晶格常数计算对应晶格primitive cell的基矢，并以字典形式储存
     primitive_vectors = {'Orthorhombic': [[0, b / 2.0, c / 2.0],
                                           [a / 2.0, 0, c / 2.0],
                                           [a / 2.0, b / 2.0, 0]],
@@ -77,13 +63,13 @@ def Bravais_lattice(lattice, lattice_parameter, lattice_type='primitive'):
                          'Hexagonal': [[a, 0, 0],
                                        [-a / 2.0, a * np.sqrt(3) / 2.0, 0],
                                        [0, 0, c]]}
-    # 同样，增加缩写
+    # 同样，将缩写的键指向全称的值，并以字典形式记录
     primitve_abbreviate = {'ORT': primitive_vectors['Orthorhombic'],
                            'CUB': primitive_vectors['Cubic'],
                            'FCC': primitive_vectors['Face-centered cubic'],
                            'BCC': primitive_vectors['Body-centered cubic'],
                            'HEX': primitive_vectors['Hexagonal']}
-    primitive_vectors.update(primitve_abbreviate)
+    primitive_vectors.update(primitve_abbreviate)  # 将记录缩写字典中的键值对更新的基矢字典中，方便外部调用
 
     # 把两个字典分配到不同晶格的模式的键值之下
     lattice_vectors = {'unitcell': unitcell_vectors[lattice],
@@ -118,24 +104,31 @@ def Reciprocal_lattice(lattice,lattice_parameter,lattice_type='primitive'):
 # 计算倒易空间的度规张量
 def Reciprocal_MetricTensor(lattice,lattice_parameter,lattice_type='primitive'):
     b1, b2, b3 = Reciprocal_lattice(lattice,lattice_parameter,lattice_type)
-    g_star = [[np.inner(b1,b1), self.dot_product(b1,b2), self.dot_product(b1,b3)],
-              [self.dot_product(b2,b1), self.dot_product(b2,b2), self.dot_product(b2,b3)],
-              [self.dot_product(b3,b1), self.dot_product(b3,b2), self.dot_product(b3,b3)]]
+    g_star = [[np.inner(b1,b1), np.inner(b1,b2), np.inner(b1,b3)],
+              [np.inner(b2,b1), np.inner(b2,b2), np.inner(b2,b3)],
+              [np.inner(b3,b1), np.inner(b3,b2), np.inner(b3,b3)]]
     return np.array(g_star)
 
 
-def Volume(self,lattice,lattice_parameter,lattice_type='primitive',space='real'):
-    x, y, z = [None]*3
-    if space == 'real':
-        x, y, z = self.Bravais_lattice(lattice,lattice_parameter,lattice_type)
-    elif space == 'reciprocal':
-        x, y, z = self.Reciprocal_lattice(lattice,lattice_parameter,lattice_type)
+# 计算不同晶格坐标中向量的模
+def length(vector,metric_tensor=np.array([[1.0,0,0],[0,1.0,0],[0,0,1.0]])):
+    d_square = 0
+    for i in range(len(vector)):
+        for j in range(len(vector)):
+            d_square = d_square+vector[i]*metric_tensor[i][j]*vector[j]
+    d = np.sqrt(d_square)
+    return d
 
-    V = self.dot_product(x,self.cross_product(y,z))
+def Volume(lattice,lattice_parameter,lattice_type='primitive',space='real'):
+    x, y, z = (np.zeros(3),np.zeros(3),np.zeros(3))  # 初始化原胞基矢
+    if space == 'real':
+        x, y, z = Bravais_lattice(lattice,lattice_parameter,lattice_type)
+    elif space == 'reciprocal':
+        x, y, z = Reciprocal_lattice(lattice,lattice_parameter,lattice_type)
+
+    V = np.inner(x, np.cross(y,z))  # 计算原胞体积
 
     return V
-
-
 
 
 if __name__ == '__main__':
