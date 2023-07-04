@@ -1,5 +1,6 @@
 # 函数包的主体部分，导入专门用于处理VASP数据的函数脚本
-from .API_for_VASP import ElectronicStructure
+from .API_for_VASP import ElectronicStructure  # 能带提取函数包
+from .API_for_VASP import ReciprocalSpace      # K空间（倒易空间）相关函数包
 
 # . 代表当前文件所在的文件夹路径（跟Linux shell script一样）
 # 子package导入模块，方便外部调用
@@ -8,8 +9,8 @@ from .API_for_VASP import ElectronicStructure
 #from .HighSymmetryPath.HSP_path_3D import HighSymPoint_3D
 #from . import HighSymmetryPath as HSP
 # 导入晶体学分析模块
-from .Crystallography import Crystallography
-from .Crystallography import HighSymmetryPath
+from .Crystallography import Crystallography   # 晶体学相关计算函数包
+from .Crystallography import HighSymmetryPath  # 高对称点路径
 
 
 # 导入画图色彩数据

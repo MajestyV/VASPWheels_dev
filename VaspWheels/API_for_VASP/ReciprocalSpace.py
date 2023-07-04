@@ -2,7 +2,6 @@
 
 import numpy as np
 import VaspWheels as vw
-from VaspWheels import Crystallography
 
 
 ########################################################################################################################

@@ -76,6 +76,57 @@ def GetEbands(EIGENVAL):
 
     return data_dict
 
+# 此函数用于区分导带跟价带，提取能带边缘（带边，band edges），有两种模式：1. 能带占据， 2. 费米能级（若出现分数电子占据，结果可能不太准确）
+# 由于DFT算法本身的原因，会出现分子轨道（能带）被分数电子占据的情况，所以我们使用OrderPrecision控制占据情况的精确度
+# 如OrderPrecision=2，则精确到小数点后两位
+def GetBandEdges(EIGENVAL, accuracy_order=0, E_fermi=0, mode='occupation'):
+    bands_data = GetEbands(EIGENVAL)         # 利用GetEbands函数从EIGENVAL文件提取能带数据
+    num_bands = bands_data['num_bands']      # 提取能带总数
+    num_kpoints = bands_data['num_kpoints']  # 提取K点总数
+    bands = bands_data['bands']              # 能带具体的能量值
+    occupation = bands_data['occupation']    # 能带的占据情况
+
+    if mode == 'occupation':
+        subject = occupation                 # 以能带占据情况为判断标的：0 - 为未被占据的能带；1 - 为被占据的能带
+        def criteria(filling_condition): return round(filling_condition, accuracy_order) == 0
+    elif mode == 'Fermi_energy':
+        subject = bands                      # 以费米能为判断标准的判断标的为能量
+        def criteria(energy): return energy >= E_fermi
+    else:
+        print('Please specific judging condition !')
+        return
+
+    unoccupied = []                          # 这个列表用于存放所有未被占据的能带数据
+    occupied = []                            # 这个列表用于存放所有已被占据的能带数据
+    for n in range(num_kpoints):
+        E_unoccupied = []
+        E_occupied = []
+        for m in range(num_bands):
+            E = bands[m,n]                   # 能量值
+            if criteria(subject[m,n]):
+                E_unoccupied.append(E)
+            else:
+                E_occupied.append(E)
+        unoccupied.append(E_unoccupied)
+        occupied.append(E_occupied)
+
+    conduction_band = [min(unoccupied[i]) for i in range(len(unoccupied))]  # 最低未占据能带（导带），Lowest unoccupied band
+    valence_band = [max(occupied[i]) for i in range(len(occupied))]  # 最高已占据能带（价带），Highest occupied band
+
+    return valence_band, conduction_band
+
+# 此函数可以计算带隙（Bandgap），同时分析材料是直接带隙还是间接带隙
+def GetBandgap(EIGENVAL, accuracy_order=0, E_fermi=0, mode='occupation'):
+    valence_band, conduction_band = GetBandEdges(EIGENVAL, accuracy_order, E_fermi, mode)
+
+    Ev_max = max(valence_band)     # 价带顶
+    Ec_min = min(conduction_band)  # 导带底
+    Eg = Ec_min - Ev_max           # 带隙
+
+    extremum_location = (valence_band.index(Ev_max), conduction_band.index(Ec_min))  # 分析价带顶跟导带底的位置
+
+    return Eg, Ev_max, Ec_min, extremum_location
+
 ########################################################################################################################
 
 # 态密度（DOS）提取模块：此模块的函数的主要目的是从VASP计算所得的DOSCAR文件中直接提取态密度计算结果

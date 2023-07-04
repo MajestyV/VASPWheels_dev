@@ -1,17 +1,13 @@
 # This script is designed for crystallography analysis in aid of performing first-principle calculations.
 # This code has referred to the article below when developing.
 # W. Setyawan, S. Curtarolo. High-throughput electronic band structure calculations: Challenges and tools, Computational Materials Science, 49 (2010) 299-312.
+# 此函数包利用numpy进行线性代数相关运算，详见：https://www.runoob.com/numpy/numpy-tutorial.html
+# 以及：https://numpy.org/doc/stable/reference/array_api.html
 
 import numpy as np
 
 ########################################################################################################################
-
-
-
-
-
-
-########################################################################################################################
+# 基础模块：通过晶格常数计算晶胞基矢
 # There are 14 kinds of Bravais lattice within 7 kinds of lattice system. (7大晶系，14种布拉菲晶格）
 # Each lattice has its own set of lattice parameters, which is a list consisting with 6 parameters.
 # Typical lattice_parameter = [a, b, c, alpha, beta, gamma]
@@ -77,7 +73,8 @@ def Bravais_lattice(lattice, lattice_parameter, lattice_type='primitive'):
     return lattice_vectors[lattice_type]
 
 ########################################################################################################################
-# 晶体学运算模块
+# 晶体学运算核心模块
+
 # 计算实空间的度规张量(Metric Tensor)
 def MetricTensor(lattice,lattice_parameter,lattice_type='primitive'):
     a1, a2, a3 = Bravais_lattice(lattice,lattice_parameter,lattice_type)
@@ -109,36 +106,46 @@ def Reciprocal_MetricTensor(lattice,lattice_parameter,lattice_type='primitive'):
               [np.inner(b3,b1), np.inner(b3,b2), np.inner(b3,b3)]]
     return np.array(g_star)
 
+########################################################################################################################
+# 晶体学运算高阶模块
 
-# 计算不同晶格坐标中向量的模
+# 利用度规张量（metric tensor）计算不同空间坐标下向量的长度
 def length(vector,metric_tensor=np.array([[1.0,0,0],[0,1.0,0],[0,0,1.0]])):
-    d_square = 0
-    for i in range(len(vector)):
-        for j in range(len(vector)):
-            d_square = d_square+vector[i]*metric_tensor[i][j]*vector[j]
-    d = np.sqrt(d_square)
+    vec = np.array([vector])            # 将输入的向量转变为二维数组，方便利用numpy进行矩阵运算
+    d_square = vec@metric_tensor@vec.T  # 利用度规张量计算向量的模（In NumPy, the @ operator means matrix multiplication）
+    d = np.sqrt(d_square[0,0])          # 由于numpy二维数组的运算结果仍是二维数组，所以需要先提取元素再开方
     return d
 
+# 计算晶胞的体积
 def Volume(lattice,lattice_parameter,lattice_type='primitive',space='real'):
-    x, y, z = (np.zeros(3),np.zeros(3),np.zeros(3))  # 初始化原胞基矢
+    x, y, z = (np.zeros(3),np.zeros(3),np.zeros(3))  # 初始化晶胞基矢
     if space == 'real':
         x, y, z = Bravais_lattice(lattice,lattice_parameter,lattice_type)
     elif space == 'reciprocal':
         x, y, z = Reciprocal_lattice(lattice,lattice_parameter,lattice_type)
 
-    V = np.inner(x, np.cross(y,z))  # 计算原胞体积
+    V = np.inner(x, np.cross(y,z))  # 计算晶胞体积
 
     return V
 
 
 if __name__ == '__main__':
-    crystal = Crystal()
-    #print(crystal.Bravais_lattice('FCC',[1,1,1,np.pi,np.pi,np.pi],'primitive'))
-    #print(crystal.Reciprocal_lattice('FCC',[1,1,1,np.pi,np.pi,np.pi],'primitive'))
-    #print(crystal.Volume('FCC',[1,1,1,np.pi,np.pi,np.pi],'unitcell'))
-    #print(crystal.MetricTensor('Hexagonal',[2,2,5,90,90,120]))
-    #print(crystal.Reciprocal_lattice('Hexagonal',[2,2,5,90,90,120]))
-    metric = crystal.Reciprocal_MetricTensor('FCC',[1,1,1,90,90,90])
-    print(metric)
-    print(crystal.length([1/0.19,-0.85/0.19,0],metric))
-    print(crystal.Volume('FCC',[1,1,1,90,90,90]))
+    a = [1, 2, 3]
+    a2 = [3, 2, 1]
+
+    b = [[1, 1, 1],
+         [2, 2, 2],
+         [3, 3, 3]]
+
+    c = [[1, 0, 0],
+         [0, 2, 0],
+         [0, 0, 3]]
+
+    # print(np.outer(a,a2))
+    # print(np.cross(a,a2))
+    # print(np.inner(a,b))
+    # print(np.outer(a,b))
+
+    # print(np.zeros(3))
+
+    print(np.array([a]) @ np.array(c) @ np.array([a]).T)
