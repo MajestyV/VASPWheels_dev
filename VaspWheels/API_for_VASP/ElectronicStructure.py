@@ -163,7 +163,7 @@ def ReadDOSCAR(DOSCAR):
     return separated_data
 
 # 利用ReadDOSCAR函数整理出态密度(DOS)
-def GetData(DOSCAR, spin_polarized='False'):
+def GetDOS(DOSCAR, spin_polarized='False'):
     data = ReadDOSCAR(DOSCAR)[0]  # 非投影的态密度在第一个子集当中
     npoints = int(data[0][2])  # number of gridpoints on which the DOS is evaluated
     Efermi = float(data[0][3])  # The Fermi energy
@@ -187,7 +187,7 @@ def GetData(DOSCAR, spin_polarized='False'):
     return DOS
 
 # 利用ReadDOSCAR函数整理出投影态密度(projected DOS)
-def GetProjectedData(DOSCAR, **kwargs):
+def GetProjectedDOS(DOSCAR, **kwargs):
     data_total = ReadDOSCAR(DOSCAR)
     natom = len(data_total) - 1  # 各个原子的态密度会分得一个子集，总DOS会分得一个子集，所以子集总数减1即为原子总数
 
