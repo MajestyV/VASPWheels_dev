@@ -20,11 +20,15 @@ from .Gallery import colors as colors  # 导入预设色值库
 # 从colors中导入函数库
 from .Gallery.colors import ColorConvertion as ColorConvertion  # 色值格式转换函数库
 
-# 导入常用函数类
-from .DataRecording import Save_Data, Save_Figure
+# 导入通用函数模块
+from .DataStorage import Save_Data, Save_Figure  # 数据保存函数模块
 
 # from VisualizeBands import plot_bands
 # from GetElectronicBands import vasp
 
 # 导入用于处理外部软件数据的API函数
 from .API_for_external import API_vaspkit as API_vaspkit  # API for VASPKIT (https://vaspkit.com/)
+
+# 导入画图函数包
+from .VISION import Visualization as Visualization    # 核心画图模块
+from .VISION import VisualizeBands as VisualizeBands  # 能带图可视化函数包
