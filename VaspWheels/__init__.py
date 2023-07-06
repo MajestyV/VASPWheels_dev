@@ -12,23 +12,18 @@ from .API_for_VASP import ReciprocalSpace      # K空间（倒易空间）相关
 from .Crystallography import Crystallography   # 晶体学相关计算函数包
 from .Crystallography import HighSymmetryPath  # 高对称点路径
 
-
-# 导入画图色彩数据
-#from .Gallery.colors.Seaborn_crayons import crayons
-#from .Gallery.colors.Seaborn_xkcd import xkcd_rgb
-from .Gallery import colors as colors  # 导入预设色值库
-# 从colors中导入函数库
-from .Gallery.colors import ColorConvertion as ColorConvertion  # 色值格式转换函数库
-
-# 导入通用函数模块
-from .DataStorage import Save_Data, Save_Figure  # 数据保存函数模块
-
-# from VisualizeBands import plot_bands
-# from GetElectronicBands import vasp
-
 # 导入用于处理外部软件数据的API函数
 from .API_for_external import API_vaspkit as API_vaspkit  # API for VASPKIT (https://vaspkit.com/)
 
-# 导入画图函数包
-from .VISION import Visualization as Visualization    # 核心画图模块
-from .VISION import VisualizeBands as VisualizeBands  # 能带图可视化函数包
+# 导入画图模块
+# 色彩模块
+from .VISION import colors as colors                            # 导入预设色值库
+from .VISION.colors import ColorConvertion as ColorConvertion   # 色值格式转换函数库
+# 各种画图专用函数
+from .VISION import Visualization as Visualization              # 核心画图模块
+from .VISION import VisualizeBands as VisualizeBands            # 能带图可视化函数包
+
+########################################################################################################################
+# 接下来是一些通用函数模块的导入
+# 这些函数放置在VaspWheels的根目录下，通过__init__.py直接导入，方便外部调用
+from .DataStorage import SavingData, SavingFigure  # 数据保存函数

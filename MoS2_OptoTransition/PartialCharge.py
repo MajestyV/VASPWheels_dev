@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import VaspWheels as vw
+
 
 # 生成渐变色值的函数，详见：https://www.jb51.net/article/164617.htm
 def gradual(rgb_start,rgb_stop,num_point=5,endpoint=True):
@@ -64,8 +64,8 @@ if __name__=='__main__':
     plt.rcParams['xtick.direction'] = 'in'  # 将x轴的刻度线方向设置向内
     plt.rcParams['ytick.direction'] = 'in'  # 将y轴的刻度线方向设置向内
 
-    plt.plot(x_v*scaling_factor,y_v,color=vw.ColorConvertion.CMYK_to_RGB(75, 45, 0, 40))
-    plt.plot(x_c*scaling_factor,y_c,color=vw.ColorConvertion.CMYK_to_RGB(0, 82, 88, 16))
+    plt.plot(x_v * scaling_factor, y_v, color=VaspWheels.VISION.colors.ColorConvertion.CMYK_to_RGB(75, 45, 0, 40))
+    plt.plot(x_c * scaling_factor, y_c, color=VaspWheels.VISION.colors.ColorConvertion.CMYK_to_RGB(0, 82, 88, 16))
 
     plt.xlim(0,0.008)
     # plt.ylim(8.5248,42.2122)

@@ -5,7 +5,11 @@ import VaspWheels as vw
 import numpy as np
 import matplotlib.pyplot as plt
 
-#################################################################################################################
+# 额外从colors中导入颜色数据，提高代码运行效率
+from .colors.Seaborn_crayons import crayons
+from .colors.Seaborn_xkcd import xkcd_rgb
+
+########################################################################################################################
 # 能带可视化函数
 
 # This function is designed for visualizing electronic bands. (此函数利用Visualization模块可视化电子能带)
@@ -15,8 +19,8 @@ def VisualizeElectronicBands(Kpath_projected,Bands,Knodes_projected,**kwargs):
 
     # 一些画图参数（以动态变量的形式传入）
     title = kwargs['title'] if 'title' in kwargs else ''  # 能带图标题，默认为无标题
-    color = kwargs['color'] if 'color' in kwargs else vw.colors.crayons['Navy Blue']  # 能带曲线颜色
-    color_split = kwargs['color_split'] if 'color_split' in kwargs else vw.colors.crayons['Gray']  # 分割线颜色
+    color = kwargs['color'] if 'color' in kwargs else crayons['Navy Blue']  # 能带曲线颜色
+    color_split = kwargs['color_split'] if 'color_split' in kwargs else crayons['Gray']  # 分割线颜色
     xlim = (min(Kpath_projected), max(Kpath_projected))       # X轴范围
     ylim = kwargs['ylim'] if 'ylim' in kwargs else (-20, 20)  # Y轴范围
     ylabel = kwargs['ylabel'] if 'ylabel' in kwargs else 'Energy (eV)'        # y轴名称
