@@ -51,37 +51,7 @@ class latte:
 
         return lattice_vector,atomic_position,crystal_info  # 应注意：lattice_vector为数组，而atomic_position、crystal_info为字典
 
-    # 这个函数可以将晶体信息组装成一个POSCAR文件
-    def WritePOSCAR(self,saving_directory=default_directory+'POSCAR_new',lattice_vector=None,atomic_position=None,crystal_info=None):
-        file = codecs.open(saving_directory,'w')  # 创建文件并给予写入权限
-        file.write(crystal_info['system']+'\n'+
-                   str(crystal_info['scale'])+'\n')  # 写入系统的名称以及晶胞的缩放尺度
-        for i in range(len(lattice_vector)):  # 写入晶格向量
-            file.write(str(lattice_vector[i][0])+'         '+str(lattice_vector[i][1])+'         '+str(lattice_vector[i][2])+'\n')
 
-        num_species = len(atomic_position['atomic_species'])  # 原子种类的数目
-        for i in range(num_species):  # 写入原子种类
-            if i == (num_species-1):
-                file.write(str(atomic_position['atomic_species'][i])+'\n')
-            else:
-                file.write(str(atomic_position['atomic_species'][i])+'    ')
-
-        for i in range(num_species):  # 写入不同原子种类中原子的数目
-            if i == (num_species-1):
-                file.write(str(atomic_position['num_atom'][i])+'\n')
-            else:
-                file.write(str(atomic_position['num_atom'][i])+'    ')
-
-        file.write(crystal_info['coordinate']+'\n')  # 写入坐标系统类别（分数坐标还是笛卡尔坐标）
-
-        num_atom = len(atomic_position['atomic_coordinate'])  # 总原子数目
-        atomic_coordinate=atomic_position['atomic_coordinate']
-        for i in range(num_atom):
-            file.write(str(atomic_coordinate[i][0])+'         '+str(atomic_coordinate[i][1])+'         '+str(atomic_coordinate[i][2])+'\n')
-
-        file.close()
-
-        return
 
     # This function is designed to create new set of lattice vectors and atomic positions for supercell
     # size变量应为list类型

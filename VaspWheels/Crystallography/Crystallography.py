@@ -7,7 +7,7 @@
 import numpy as np
 
 ########################################################################################################################
-# 基础模块：通过晶格常数计算晶胞基矢
+# 基础模块：晶格常数与晶格基矢
 # There are 14 kinds of Bravais lattice within 7 kinds of lattice system. (7大晶系，14种布拉菲晶格）
 # Each lattice has its own set of lattice parameters, which is a list consisting with 6 parameters.
 # Typical lattice_parameter = [a, b, c, alpha, beta, gamma]
@@ -15,7 +15,9 @@ import numpy as np
 # There are two types of lattice vectors: unitcell and primitive.
 # unitcell - The conventional lattice usually used in crystallography analysis.
 # primitive - The lattice consistent with the stoichiometry, used in first-principle calculations.
-def BravaisLattice(lattice, lattice_parameter, lattice_type='primitive'):
+
+# 此函数可通过指定晶格类型，以及给定晶格常数，计算出晶格基矢
+def LatticeVector(lattice, lattice_parameter, lattice_type='primitive'):
     # 提取晶格常数
     a, b, c, alpha, beta, gamma = lattice_parameter
 
@@ -72,12 +74,23 @@ def BravaisLattice(lattice, lattice_parameter, lattice_type='primitive'):
                        'primitive': primitive_vectors[lattice]}
     return lattice_vectors[lattice_type]
 
+# 这个函数可以通过晶格基矢a, b, c计算晶格常数，但是记得输入必须是个由三个基矢组成的列表：[[a],[b],[c]]
+def LatticeParameter(lattice_vector):
+    lattice_vector = [np.array(lattice_vector[i]) for i in range(len(lattice_vector))]  # 将晶格基矢转换为数组，防止出错
+    a_vec, b_vec, c_vec = lattice_vector                                                # 解压a, b, c基矢
+    # 计算三个晶格基矢的长度，向量的二范数即向量的模
+    a_len, b_len, c_len = [np.linalg.norm(lattice_vector[i],ord=2) for i in range(len(lattice_vector))]
+    alpha = np.arccos(np.dot(b_vec, c_vec) / (b_len * c_len))  # 利用 cos(<a,b>) = a·b/(|a|·|b|)计算向量夹角
+    beta = np.arccos(np.dot(a_vec, c_vec) / (a_len * c_len))   # 在python中，向量点乘（内积）可以通过np.dot()函数实现
+    gamma = np.arccos(np.dot(a_vec, b_vec) / (a_len * b_len))
+    return a_len, b_len, c_len, alpha, beta, gamma
+
 ########################################################################################################################
 # 晶体学运算核心模块
 
 # 计算实空间的度规张量(Metric Tensor)
 def MetricTensor(lattice,lattice_parameter,lattice_type='primitive'):
-    a1, a2, a3 = BravaisLattice(lattice,lattice_parameter,lattice_type)
+    a1, a2, a3 = LatticeVector(lattice,lattice_parameter,lattice_type)
     g = [[np.dot(a1,a1), np.dot(a1,a2), np.dot(a1,a3)],
          [np.dot(a2,a1), np.dot(a2,a2), np.dot(a2,a3)],
          [np.dot(a3,a1), np.dot(a3,a2), np.dot(a3,a3)]]
@@ -85,7 +98,7 @@ def MetricTensor(lattice,lattice_parameter,lattice_type='primitive'):
 
 # 计算倒易空间基矢
 def Reciprocal_Lattice(lattice,lattice_parameter,lattice_type='primitive'):
-    a1, a2, a3 = BravaisLattice(lattice,lattice_parameter,lattice_type)  # 计算正空间基矢
+    a1, a2, a3 = LatticeVector(lattice,lattice_parameter,lattice_type)  # 计算正空间基矢
     a1_x_a2, a2_x_a3, a3_x_a1 = (np.cross(a1,a2),np.cross(a2,a3), np.cross(a3,a1))  # 提前算好基矢的交叉叉乘结果，方便调用以减少代码计算量
 
     V = np.inner(a1,a2_x_a3)  # 计算实空间晶胞的体积
@@ -127,6 +140,22 @@ def Volume(lattice,lattice_parameter,lattice_type='primitive',space='real'):
     V = np.inner(x, np.cross(y,z))  # 计算晶胞体积
 
     return V
+
+
+
+
+    # 此函数用于计算原子键长
+    def BondLength(atom1_pos, atom2_pos, lattice_vector):
+        a1, a2, a3 = lattice_vector
+        lattice = np.mat([a1, a2, a3])
+        lattice_T = np.transpose(lattice)
+        MetricTensor = np.dot(lattice, lattice_T)  # 应注意，这里要用向量/矩阵的点乘，不是叉乘，不要弄混
+
+        d_vec = np.mat(Atom_1) - np.mat(Atom_2)
+        d_sqaure = d_vec * MetricTensor * np.transpose(d_vec)  # 同时，这里也是点乘
+        d_sqaure = np.array(d_sqaure)  # 将d_square从矩阵形式转变为数组形式
+
+        return np.sqrt(d_sqaure[0][0])
 
 
 if __name__ == '__main__':

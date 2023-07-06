@@ -1,6 +1,10 @@
+# 此函数包囊括了一系列的函数，以实现一系列功能，致力于为第一性原理研究中常见的数据分析与计算提供便利
+# 高聚低耦，吾码所宗，以建理论，追本溯源
+
 # 函数包的主体部分，导入专门用于处理VASP数据的函数脚本
-from .API_for_VASP import ElectronicStructure  # 能带提取函数包
-from .API_for_VASP import ReciprocalSpace      # K空间（倒易空间）相关函数包
+from .API_for_VASP import AtomicStructure      # 原子结构构造与分析函数模块
+from .API_for_VASP import ElectronicStructure  # 能带提取函数模块
+from .API_for_VASP import ReciprocalSpace      # K空间（倒易空间）相关函数模块
 
 # . 代表当前文件所在的文件夹路径（跟Linux shell script一样）
 # 子package导入模块，方便外部调用

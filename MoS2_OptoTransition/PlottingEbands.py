@@ -3,13 +3,16 @@ import VaspWheels as vw
 if __name__=='__main__':
     # 数据文件目录
     # data_directory = 'D:/PhD_research/OptoTransition/Data/MoS2/Electronic_structure/Pentalayer/E_prop_SOC_SYM'  # Zhuhai
-    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM'  # JCPGH1
-    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_9_9_1'
-    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_9_9_1'  # MMW502
+    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_9_9_1'  # JCPGH1
+    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_14_14_1'
+    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_9_9_1'  # MMW502
     # data_directory = 'D:/PhD_research/Data/Simulation/MoS2/MoS2_pawpbe_vasp5_SOC/D3BJ/5/result'
 
     # 保存目录
-    saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop'  # MMW502
+    saving_directory = 'C:/Users/13682/OneDrive/桌面/Test'  # JCPGH1
+    # aving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop'  # MMW502
+
+    saving_filename = '14_14_1'
 
     EIGENVAL = data_directory+'/EIGENVAL'
 

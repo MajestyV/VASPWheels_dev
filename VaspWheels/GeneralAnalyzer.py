@@ -1,7 +1,6 @@
 # 此代码囊括了一系列的函数，以实现一系列功能，致力于为第一性原理研究中常见的数据分析与计算提供便利
 # 高聚低耦，吾码所宗，以建理论，追本溯源
 
-import codecs
 import numpy as np
 import pandas as pd
 from scipy.optimize import leastsq
@@ -74,74 +73,8 @@ class functions:
     ##############################################################################################################
     #########################################接下来的部分为特定功能的实现模块###########################################
     ##############################################################################################################
-    # V.A.S.P.计算中的结构文件POSCAR的分析模块
-    # This function can extract the information of the lattice structure from the POSCAR file.
-    def GetStructure(self, POSCAR):
-        file = codecs.open(POSCAR, 'rb', 'utf-8', 'ignore')
-        line = file.readline()
-        lindex = 0
-        lattice_vector = []
-        atomic_position_raw = []
-        while line:
-            content = line.split()  # 以空字符（空格，换行'\n'，制表符'\t'等）为分隔符对本行内容做切片 （什么都不填默认为空字符）
-            if lindex == 0:
-                system = line.split()
-            elif lindex == 1:
-                scale = float(content[0])
-            elif lindex >= 2 and lindex <= 4:
-                content = list(map(float, content))
-                lattice_vector.append(content)
-            elif lindex == 5:
-                atom_species = content
-            elif lindex == 6:
-                num_atom = list(map(float, content))
-            elif lindex == 7:
-                coordinate = content[0]
-            else:
-                content = list(map(float, content))
-                atomic_position_raw.append(content)
 
-            line = file.readline()
-            lindex += 1
-        file.close()
 
-        # 重整原子坐标信息，丢弃无意义的部分
-        num_total = int(sum(num_atom))  # 将各原子数加起来得到原子总数,记得要替换为整型
-        atomic_position = []
-        for i in range(num_total):
-            atomic_position.append(atomic_position_raw[i])
-
-        structure = {'system': system, 'scale': scale,
-                     'atom': atom_species, 'num_atom': num_atom,
-                     'coordinate_system': coordinate,
-                     'lattice_vector': lattice_vector,
-                     'atomic_position': np.array(atomic_position)}  # 将原子坐标信息转换为数组，以防出错
-        return structure
-
-    # 这个函数可以通过晶体的三个基矢a, b, c计算晶格常数，但是记得输入必须是个由三个基矢组成的列表：[[a],[b],[c]]，方便解压
-    def LatticeParameter(self, lattice_vector):
-        # lattice_vector = lattice_vector.tolist()     # 确保输入是个列表，可以解压
-        lattice_vector = [np.array(lattice_vector[i]) for i in range(len(lattice_vector))]  # 将晶格基矢转换为数组，防止出错
-        a_vec, b_vec, c_vec = lattice_vector  # 解压a, b, c基矢
-        # 计算三个晶格基矢的长度，向量的二范数即向量的模
-        a_len, b_len, c_len = [np.linalg.norm(lattice_vector[i],ord=2) for i in range(len(lattice_vector))]
-        alpha = np.arccos(np.dot(b_vec, c_vec) / (b_len * c_len))  # 利用 cos(<a,b>) = a·b/(|a|·|b|)计算向量夹角
-        beta = np.arccos(np.dot(a_vec, c_vec) / (a_len * c_len))  # 在python中，向量点乘（内积）可以通过np.dot()函数实现
-        gamma = np.arccos(np.dot(a_vec, b_vec) / (a_len * b_len))
-        return a_len, b_len, c_len, alpha, beta, gamma
-
-    # 用于计算不同晶体坐标下的原子间距
-    def BondLength(self, Atom_1, Atom_2, lattice_vector):
-        a1, a2, a3 = lattice_vector
-        lattice = np.mat([a1, a2, a3])
-        lattice_T = np.transpose(lattice)
-        MetricTensor = np.dot(lattice, lattice_T)  # 应注意，这里要用向量/矩阵的点乘，不是叉乘，不要弄混
-
-        d_vec = np.mat(Atom_1) - np.mat(Atom_2)
-        d_sqaure = d_vec * MetricTensor * np.transpose(d_vec)  # 同时，这里也是点乘
-        d_sqaure = np.array(d_sqaure)  # 将d_square从矩阵形式转变为数组形式
-
-        return np.sqrt(d_sqaure[0][0])
 
     ##############################################################################################################
     # 弹性模量计算模块（应变-能量分析）
