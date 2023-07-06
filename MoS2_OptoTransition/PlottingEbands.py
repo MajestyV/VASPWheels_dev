@@ -1,8 +1,10 @@
 import VaspWheels as vw
 
 if __name__=='__main__':
-    # data_directory = 'D:/PhD_research/OptoTransition/Data/MoS2/Electronic_structure/Pentalayer/E_prop_SOC_SYM'
-    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM'
+    # data_directory = 'D:/PhD_research/OptoTransition/Data/MoS2/Electronic_structure/Pentalayer/E_prop_SOC_SYM'  # Zhuhai
+    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM'  # JCPGH1
+    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_9_9_1'
+    # data_directory = 'D:/PhD_research/Data/Simulation/MoS2/MoS2_pawpbe_vasp5_SOC/D3BJ/5/result'
 
     EIGENVAL = data_directory+'/EIGENVAL'
 
