@@ -10,15 +10,7 @@ class functions:
     """ This class of functions is designed for general data analysis and computation in ab initio study. """
     def __init__(self):
         self.name = functions
-        # 在这个函数类中，所有内嵌的物理常数都默认使用国际单位制（SI）
-        self.q = 1.602e-19  # 基本电荷，[=] C
-        self.m_e = 9.109e-31  # 电子静止质量，[=] kg
-        self.kB = 1.381e-23  # 玻尔兹曼常数，[=] J/K
-        self.h = 6.626e-34  # 普朗克常数，[=] J·s
-        self.hbar = 1.055e-34  # 约化普朗克常数，[=] J·s
-        # 常用的量纲转换因子
-        self.eV_to_J = 1.602e-19  # Electronvolt to Joule, eV to J
-        self.J_to_eV = 6.242e18   # Joule to Electronvolt, J to eV
+        
 
     ##############################################################################################################
     # 通用数据提取以及保存模块

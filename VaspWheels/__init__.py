@@ -28,6 +28,7 @@ from .VISION import Visualization as Visualization              # 核心画图�
 from .VISION import VisualizeBands as VisualizeBands            # 能带图可视化函数包
 
 ########################################################################################################################
-# 接下来是一些通用函数模块的导入
-# 这些函数放置在VaspWheels的根目录下，通过__init__.py直接导入，方便外部调用
-from .DataStorage import SavingData, SavingFigure  # 数据保存函数
+# 接下来是一些通用模块的导入
+# 这些函数或者字典形式储存的数据放置在VaspWheels的根目录下，通过__init__.py直接导入，方便外部调用
+from .Foundation import SI_unit, UnitConversionFactor  # 导入常用的基本物理学常数
+from .DataStorage import SavingData, SavingFigure      # 数据保存函数
