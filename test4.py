@@ -1,25 +1,21 @@
 import numpy as np
-from Wheels import GetData
-from Wheels import functions
 
-gd = GetData.geda()
-f = functions.fx()
+a1, a2, a3 = np.array([[1,2,0],[2,1,0],[3,0,1]])
 
-for i in ['alpha', 'omega']:
-    locals()['V_'+str(i)] = []
-    for j in ['minus', 'plus', 'orig']:
-        DataPath = '/Users/liusongwei/Titanium/mode_Gruneisen_parameters/G_relaxed_structure_test1/'+i+'/POSCAR_unitcell_'+j
-        par = gd.GetStructure(DataPath)
-        V = f.Volume(par[0],par[1])*gd.GetStructure(DataPath)[2]
-        locals()['V_'+str(i)].append(V)
 
-difference1 = (V_alpha[2]-V_alpha[1])/(V_alpha[1])
-difference2 = (V_omega[2]-V_omega[1])/(V_omega[1])
+a1_x_a2, a2_x_a3, a3_x_a1 = (np.cross(a1,a2),np.cross(a2,a3), np.cross(a3,a1))  # 提前算好基矢的交叉叉乘结果，方便调用以减少代码计算量
 
-print(V_alpha, V_omega, difference1, difference2)
+V = np.inner(a1,a2_x_a3)  # 计算实空间晶胞的体积
 
-a = 14.10
-b = 17.04
-x = ((b/a)**2/3-1)/2
+pi = np.pi
+# reciprocal_lattice = (2.0*pi/V)*np.array([a2_x_a3,a3_x_a1,a1_x_a2])
 
-print(x)
+reciprocal_lattice = (2.0*np.pi/V)*np.array([np.cross(a1,a2),np.cross(a2,a3), np.cross(a3,a1)])
+
+# 倒空间基矢计算公式：b1 = 2*pi*(a2xa3)/[a1·(a2xa3)], b2 = 2*pi*(a3xa1)/[a1·(a2xa3)], b3 = 2*pi*(a1xa2)/[a1·(a2xa3)]
+b1 = [(2.0*pi/V)*a2_x_a3[n] for n in range(len(a2_x_a3))]
+b2 = [(2.0*pi/V)*a3_x_a1[n] for n in range(len(a3_x_a1))]
+b3 = [(2.0*pi/V)*a1_x_a2[n] for n in range(len(a1_x_a2))]
+
+print(np.array([b1,b2,b3]))
+print(reciprocal_lattice)

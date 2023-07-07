@@ -72,7 +72,7 @@ def LatticeVector(lattice, lattice_parameter, lattice_type='primitive'):
     # 把两个字典分配到不同晶格的模式的键值之下
     lattice_vectors = {'unitcell': unitcell_vectors[lattice],
                        'primitive': primitive_vectors[lattice]}
-    return lattice_vectors[lattice_type]
+    return np.array(lattice_vectors[lattice_type])  # 保证输出的结果为numpy的数组，方面后续矩阵运算
 
 # 这个函数可以通过晶格基矢a, b, c计算晶格常数，但是记得输入必须是个由三个基矢组成的列表：[[a],[b],[c]]
 def LatticeParameter(lattice_vector):
@@ -88,75 +88,94 @@ def LatticeParameter(lattice_vector):
 ########################################################################################################################
 # 晶体学运算核心模块
 
-# 计算实空间的度规张量(Metric Tensor)
-def MetricTensor(lattice,lattice_parameter,lattice_type='primitive'):
-    a1, a2, a3 = LatticeVector(lattice,lattice_parameter,lattice_type)
-    g = [[np.dot(a1,a1), np.dot(a1,a2), np.dot(a1,a3)],
-         [np.dot(a2,a1), np.dot(a2,a2), np.dot(a2,a3)],
-         [np.dot(a3,a1), np.dot(a3,a2), np.dot(a3,a3)]]
-    return np.array(g)
+# 给定晶格基矢(lattice vector)计算该空间的度规常量(Metric Tensor), 输入的晶格矩阵必须是由晶格基矢组成的numpy数组
+def MetricTensor_from_LattVec(lattice_matrix): return lattice_matrix@lattice_matrix.T
 
-# 计算倒易空间基矢
+# 给定晶格常数计算实空间的度规张量
+def MetricTensor(lattice,lattice_parameter,lattice_type='primitive'):
+    lattice_matrix = LatticeVector(lattice,lattice_parameter,lattice_type)  # LatticeVector()函数的输出已是数组形式
+    metric_tensor = lattice_matrix@lattice_matrix.T  # @ - Python 3.5+中的操作，指代矩阵乘法
+    return metric_tensor
+
+# 给定晶格常数计算倒易空间基矢
 def Reciprocal_Lattice(lattice,lattice_parameter,lattice_type='primitive'):
     a1, a2, a3 = LatticeVector(lattice,lattice_parameter,lattice_type)  # 计算正空间基矢
-    a1_x_a2, a2_x_a3, a3_x_a1 = (np.cross(a1,a2),np.cross(a2,a3), np.cross(a3,a1))  # 提前算好基矢的交叉叉乘结果，方便调用以减少代码计算量
 
-    V = np.inner(a1,a2_x_a3)  # 计算实空间晶胞的体积
+    V = np.inner(a1,np.cross(a2, a3))  # 计算实空间晶胞的体积
 
     # 倒空间基矢计算公式：b1 = 2*pi*(a2xa3)/[a1·(a2xa3)], b2 = 2*pi*(a3xa1)/[a1·(a2xa3)], b3 = 2*pi*(a1xa2)/[a1·(a2xa3)]
-    pi = np.pi
-    b1 = [(2.0*pi/V)*a2_x_a3[n] for n in range(len(a2_x_a3))]
-    b2 = [(2.0*pi/V)*a3_x_a1[n] for n in range(len(a3_x_a1))]
-    b3 = [(2.0*pi/V)*a1_x_a2[n] for n in range(len(a1_x_a2))]
+    reciprocal_lattice = (2.0 * np.pi / V) * np.array([np.cross(a1, a2), np.cross(a2, a3), np.cross(a3, a1)])
 
-    return np.array([b1,b2,b3])
+    return reciprocal_lattice
 
-# 计算倒易空间的度规张量
+# 给定晶格常数计算倒易空间的度规张量
 def Reciprocal_MetricTensor(lattice,lattice_parameter,lattice_type='primitive'):
-    b1, b2, b3 = Reciprocal_Lattice(lattice,lattice_parameter,lattice_type)
-    g_star = [[np.inner(b1,b1), np.inner(b1,b2), np.inner(b1,b3)],
-              [np.inner(b2,b1), np.inner(b2,b2), np.inner(b2,b3)],
-              [np.inner(b3,b1), np.inner(b3,b2), np.inner(b3,b3)]]
-    return np.array(g_star)
+    reciprocal_lattice_matrix = Reciprocal_Lattice(lattice,lattice_parameter,lattice_type)
+    reciprocal_metric_tensor = reciprocal_lattice_matrix@reciprocal_lattice_matrix.T
+    return reciprocal_metric_tensor
 
 ########################################################################################################################
 # 晶体学运算高阶模块
 
-# 利用度规张量（metric tensor）计算不同空间坐标下向量的长度
-def Length(vector,metric_tensor=np.array([[1.0,0,0],[0,1.0,0],[0,0,1.0]])):
+# 计算不同空间坐标下向量的长度
+def Length(vector,mode='lattice vector',**kwargs):
+    # 初始化晶格基矢模式下所需的变量
+    lattice_vector = kwargs['lattice_vector'] if 'lattice_vector' in kwargs else np.array([[1.0, 0, 0], [0, 1.0, 0], [0, 0, 1.0]])
+    # 初始化晶格常数模式下所需的变量
+    lattice = kwargs['lattice'] if 'lattice' in kwargs else 'CUB'
+    lattice_parameter = kwargs['lattice_parameter'] if 'lattice_parameter' in kwargs else [1.0, 1.0, 1.0, 90, 90, 90]
+    lattice_type = kwargs['lattice_type'] if 'lattice_type' in kwargs else 'primitive'
+
+    if mode == 'lattice vector':
+        metric_tensor = MetricTensor_from_LattVec(lattice_vector)
+    elif mode == 'lattice parameter':
+        metric_tensor = MetricTensor(lattice,lattice_parameter,lattice_type)
+    else:
+        print(r'There are two available mode: "lattice parameter" or "lattice vector" .')
+        return
+
     vec = np.array([vector])            # 将输入的向量转变为二维数组，方便利用numpy进行矩阵运算
     l_square = vec@metric_tensor@vec.T  # 利用度规张量计算向量的模（In NumPy, the @ operator means matrix multiplication）
     l = np.sqrt(l_square[0,0])          # 由于numpy二维数组的运算结果仍是二维数组，所以需要先提取元素再开方
+
     return l
+
+# 此函数用于计算原子键长
+def BondLength(atom1_pos,atom2_pos,mode='lattice vector',**kwargs):
+    # 初始化晶格基矢模式下所需的变量
+    lattice_vector = kwargs['lattice_vector'] if 'lattice_vector' in kwargs else np.array(
+        [[1.0, 0, 0], [0, 1.0, 0], [0, 0, 1.0]])
+    # 初始化晶格常数模式下所需的变量
+    lattice = kwargs['lattice'] if 'lattice' in kwargs else 'CUB'
+    lattice_parameter = kwargs['lattice_parameter'] if 'lattice_parameter' in kwargs else [1.0, 1.0, 1.0, 90, 90, 90]
+    lattice_type = kwargs['lattice_type'] if 'lattice_type' in kwargs else 'primitive'
+
+    if mode == 'lattice vector':
+        metric_tensor = MetricTensor_from_LattVec(lattice_vector)
+    elif mode == 'lattice parameter':
+        metric_tensor = MetricTensor(lattice, lattice_parameter, lattice_type)
+    else:
+        print(r'There are two available mode: "lattice parameter" or "lattice vector" .')
+        return
+
+    atom1, atom2 = (np.array(atom1_pos),np.array(atom2_pos))  # 将原子坐标转换为数组，防止运算出错
+    l_bond_vec = np.array([atom1-atom2])
+    l_bond_sqaure = l_bond_vec@metric_tensor@l_bond_vec.T
+    l_bond = np.sqrt(l_bond_sqaure[0][0])
+
+    return l_bond
 
 # 计算晶胞的体积
 def Volume(lattice,lattice_parameter,lattice_type='primitive',space='real'):
     x, y, z = (np.zeros(3),np.zeros(3),np.zeros(3))  # 初始化晶胞基矢
     if space == 'real':
-        x, y, z = BravaisLattice(lattice,lattice_parameter,lattice_type)
+        x, y, z = LatticeVector(lattice,lattice_parameter,lattice_type)
     elif space == 'reciprocal':
         x, y, z = Reciprocal_Lattice(lattice,lattice_parameter,lattice_type)
 
     V = np.inner(x, np.cross(y,z))  # 计算晶胞体积
 
     return V
-
-
-
-
-    # 此函数用于计算原子键长
-    def BondLength(atom1_pos, atom2_pos, lattice_vector):
-        a1, a2, a3 = lattice_vector
-        lattice = np.mat([a1, a2, a3])
-        lattice_T = np.transpose(lattice)
-        MetricTensor = np.dot(lattice, lattice_T)  # 应注意，这里要用向量/矩阵的点乘，不是叉乘，不要弄混
-
-        d_vec = np.mat(Atom_1) - np.mat(Atom_2)
-        d_sqaure = d_vec * MetricTensor * np.transpose(d_vec)  # 同时，这里也是点乘
-        d_sqaure = np.array(d_sqaure)  # 将d_square从矩阵形式转变为数组形式
-
-        return np.sqrt(d_sqaure[0][0])
-
 
 if __name__ == '__main__':
     a = [1, 2, 3]
