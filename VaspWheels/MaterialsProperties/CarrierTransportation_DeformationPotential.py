@@ -1,5 +1,10 @@
+# 此代码专用于利用形变势理论研究材料的载流子传输
+# This code is designed for investigating carrier transportation of materials via deformation potential theory.
+# 具体可以参考：
+
 import numpy as np
 from scipy.optimize import leastsq
+from VaspWheels import SI_unit as SI, UnitConversionFactor as unit_conv
 
 ##############################################################################################################
     # 弹性模量计算模块（应变-能量分析）

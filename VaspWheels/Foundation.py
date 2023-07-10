@@ -1,4 +1,4 @@
-# 国际单位制
+# 国际单位制（International System of Units, SI is the abbreviation for Système International）
 SI_unit = {
            'q': 1.602e-19,                     # 基本电荷，[=] C
            'm_e': 9.109e-31,                   # 电子静止质量，[=] kg
