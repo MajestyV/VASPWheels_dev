@@ -104,7 +104,7 @@ def Reciprocal_Lattice(lattice,lattice_parameter,lattice_type='primitive'):
     V = np.inner(a1,np.cross(a2, a3))  # 计算实空间晶胞的体积
 
     # 倒空间基矢计算公式：b1 = 2*pi*(a2xa3)/[a1·(a2xa3)], b2 = 2*pi*(a3xa1)/[a1·(a2xa3)], b3 = 2*pi*(a1xa2)/[a1·(a2xa3)]
-    reciprocal_lattice = (2.0 * np.pi / V) * np.array([np.cross(a1, a2), np.cross(a2, a3), np.cross(a3, a1)])
+    reciprocal_lattice = (2.0 * np.pi / V) * np.array([np.cross(a2, a3), np.cross(a3, a1), np.cross(a1, a2)])
 
     return reciprocal_lattice
 
