@@ -1,14 +1,13 @@
 # This code is written for generating K-point path file for first-principles calculation and analyzing computation results.
 
 import numpy as np
-import VaspWheels as vw
-
+from VaspWheels import Crystallography  # 直接指明要调用的模块，提高代码运行效率
 
 ########################################################################################################################
 # KPOINTS文件生成模块：此模块的函数专门用于生成VASP计算所需的KPOINTS文件
 
 # 这个函数可以指定K点列表生成V.A.S.P.计算所需的KPOINTS文件
-def GenKPOINTS(saving_address, Kpoints_list):
+def WriteKPOINTS(saving_address, Kpoints_list):
     file = open(saving_address, 'w')
     file.write('auto generate\n' +     # 写入KPOINTS文件表头
                 str(len(Kpoints_list)) + '\n' +
@@ -37,7 +36,7 @@ def GenerateKpath(Knodes,npoints=100):
 
 # 这个函数可以通过指定高对称K点端点生成K点路径文件，专用于能带计算（当然，对于VASP5以上用户，强烈建议直接用vasp自带的linemode）
 # This function is written to generate KPOINTS file for electronic dispersion calculation.
-def GetKpath(saving_address,nodes,npoints=100):
+def WriteKpath(saving_address,nodes,npoints=100):
     Kpath = GenerateKpath(nodes,npoints)
     KPOINTS = saving_address
     file = open(KPOINTS,'w')
@@ -56,7 +55,7 @@ def GetKpath(saving_address,nodes,npoints=100):
 # 将沿这个路程计算得到的能量值展开，我们就得到了经常能看到的能带图
 def ProjectKpath(Kpath,num_segments,lattice_param=('Cubic', [1, 1, 1, 90, 90, 90], 'primitive')):
     lattice, parameters, type = lattice_param  # 输入晶格常数，默认为立方单位晶格，即不作任何的晶格修正
-    b1,b2,b3 = vw.Crystallography.Reciprocal_Lattice(lattice,parameters,type)  # 计算倒空间基矢
+    b1,b2,b3 = Crystallography.Reciprocal_Lattice(lattice,parameters,type)  # 计算倒空间基矢
     # 通过倒空间基矢的长度，对K点路程进行晶格修正
     scaling = np.array([np.linalg.norm(b1,ord=2),np.linalg.norm(b2,ord=2),np.linalg.norm(b3,ord=2)])
 

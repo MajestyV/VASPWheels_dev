@@ -1,25 +1,25 @@
 # 此代码专用于利用形变势理论研究材料的载流子传输
 # This code is designed for investigating carrier transportation of materials via deformation potential theory.
-# 具体可以参考：
+# 参考文献详见：
+# J. Bardeen and W. Shockley, Deformation Potentials and Mobilities in Non-Polar Crystals, Phys. Rev. 90, 72 (1950).
+# Y. Cai, G. Zhang and Y.-W. Zhang, Polarity-Reversed Robust Carrier Mobility in Monolayer MoS2 Nanoribbons, J. Am. Chem. Soc. 136, 6269-6275 (2014).
 
 import numpy as np
 from scipy.optimize import leastsq
 from VaspWheels import SI_unit as SI, UnitConversionFactor as unit_conv
 
 ##############################################################################################################
-    # 弹性模量计算模块（应变-能量分析）
-    # 此函数可以通过分析strain-energy profile计算弹性模量
-    def ElasticModulus(self,strain,energy,structural_factor,**kwargs):
-        # 对于简单的二次项回归np.polyfit()函数会更加robust
-        coef = np.polyfit(strain,energy,2)  # 多项式系数系数的排列从高到低，比如对于二次多项式，系数对于的次数依次为：2、1、0
-        modulus = 2*coef[0]/structural_factor  # structural_factor随系统维数变化而变化：1D-长度，2D-面积，3D-体积
+# 弹性模量计算模块（应变-能量分析），此函数可以通过分析strain-energy profile计算弹性模量
+def ElasticModulus(strain,energy,structural_factor,dim='3D'):
+    # 对于简单的二次项回归np.polyfit()函数会更加robust
+    coef = np.polyfit(strain,energy,2)  # 多项式系数系数的排列从高到低，比如对于二次多项式，系数对于的次数依次为：2、1、0
+    modulus = 2*coef[0]/structural_factor  # structural_factor随系统维数变化而变化：1D-长度，2D-面积，3D-体积
 
-        dim = kwargs['dim'] if 'dim' in kwargs else '3D'  # 系统的维数
-        # 量纲转换因子，转换过程为1D：eV/Å to N, 2D: eV/Å^2 to N/m, 3D: eV/Å^3 to N/m^2 = Pa
-        unit_transform = {'1D': 1.602e-19/1.0e-10,
-                          '2D': 1.602e-19/1.0e-20,
-                          '3D': 1.602e-19/1.0e-30}
-        return unit_transform[dim]*modulus
+    # 量纲转换因子，转换过程为1D：eV/Å to N, 2D: eV/Å^2 to N/m, 3D: eV/Å^3 to N/m^2 = Pa （系统的维数默认为3D）
+    unit_transform = {'1D': 1.602e-19/1.0e-10,
+                      '2D': 1.602e-19/1.0e-20,
+                      '3D': 1.602e-19/1.0e-30}
+    return unit_transform[dim]*modulus
 
 # Semiconductor conductivity calculation module (半导体导电性计算模块计算模块)
 
