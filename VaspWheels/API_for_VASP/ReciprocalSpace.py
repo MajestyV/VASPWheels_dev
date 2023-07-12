@@ -1,7 +1,7 @@
 # This code is written for generating K-point path file for first-principles calculation and analyzing computation results.
 
 import numpy as np
-from VaspWheels import Crystallography  # 直接指明要调用的模块，提高代码运行效率
+from ..Crystallography import Crystallography  # 直接指明要调用的模块，提高代码运行效率
 
 ########################################################################################################################
 # KPOINTS文件生成模块：此模块的函数专门用于生成VASP计算所需的KPOINTS文件
