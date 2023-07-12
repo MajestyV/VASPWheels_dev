@@ -48,8 +48,8 @@ if __name__=='__main__':
 
     bands_shifted = vw.ElectronicStructure.ShiftFermiSurface(bands,Ev_max)  # 费米面调零
 
-    vw.VisualizeBands.VisualizeElectronicBands(Kpath_projected, bands_shifted,
+    vw.VisualizeElectronic.VisualizeBands(Kpath_projected, bands_shifted,
                                                Knodes_projected, ylim=(-2, 5), HighSymPath=HighSymPath, color=vw.colors.iColar['Paris'])
 
-    vw.SavingFigure(saving_directory=saving_directory, file_name=structure)
-    vw.SavingFigure(saving_directory=saving_directory, file_name=structure,format='eps')
+    # vw.SavingFigure(saving_directory=saving_directory, file_name=structure)
+    # vw.SavingFigure(saving_directory=saving_directory, file_name=structure,format='eps')

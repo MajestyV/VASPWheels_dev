@@ -46,58 +46,7 @@ class full_analysis:
 
     def GetBandgap(self): return self.Eg
 
-    def Visualize_band_n_dos(self,energy_range=(-3,5),dos_range=(0,15),shift_Fermi=True,figsize=(4.5,6)):
-        if shift_Fermi:  # 默认进行费米面调零
-            bands = GE.ShiftFermiSurface(self.bands, self.Ev_max)  # 对能带数据进行费米面调零
-            energy = self.energy-self.Ev_max  # 对DOS数据进行费米面调零
-        else:
-            bands = self.bands
-            energy = self.energy
-        Kpath, Knodes = (self.Kpath_projected,self.Knodes_projected)  # 将实例变量的值赋予本地变量
 
-        # 设置坐标轴和网格配置
-        fig = plt.figure(figsize=figsize)
-        grid = plt.GridSpec(3, 4, hspace=0.2, wspace=0.1)
-
-        # 设置刻度线方向
-        plt.rcParams['xtick.direction'] = 'in'  # 将x轴的刻度线方向设置向内
-        plt.rcParams['ytick.direction'] = 'in'  # 将y轴的刻度线方向设置向内
-        #plt.tick_params(bottom=False, top=False, left=True, right=True)
-
-
-        # main_plot = fig.add_subplot(grid[:-1, 1:])
-        # subplot_x = fig.add_subplot(grid[-1, 1:], yticklabels=[], sharex=main_plot)
-        # subplot_y = fig.add_subplot(grid[:-1, 0], xticklabels=[], sharey=main_plot)
-
-        plot_bands = fig.add_subplot(grid[:-1, :3])
-        # subplot_x = fig.add_subplot(grid[-1, :3], yticklabels=[], sharex=main_plot)
-        plot_dos = fig.add_subplot(grid[:-1, 3], xticklabels=[], sharey=plot_bands)
-
-        # 画图
-        for i in range(self.num_bands):
-            plot_bands.plot(Kpath,bands[i],color=vw.colors.crayons['Navy Blue'])
-        plot_dos.plot(self.DOS,energy,color=vw.colors.crayons['Navy Blue'])
-
-        # 能带图辅助分割线以及各种细节设置
-        K_min, K_max = (min(Kpath), max(Kpath))  # 投影K空间路径的范围
-        ymin, ymax = energy_range  # 从输入参数中读取要展示的能量范围
-
-        print(Knodes)
-        print(K_min, K_max)
-
-        # 画高对称点分割线
-        for i in range(len(Knodes) - 2):  # 第一跟最后的一个高对称点跟能带图的左右边界重合，所以不必作分割线
-            plot_bands.vlines(Knodes[i + 1], ymin, ymax, linestyles='dashed', colors=vw.colors.crayons['Gray'])
-        # 画费米面分割线
-        plot_bands.hlines(0, K_min, K_max, linestyles='dashed', colors=vw.colors.crayons['Gray'])
-        plot_bands.set_xticks(Knodes, self.HSP_path)
-        plot_bands.set_xlim(K_min,K_max)
-        plot_bands.set_ylim(ymin,ymax)
-
-        plot_dos.set_xticks([])
-        plot_dos.set_yticklabels([])
-        dos_min, dos_max = dos_range  # 从输入参数中读取要展示的态密度范围
-        plot_dos.set_xlim(dos_min,dos_max)
 
     def Visualize(self,shift_Fermi=True,figsize=(6,6)):
         if shift_Fermi:  # 默认进行费米面调零

@@ -25,7 +25,7 @@ from .VISION import colors as colors                            # 导入预设�
 from .VISION.colors import ColorConvertion as ColorConvertion   # 色值格式转换函数库
 # 各种画图专用函数
 from .VISION import Visualization as Visualization              # 核心画图模块
-from .VISION import VisualizeBands as VisualizeBands            # 能带图可视化函数包
+from .VISION import VisualizeElectronic as VisualizeElectronic  # 电子性能可视化函数包
 
 ########################################################################################################################
 # 接下来是一些通用模块的导入

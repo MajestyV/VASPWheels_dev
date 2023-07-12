@@ -12,9 +12,8 @@ from .colors.Custom_iColar import iColar
 
 ########################################################################################################################
 # 能带可视化函数
-
 # This function is designed for visualizing electronic bands. (此函数利用Visualization模块可视化电子能带)
-def VisualizeElectronicBands(Kpath_projected,Bands,Knodes_projected,**kwargs):
+def VisualizeBands(Kpath_projected,Bands,Knodes_projected,**kwargs):
     num_bands, num_kpoints = np.shape(Bands)  # 输入的能带数据Energy应该是一个num_bands行num_kpoints列的二维数组
     num_Knodes = len(Knodes_projected)         # K点路径端点的个数，即高对称点的个数
 
@@ -48,6 +47,79 @@ def VisualizeElectronicBands(Kpath_projected,Bands,Knodes_projected,**kwargs):
     vw.Visualization.CustomSetting(xlim=xlim, ylim=ylim, title=title, ylabel=ylabel)  # 对能带图进行个性化设置
 
     return
+
+# 全谱分析
+def FullAnalysis(Kpath_projected,Bands,Knodes_projected,Energy,DOS,**kwargs):
+    num_bands, num_kpoints = np.shape(Bands)  # 输入的能带数据Energy应该是一个num_bands行num_kpoints列的二维数组
+    num_Knodes = len(Knodes_projected)  # K点路径端点的个数，即高对称点的个数
+
+    # 以动态变量的形式传入画图参数
+    title = kwargs['title'] if 'title' in kwargs else ''  # 能带图标题，默认为无标题
+    color = kwargs['color'] if 'color' in kwargs else iColar['Paris']  # 能带曲线颜色
+    color_split = kwargs['color_split'] if 'color_split' in kwargs else iColar['Gray']  # 分割线颜色
+    xlim = (min(Kpath_projected), max(Kpath_projected))  # X轴范围
+    ylim = kwargs['ylim'] if 'ylim' in kwargs else (-20, 20)  # Y轴范围
+    ylabel = kwargs['ylabel'] if 'ylabel' in kwargs else 'Energy (eV)'  # y轴名称
+    y_major_tick = kwargs['y_major_tick'] if 'y_major_tick' in kwargs else 2  # y轴主刻度的步长
+
+    energy_range = kwargs['energy_range'] if 'energy_range' in kwargs else (-3,5)
+    DOS_range = kwargs['DOS_range'] if 'DOS_range' in kwargs else (0,15)
+
+    figsize = kwargs['figsize'] if 'figsize' in kwargs else (4.5,6)  # 图像大小
+    wspace = kwargs['wspace'] if  'wspace' in kwargs else 0.0  # 子图间的横向间隔
+
+    # 设置画布
+    # 创建图像对象，并设置坐标轴和网格配置
+    fig = plt.figure(figsize=figsize)
+    grid = plt.GridSpec(3, 4, wspace=wspace)
+
+    # 设置刻度线方向
+    plt.rcParams.update({'xtick.direction': 'in', 'ytick.direction': 'in'})  # 设置x轴和y轴刻度线方向向内
+
+    # 创建子图对象
+    plot_bands = fig.add_subplot(grid[:-1, :3])
+    plot_dos = fig.add_subplot(grid[:-1, 3], xticklabels=[], sharey=plot_bands)
+
+    # 画能带子图
+    for i in range(num_bands):
+        plot_bands.plot(Kpath_projected, Bands[i], color=color)
+
+    # 能带图辅助分割线以及各种细节设置
+    K_min, K_max = (min(Kpath), max(Kpath))  # 投影K空间路径的范围
+    ymin, ymax = energy_range  # 从输入参数中读取要展示的能量范围
+
+    print(Knodes)
+    print(K_min, K_max)
+
+    # 画高对称点分割线
+    for i in range(len(Knodes) - 2):  # 第一跟最后的一个高对称点跟能带图的左右边界重合，所以不必作分割线
+        plot_bands.vlines(Knodes[i + 1], ymin, ymax, linestyles='dashed', colors=vw.colors.crayons['Gray'])
+    # 画费米面分割线
+    plot_bands.hlines(0, K_min, K_max, linestyles='dashed', colors=vw.colors.crayons['Gray'])
+    plot_bands.set_xticks(Knodes, self.HSP_path)
+    plot_bands.set_xlim(K_min, K_max)
+    plot_bands.set_ylim(ymin, ymax)
+
+    plot_dos.set_xticks([])
+    plot_dos.set_yticklabels([])
+    dos_min, dos_max = dos_range  # 从输入参数中读取要展示的态密度范围
+    plot_dos.set_xlim(dos_min, dos_max)
+
+    # 画态密度（DOS）子图
+    plot_dos.plot(self.DOS, energy, color=vw.colors.crayons['Navy Blue'])
+
+
+
+
+
+    return
+
+    def Visualize_band_n_dos(self,energy_range=(-3,5),dos_range=(0,15),shift_Fermi=True,figsize=(4.5,6)):
+
+
+
+
+
 
 
 class plot_bands:
