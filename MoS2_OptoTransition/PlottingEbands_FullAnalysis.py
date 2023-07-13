@@ -12,13 +12,13 @@ if __name__=='__main__':
     # JCPGH1
     # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_9_9_1'
     # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_14_14_1'
-    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bulk/E_prop_SOC_SYM'  # Bulk
+    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bulk/E_prop_SOC_SYM'  # Bulk
     # MMW502
     # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/'+structure+'/E_prop_SOC_SYM'  # 1-4 层
     # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/' + structure + '/E_prop_SOC_SYM_MoreBands'  # 补充数据
     # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/'+structure+'/E_prop_SYM'  # Non SOC
     # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_14_14_1'  # Pentalayer
-    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bulk/E_prop_SOC_SYM'  # Bulk
+    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bulk/E_prop_SOC_SYM_MoreBands'  # Bulk
     # data_directory = 'D:/PhD_research/Data/Simulation/MoS2/MoS2_pawpbe_vasp5_SOC/D3BJ/5/result'
 
     # 保存目录
@@ -64,8 +64,9 @@ if __name__=='__main__':
 
     vw.VisualizeElectronic.FullAnalysis(Kpath_projected,bands_shifted,Knodes_projected,
                                         DOS,energy_shifted,
-                                        TDM=tdm_test,
+                                        # TDM=tdm_test,
                                         HighSymPath=HighSymPath,
+                                        energy_range=(-6,6),
                                         wspace=0.1,hspace=0.1)
 
     # vw.SavingFigure(saving_directory=saving_directory, file_name=structure)

@@ -1,5 +1,5 @@
 # 国际单位制（International System of Units, SI is the abbreviation for Système International）
-SI_unit = {
+SI_unit = {'c': 2.99792458e8,                  # 真空光速（The speed of light），[=] m/s
            'q': 1.602e-19,                     # 基本电荷，[=] C
            'm_e': 9.109e-31,                   # 电子静止质量，[=] kg
            'kB': 1.381e-23,                    # 玻尔兹曼常数，[=] J/K
