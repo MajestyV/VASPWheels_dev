@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 import VaspWheels as vw
-from VaspWheels import Visualization
-
-VI = Visualization.plot()  # 调用Visualization模块
 
 if __name__=='__main__':
     # 指定数据文件总目录
-    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Pentalayer_SYM'  # MMW502
+    # Zhuhai
+
+    # MMW502
+    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Pentalayer_SYM'  # MMW502
 
     # 全局设定
     Fermi_factor = 0.20  # 费米面调零参数

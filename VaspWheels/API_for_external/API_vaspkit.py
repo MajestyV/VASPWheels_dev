@@ -1,4 +1,6 @@
 # This script is designed to provide API functions for VASPKIT (https://vaspkit.com/)
+# 写在开头的参数详解：
+# Fermi_adjust - VASPKIT会根据VASP计算结果进行费米面调零，但是由于原子轨道分数占据问题，VASP的费米面不一定是准确的，所以我们可以利用这个参数对图像进行微调
 
 import linecache  # Python标准库，内置的函数对于读取数据文件中特定行的内容等任务十分合适
 import numpy as np

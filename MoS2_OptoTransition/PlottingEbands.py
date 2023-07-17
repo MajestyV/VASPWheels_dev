@@ -7,25 +7,27 @@ if __name__=='__main__':
     # 数据文件目录
     # Zhuhai
     # data_directory = 'D:/PhD_research/OptoTransition/Data/MoS2/Electronic_structure/Pentalayer/E_prop_SOC_SYM'
+    data_directory = 'D:/PhD_research/OptoTransition/Data/MoS2/Electronic_structure/Bulk/E_prop_SOC_SYM_MoreBands'
     # JCPGH1
     # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_9_9_1'
     # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_14_14_1'
     # MMW502
     # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/'+structure+'/E_prop_SOC_SYM'  # 1-4 层
-    data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/' + structure + '/E_prop_SOC_SYM_MoreBands'  # 补充数据
+    # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/' + structure + '/E_prop_SOC_SYM_MoreBands'  # 补充数据
     # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/'+structure+'/E_prop_SYM'  # Non SOC
     # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_14_14_1'  # Pentalayer
     # data_directory = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Bulk/E_prop_SOC_SYM'  # Bulk
     # data_directory = 'D:/PhD_research/Data/Simulation/MoS2/MoS2_pawpbe_vasp5_SOC/D3BJ/5/result'
 
     # 保存目录
+    saving_directory = 'C:/Users/DELL/Desktop/DataFig_Desktop'  # Zhuhai
     # saving_directory = 'C:/Users/13682/OneDrive/桌面/Test'  # JCPGH1
-    saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/DataFig_OptoTrans'  # MMW502
+    # saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/DataFig_OptoTrans'  # MMW502
 
     EIGENVAL = data_directory+'/EIGENVAL'
 
-    HighSymPath = vw.HighSymmetryPath._2D['HEX']  # 2D planar structure
-    # HighSymPath = vw.HighSymmetryPath._3D['HEX']  # 3D bulk structure
+    # HighSymPath = vw.HighSymmetryPath._2D['HEX']  # 2D planar structure
+    HighSymPath = vw.HighSymmetryPath._3D['HEX']  # 3D bulk structure
 
     # 存放晶格常数的字典
     lattice_dict = {'HEX': ['HEX', [3.16, 3.16, 12.9, 90, 90, 120], 'primitive'],

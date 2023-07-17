@@ -5,4 +5,4 @@ iColar = {
          'Blue': '#006EBA',
          'Paris': '#0A3B80',
          'Gray': '#BCBCBC'
-}
+         }
