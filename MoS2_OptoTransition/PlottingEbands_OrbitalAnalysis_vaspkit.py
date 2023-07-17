@@ -1,6 +1,4 @@
-import matplotlib.pyplot as plt
 import VaspWheels as vw
-from matplotlib import cm,colors
 
 if __name__=='__main__':
     # SOC
@@ -28,8 +26,10 @@ if __name__=='__main__':
     # 获取能带数据
     x_band, y_band, w_band = vw.API_vaspkit.BiOrbitalAnalysis(data_file, orbital_list, Fermi_adjust=Fermi_factor)
 
-    # 画图模块
+    cmap = vw.colormap.iColarmap['Blue_n_Red']
+    colormap = 'seismic'
 
+    # 画图模块
     vw.VisualizeElectronic.VisualizeProjectedBands(x_band,y_band,w_band,Knodes_projected=Kpath_nodes,
-                                                   colormap='seismic',
+                                                   colormap=cmap,
                                                    colormap_norm=(-1,1),HighSymPath=HighSymPath)
