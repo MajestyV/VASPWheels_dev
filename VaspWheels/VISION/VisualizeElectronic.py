@@ -14,7 +14,6 @@ from .colors.Custom_iColar import iColar
 # 色谱
 from .colormap.Custom_iColarmap import iColarmap
 
-
 ########################################################################################################################
 # 能带可视化函数
 # This function is designed for visualizing electronic bands. (此函数利用Visualization模块可视化电子能带)

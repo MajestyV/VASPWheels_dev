@@ -5,8 +5,8 @@ from .CustomizingColormap import CreateColormap, CreateDivergingColormap, Create
 
 iColarmap = {
              'Coolwarm': CreateDivergingColormap('#265499','#DDDDDD','#B40426'),
-             'Blue_n_Red': CreateDivergingColormap('#293485','#FFFFFF','#8C031E'),
-             'Purple_n_Green': CreateDivergingColormap('#7202C2', '#FFFFFF', '#12290B'),
+             'Blue_n_Red': CreateDivergingColormap('#3F48CC','#FFFFFF','#B30407'),
+             'Purple_n_Green': CreateDivergingColormap('#A401A4', '#FFFFFF', '#187D36'),
              'Brown_n_Green': CreateDivergingColormap('#422802', '#FFFFFF', '#051F18')
              }
 

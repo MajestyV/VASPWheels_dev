@@ -16,8 +16,8 @@ def GlobalSetting(**kwargs):
     # 确认是否显示刻度线
     bottom_tick = kwargs['bottom_tick'] if 'bottom_tick' in kwargs else True  # 底坐标轴刻度
     top_tick = kwargs['top_tick'] if 'top_tick' in kwargs else False          # 顶坐标轴刻度
-    left_tick = kwargs['left_tick'] if 'left_tick' in kwargs else True    # 左坐标轴刻度
-    right_tick = kwargs['right_tick'] if 'right_tick' in kwargs else False        # 右坐标轴刻度
+    left_tick = kwargs['left_tick'] if 'left_tick' in kwargs else True        # 左坐标轴刻度
+    right_tick = kwargs['right_tick'] if 'right_tick' in kwargs else False    # 右坐标轴刻度
     plt.tick_params(bottom=bottom_tick, top=top_tick, left=left_tick, right=right_tick)
 
     # 设置主次刻度线
