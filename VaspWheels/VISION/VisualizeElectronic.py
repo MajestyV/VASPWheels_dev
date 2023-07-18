@@ -60,13 +60,14 @@ def VisualizeProjectedBands(x_band, y_band, w_band, Knodes_projected, **kwargs):
     num_segments = num_Knodes-1               # 能带分段数，为K点路径端点数减一
 
     # 一些画图参数（以动态变量的形式传入）
-    colormap = kwargs['colormap'] if 'colormap' in kwargs else iColarmap['Blue_n_Red']        # colormap，色谱
-    color_split = kwargs['color_split'] if 'color_split' in kwargs else iColar['Gray']        # 分割线颜色
-    xlim = (np.min(x_band), np.max(x_band))                                                   # X轴范围
-    ylim = kwargs['energy_range'] if 'energy_range' in kwargs else (-5, 5)                    # Y轴范围
-    ylabel = kwargs['ylabel'] if 'ylabel' in kwargs else 'Energy (eV)'                        # Y轴名称
-    y_major_tick = kwargs['y_major_tick'] if 'y_major_tick' in kwargs else 2                  # Y轴主刻度的步长
-    size_band = kwargs['size_band'] if 'size_band' in kwargs else 2                           # 能带散点的尺寸（若输入二维数据，可画fatband）
+    colormap = kwargs['colormap'] if 'colormap' in kwargs else iColarmap['Coolwarm']              # colormap，色谱
+    color_split = kwargs['color_split'] if 'color_split' in kwargs else iColar['Gray']            # 分割线颜色
+    color_background = kwargs['color_background'] if 'color_background' in kwargs else '#FFFFFF'  # 背景颜色
+    xlim = (np.min(x_band), np.max(x_band))                                                       # X轴范围
+    ylim = kwargs['energy_range'] if 'energy_range' in kwargs else (-5, 5)                        # Y轴范围
+    ylabel = kwargs['ylabel'] if 'ylabel' in kwargs else 'Energy (eV)'                            # Y轴名称
+    y_major_tick = kwargs['y_major_tick'] if 'y_major_tick' in kwargs else 2                      # Y轴主刻度的步长
+    size_band = kwargs['size_band'] if 'size_band' in kwargs else 2                               # 能带散点的尺寸（若输入二维数据，可画fatband）
 
     # 设置色谱的对应的权重范围
     if 'colormap_norm' in kwargs:
@@ -76,16 +77,12 @@ def VisualizeProjectedBands(x_band, y_band, w_band, Knodes_projected, **kwargs):
     cmap_norm = colors.Normalize(colormap_norm[0],colormap_norm[1])  # 将色谱范围转化为matplotlib可读对象
 
     # 定义好各种参数，接下来是正式的画图部分
-    vw.Visualization.GlobalSetting(bottom_tick=False, y_major_tick=y_major_tick)              # 引入画图全局变量
+    plt.rcParams['axes.facecolor'] = color_background  # 更换背景颜色
+    vw.Visualization.GlobalSetting(bottom_tick=False, y_major_tick=y_major_tick)  # 引入画图全局变量
 
-    # plt.rcParams['axes.facecolor'] = np.array([0,0,128])/255.0  # 更换背景颜色
-
-    # 画投影能带
-    # https://blog.shishiruqi.com//2019/05/19/pymatgen-band/
+    # 画投影能带（形式可参考：https://blog.shishiruqi.com//2019/05/19/pymatgen-band/）
     # 用Matplotlib绘制渐变的彩色曲线：https://blog.csdn.net/xufive/article/details/127492212
     # 利用散点图实现渐变：https://www.brothereye.cn/python/427/
-    # plt.scatter(x_band, y_band, s=2, c=w_band, cmap=cmap, norm=cmap_norm)
-    # 使用matplotlib自带的热度图色彩设置
     plt.scatter(x_band, y_band, s=size_band, c=w_band, cmap=colormap, norm=cmap_norm)
 
     # 画高对称点分割线

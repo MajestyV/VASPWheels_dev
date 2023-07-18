@@ -21,13 +21,14 @@ from .API_for_external import API_vaspkit as API_vaspkit  # API for VASPKIT (htt
 
 # 导入画图模块
 # 色彩模块
-from .VISION import colors as colors                            # 导入预设色值库
-from .VISION.colors import ColorConvertion as ColorConvertion   # 色值格式转换函数库
+from .VISION import colors as colors                                     # 导入预设色值库
+from .VISION.colors import ColorConvertion as ColorConvertion            # 色值格式转换函数库
 # 色谱模块
-from .VISION import colormap as colormap                        # 导入预设色谱库
+from .VISION import colormap as colormap                                 # 导入预设色谱库
+from .VISION.colormap import CustomizingColormap as CustomizingColormap  # 色谱定制函数库
 # 各种画图专用函数
-from .VISION import Visualization as Visualization              # 核心画图模块
-from .VISION import VisualizeElectronic as VisualizeElectronic  # 电子性能可视化函数包
+from .VISION import Visualization as Visualization                       # 核心画图模块
+from .VISION import VisualizeElectronic as VisualizeElectronic           # 电子性能可视化函数包
 
 ########################################################################################################################
 # 接下来是一些通用模块的导入

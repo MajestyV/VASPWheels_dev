@@ -1,7 +1,7 @@
 # 此函数可以利用matplotlib自定义创建色谱（colormap），用于热度图等，需要连续变化色值的场景
 
 import matplotlib.pyplot as plt
-from matplotlib import cm
+from matplotlib import cm, colors
 
 # 最通用的函数，通过给定一个颜色节点列表，在颜色节点间不断插值，创建色谱
 # nbins指定了颜色节点间插颜色值的数目：nbins越小，插值得到的颜色区间越少；反之，nbins越大，色谱越连续可分
@@ -22,7 +22,8 @@ def CreateDivergingColormap(color_pole1,color_median,color_pole2,nbins=100,cmap_
 
 # 此函数可生成颜色条（colorbar），以检视色谱情况
 def ShowColorbar(colormap,colormap_norm,figsize=(6,1),orientation='horizontal',label='Weight'):
-    fig, ax = plt.subplots(figsize=figsize)
+    cmap_norm = colors.Normalize(colormap_norm[0], colormap_norm[1])  # 将色谱范围转化为matplotlib可读对象
+    fig, ax = plt.subplots(figsize=figsize)                           # 创建用于绘制颜色条的画板
     fig.subplots_adjust(bottom=0.5)
-    fig.colorbar(cm.ScalarMappable(cmap=colormap, norm=colormap_norm), cax=ax, orientation=orientation, label=label)
+    fig.colorbar(cm.ScalarMappable(cmap=colormap, norm=cmap_norm), cax=ax, orientation=orientation, label=label)
     return
