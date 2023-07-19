@@ -22,8 +22,9 @@ def CreateDivergingColormap(color_pole1,color_median,color_pole2,nbins=100,cmap_
 
 # 此函数可生成颜色条（colorbar），以检视色谱情况
 def ShowColorbar(colormap,colormap_norm,figsize=(6,1),orientation='horizontal',label='Weight'):
-    cmap_norm = colors.Normalize(colormap_norm[0], colormap_norm[1])  # 将色谱范围转化为matplotlib可读对象
-    fig, ax = plt.subplots(figsize=figsize)                           # 创建用于绘制颜色条的画板
-    fig.subplots_adjust(bottom=0.5)
+    cmap_norm = colors.Normalize(colormap_norm[0], colormap_norm[1])         # 将色谱范围转化为matplotlib可读对象
+    plt.rcParams.update({'xtick.direction': 'in', 'ytick.direction': 'in'})  # 设置x轴和y轴刻度线方向向内
+    fig, ax = plt.subplots(figsize=figsize)                                  # 创建用于绘制颜色条的画板
+    fig.subplots_adjust(bottom=0.5)                                          # 调整颜色条的位置
     fig.colorbar(cm.ScalarMappable(cmap=colormap, norm=cmap_norm), cax=ax, orientation=orientation, label=label)
     return
