@@ -55,6 +55,7 @@ if __name__=='__main__':
     # vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename)
     # vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename, format='eps')
 
-    vw.CustomizingColormap.ShowColorbar(cmap,(-1,1))
-    vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename+'_scalebar')
-    vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename+'_scalebar', format='eps')
+    # 可视化并保存scalebar
+    #vw.CustomizingColormap.ShowColorbar(cmap,(-1,1))
+    #vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename+'_scalebar')
+    #vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename+'_scalebar', format='eps')

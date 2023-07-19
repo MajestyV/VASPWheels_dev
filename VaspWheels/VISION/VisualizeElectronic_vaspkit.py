@@ -139,9 +139,9 @@ def FullAnalysis(x_band,y_band,Knodes_projected,x_DOS,y_DOS,**kwargs):
     hspace = kwargs['hspace'] if 'hspace' in kwargs else 0.0                                      # 子图间的纵向间隔
     color = kwargs['color'] if 'color' in kwargs else iColar['Paris']                             # 曲线颜色
     color_split = kwargs['color_split'] if 'color_split' in kwargs else iColar['Gray']            # 分割线颜色
-    K_range = (min(x_band), max(y_band))                                                          # 能带图投影K空间范围
+    K_range = (min(x_band), max(x_band))                                                          # 能带图投影K空间范围
     energy_range = kwargs['energy_range'] if 'energy_range' in kwargs else (-5, 5)                # 能带图能量值范围
-    DOS_range = kwargs['DOS_range'] if 'DOS_range' in kwargs else (np.min(x_DOS), np.max(x_DOS))  # DOS范围
+    DOS_range = kwargs['dos_range'] if 'dos_range' in kwargs else (np.min(x_DOS), np.max(x_DOS))  # DOS范围
     bands_label = kwargs['bands_label'] if 'bands_label' in kwargs else 'Energy (eV)'             # 能带图Y轴名称
     dos_label = kwargs['dos_label'] if 'dos_label' in kwargs else 'DOS (a.u.)'                    # DOS图X轴名称
 
@@ -163,8 +163,8 @@ def FullAnalysis(x_band,y_band,Knodes_projected,x_DOS,y_DOS,**kwargs):
     num_Knodes = len(Knodes_projected)  # K点路径端点的个数，即高对称点的个数
     HighSymPath = kwargs['HighSymPath'] if 'HighSymPath' in kwargs else ['K' + str(n + 1) for n in range(num_Knodes)]  # K空间高对称点路径标记
     for i in range(num_Knodes-2):  # 第一跟最后的一个高对称点跟能带图的左右边界重合，所以不必作分割线
-        plot_bands.vlines(Knodes_projected[i+1],energy_range[0], energy_range[1], lw=2, ls='dashed',color=color_split)
-    plot_bands.hlines(0, K_range[0], K_range[1], lw=2, ls='dashed', colors=color_split)  # 画费米面分割线
+        plot_bands.vlines(Knodes_projected[i+1],energy_range[0], energy_range[1], lw=2, ls='dashed',color=color_split,zorder=0)
+    plot_bands.hlines(0, K_range[0], K_range[1], lw=2, ls='dashed', colors=color_split,zorder=0)  # 画费米面分割线
     plot_bands.set_xlim(K_range[0], K_range[1])            # 设置能带图的X轴范围
     plot_bands.set_ylim(energy_range[0], energy_range[1])  # 设置能带图的Y轴范围
     plot_bands.set_xticks(Knodes_projected, HighSymPath)   # 设置K空间高对称点为能带图的X轴标签
@@ -172,7 +172,7 @@ def FullAnalysis(x_band,y_band,Knodes_projected,x_DOS,y_DOS,**kwargs):
 
     # 画态密度（DOS）子图
     plot_dos.plot(x_DOS, y_DOS, lw=2, color=color)
-    plot_dos.hlines(0, DOS_range[0], DOS_range[1], lw=2, ls='dashed', color=color_split)  # 画费米面分割线
+    plot_dos.hlines(0, DOS_range[0], DOS_range[1], lw=2, ls='dashed', color=color_split, zorder=0)  # 画费米面分割线
     plot_dos.set_xlim(DOS_range[0], DOS_range[1])        # 设定DOS的X轴范围
     plot_dos.set_ylim(energy_range[0], energy_range[1])  # 设定DOS的Y轴范围（与能带图能量范围一致）
     plot_dos.set_xlabel(dos_label)                       # 设置DOS图的X轴名称
@@ -187,7 +187,7 @@ def FullAnalysis(x_band,y_band,Knodes_projected,x_DOS,y_DOS,**kwargs):
         plot_tdm.plot(x_TDM, y_TDM, linewidth=2, color=color)  # 画TDM曲线子图
         # 画高对称点分割线
         for i in range(num_Knodes - 2):  # 第一跟最后的一个高对称点跟能带图的左右边界重合，所以不必作分割线
-            plot_tdm.vlines(Knodes_projected[i + 1], TDM_range[0], TDM_range[1], lw=2,ls='dashed', color=color_split)
+            plot_tdm.vlines(Knodes_projected[i+1],TDM_range[0],TDM_range[1],lw=2,ls='dashed',color=color_split,zorder=0)
         plot_tdm.set_xlim(K_range[0],K_range[1])      # 设置TDM的X轴范围（与能带图投影K空间范围一致）
         plot_tdm.set_ylim(TDM_range[0],TDM_range[1])  # 设置TDM图的Y轴范围
         plot_tdm.set_ylabel(tdm_label)                # 设置TDM图的X轴名称
