@@ -1,4 +1,3 @@
-import numpy as np
 import VaspWheels as vw
 
 if __name__=='__main__':
@@ -8,7 +7,7 @@ if __name__=='__main__':
     # MMW502
     # data_file = 'D:/Projects/OptoTransition/Data/OrbitalAnalysis/Bulk/S/PBAND_SUM_SOC.dat'
     # JCPGH1
-    data_file = 'D:/Projects/OptoTransition/Data/OrbitalAnalysis/Monolayer/S/PBAND_SUM_SOC.dat'  # Monolayer
+    data_file = 'D:/Projects/OptoTransition/Data/OrbitalAnalysis/Monolayer/bands/BAND.dat'  # Monolayer
     # data_file = 'D:/Projects/OptoTransition/Data/OrbitalAnalysis/Bulk/S/PBAND_SUM_SOC.dat'  # Bulk
 
     # Non SOC
@@ -19,11 +18,7 @@ if __name__=='__main__':
     # saving_directory = 'D:\OneDrive\OneDrive - The Chinese University of Hong Kong\Desktop\DataFig_OptoTrans\OribitalAnalysis'  # MMW502
     saving_directory = 'D:/Projects/OptoTransition/Data/Figures'
 
-    saving_filename = 'Monolayer_S'
-
-    # 要分析的轨道
-    # orbital_list = ['dx2-y2 pnm idxy', 'dz2']  # Mo
-    orbital_list = ['px pnm ipy', 'pz']  # S
+    saving_filename = 'Monolayer'
 
     # Fermi_factor = 0.20  # 费米面调零参数
     Fermi_factor = 0.185
@@ -37,21 +32,10 @@ if __name__=='__main__':
     # HighSymPath = vw.HighSymmetryPath._3D['HEX']  # 3D bulk structure
 
     # 获取能带数据
-    x_band, y_band, w_band = vw.API_vaspkit.BiOrbitalAnalysis(data_file, orbital_list, Fermi_adjust=Fermi_factor)
-
-    # cmap = vw.colormap.iColarmap['Coolwarm']
-    # cmap = vw.colormap.iColarmap['Blue_n_Red']
-    cmap = vw.colormap.iColarmap['Purple_n_Green']
-    # cmap = 'seismic'  # 采用matplotlib标准色谱
+    x_band, y_band = vw.API_vaspkit.GetBands(data_file,Fermi_adjust=Fermi_factor)
 
     # 画图模块
-    vw.VisualElec_vaspkit.VisualizeProjectedBands(x_band,y_band,w_band,Knodes_projected=Kpath_nodes,
-                                                   colormap=cmap,size_band=np.abs(w_band)*4,
-                                                   colormap_norm=(-1,1),HighSymPath=HighSymPath)
+    vw.VisualElec_vaspkit.VisualizeBands(x_band,y_band,Knodes_projected=Kpath_nodes)
 
-    # vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename)
-    # vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename, format='eps')
-
-    #vw.CustomizingColormap.ShowColorbar(cmap,(-1,1))
-    #vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename+'_scalebar')
-    #vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename+'_scalebar', format='eps')
+    vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename)
+    vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename, format='eps')
