@@ -2,25 +2,26 @@ import numpy as np
 import VaspWheels as vw
 
 if __name__=='__main__':
-    structure = 'Monolayer'
+    structure = 'Pentalayer'
     atom = 'S'
 
     # SOC
     # Zhuhai
     # data_file = 'D:/PhD_research/OptoTransition/Data/MoS2/Electronic_structure/OrbitalAnalysis/Bulk/Mo/PBAND_SUM_SOC.dat'
     # MMW502
-    data_file = 'D:/Projects/OptoTransition/Data/OrbitalAnalysis/'+structure+'/bands/'+atom+'/PBAND_SUM_SOC.dat'
+    # data_file = 'D:/Projects/OptoTransition/Data/OrbitalAnalysis/'+structure+'/bands/'+atom+'/PBAND_SUM_SOC.dat'
     # JCPGH1
     # data_file = 'D:/Projects/OptoTransition/Data/OrbitalAnalysis/Monolayer/S/PBAND_SUM_SOC.dat'  # Monolayer
     # data_file = 'D:/Projects/OptoTransition/Data/OrbitalAnalysis/Bulk/S/PBAND_SUM_SOC.dat'  # Bulk
+    data_file = 'D:/Projects/OptoTransition/Data/OrbitalAnalysis/'+structure+'/bands/'+atom+'/PBAND_SUM_SOC.dat'
 
     # Non SOC
     # data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Bulk_SYM/bands/Mo/PBAND_SUM.dat'  # MMW502
     # data_file = 'D:/Projects/OptoTransition/Data/MoS2_ElectronicStructure/Projected_bands/Bulk_SYM/S/PBAND_SUM.dat'  # JCPGH1
 
     # 保存目录
-    saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/DataFig_OptoTrans/OrbitalAnalysis'  # MMW502
-    # saving_directory = 'D:/Projects/OptoTransition/Data/Figures'  # JCPGH1
+    # saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/DataFig_OptoTrans/OrbitalAnalysis'  # MMW502
+    saving_directory = 'D:/Projects/OptoTransition/Data/Figures/临时数据文件夹'  # JCPGH1
 
     saving_filename = structure+'_'+atom
 
@@ -43,17 +44,17 @@ if __name__=='__main__':
     x_band, y_band, w_band = vw.API_vaspkit.BiOrbitalAnalysis(data_file, orbital_list, Fermi_adjust=Fermi_factor)
 
     # cmap = vw.colormap.iColarmap['Coolwarm']
-    cmap = vw.colormap.iColarmap['Blue_n_Red']
-    # cmap = vw.colormap.iColarmap['Purple_n_Green']
+    # cmap = vw.colormap.iColarmap['Blue_n_Red']
+    cmap = vw.colormap.iColarmap['Purple_n_Green']
     # cmap = 'seismic'  # 采用matplotlib标准色谱
 
     # 画图模块
-    #vw.VisualElec_vaspkit.VisualizeProjectedBands(x_band,y_band,w_band,Knodes_projected=Kpath_nodes,
-                                                   #colormap=cmap,size_band=np.abs(w_band)*4,
-                                                   #colormap_norm=(-1,1),HighSymPath=HighSymPath)
+    vw.VisualElec_vaspkit.VisualizeProjectedBands(x_band,y_band,w_band,Knodes_projected=Kpath_nodes,
+                                                  colormap=cmap,size_band=np.abs(w_band)*4,energy_range=(-3,3),
+                                                  y_major_tick=1.5,colormap_norm=(-1,1),HighSymPath=HighSymPath)
 
-    # vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename)
-    # vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename, format='eps')
+    vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename)
+    vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename, format='eps')
 
     # 可视化并保存scalebar
     #vw.CustomizingColormap.ShowColorbar(cmap,(-1,1))

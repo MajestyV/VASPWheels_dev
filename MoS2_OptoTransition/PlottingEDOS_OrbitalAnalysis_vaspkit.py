@@ -1,17 +1,19 @@
 import VaspWheels as vw
 
 if __name__=='__main__':
-    structure = 'Monolayer'
+    structure = 'Pentalayer'
 
     # 指定数据文件总目录
     # Zhuhai
 
     # MMW502
-    data_directory = 'D:/Projects/OptoTransition/Data/OrbitalAnalysis/'+structure+'/dos'  # MMW502
+    # data_directory = 'D:/Projects/OptoTransition/Data/OrbitalAnalysis/'+structure+'/dos'  # MMW502
+    # JCPGH1
+    data_directory = 'D:/Projects/OptoTransition/Data/OrbitalAnalysis/'+structure+'/dos'
 
     # 保存目录
-    saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/DataFig_OptoTrans'  # MMW502
-    # saving_directory = 'D:/Projects/OptoTransition/Data/Figures'  # JCPGH1
+    # saving_directory = 'D:/OneDrive/OneDrive - The Chinese University of Hong Kong/Desktop/DataFig_OptoTrans'  # MMW502
+    saving_directory = 'D:/Projects/OptoTransition/Data/Figures/临时数据文件夹'  # JCPGH1
 
     saving_filename = structure+'_DOS'
 
@@ -39,7 +41,8 @@ if __name__=='__main__':
 
     ####################################################################################################################
     # 画图模块
-    vw.VisualElec_vaspkit.VisualizeDOS(x_dos,y_dos,mode='multiple',dos_range=(0,7),color_list=color_list)
+    vw.VisualElec_vaspkit.VisualizeDOS(x_dos,y_dos,mode='multiple',dos_range=(0,28),color_list=color_list)
+    # dos_range=(0,28) for Pentalayer
 
     vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename)
     vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename, format='eps')
