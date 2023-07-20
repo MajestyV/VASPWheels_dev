@@ -36,7 +36,7 @@ if __name__=='__main__':
     x_band, y_band = vw.API_vaspkit.GetBands(data_file,Fermi_adjust=Fermi_factor)
 
     # 画图模块
-    vw.VisualElec_vaspkit.VisualizeBands(x_band,y_band,Knodes_projected=Kpath_nodes,energy_range=(-3,3))
+    vw.VisualElec_vaspkit.VisualizeBands(x_band,y_band,Knodes_projected=Kpath_nodes,energy_range=(-3,3),y_major_tick=1.5)
 
     vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename)
     vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename, format='eps')

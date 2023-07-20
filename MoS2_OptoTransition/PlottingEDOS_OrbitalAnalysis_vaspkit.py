@@ -41,7 +41,8 @@ if __name__=='__main__':
 
     ####################################################################################################################
     # 画图模块
-    vw.VisualElec_vaspkit.VisualizeDOS(x_dos,y_dos,mode='multiple',dos_range=(0,28),color_list=color_list)
+    vw.VisualElec_vaspkit.VisualizeDOS(x_dos,y_dos,mode='multiple',dos_range=(0,28),color_list=color_list,
+                                       energy_range=(-3,3),y_major_tick=1.5)
     # dos_range=(0,28) for Pentalayer
 
     vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename)
