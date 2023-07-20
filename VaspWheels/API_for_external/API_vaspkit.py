@@ -98,7 +98,8 @@ def BiOrbitalAnalysis(data_file,orbital_list,Fermi_adjust=0):
         orbital_weight = sum(data_array[:, :, k] for k in orbitals_dict_bands[orbital_list[i]])  # 计算原子轨道对能带贡献的占比
         orbital_weight_list.append(orbital_weight)
 
-    orbital_weight_combined = orbital_weight_list[0] - orbital_weight_list[1]
+    # 权重从-1变化到1，第一个轨道权重为负，范围为[-1,0]；第二个轨道权重为正，范围为[0,1]
+    orbital_weight_combined = orbital_weight_list[1] - orbital_weight_list[0]
 
     # 能带点坐标[[K point], [Energy], [Weight]]
     band_point_coordinate = [[data_array[i,j,0] for i in range(num_bands) for j in range(num_kpoints)],
