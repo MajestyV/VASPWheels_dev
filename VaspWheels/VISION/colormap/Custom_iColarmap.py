@@ -5,7 +5,10 @@ from .CustomizingColormap import CreateColormap, CreateDivergingColormap, Create
 
 iColarmap = {
              # Sequential colormaps
-             'Viridis': CreateColormap(('440154','FDE725')),
+             'Parula': CreateColormap(('#3D26A8','#F9FA14')),
+             'Viridis': CreateColormap(('#440154','#FDE725')),
+             'Magma': CreateColormap(('#000003','#FBFCBF')),
+             'Cividis': CreateColormap(('#00224D','#FDE737')),
              # Diverging colormaps
              'Coolwarm': CreateDivergingColormap('#265499','#DDDDDD','#B40426'),
              'Blue_n_Red': CreateDivergingColormap('#3F48CC','#FFFFFF','#B30407'),
