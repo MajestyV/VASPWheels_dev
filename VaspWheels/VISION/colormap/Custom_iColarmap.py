@@ -4,6 +4,9 @@
 from .CustomizingColormap import CreateColormap, CreateDivergingColormap, CreateSequentialColormap  # 导入colormap生成函数
 
 iColarmap = {
+             # Sequential colormaps
+             'Viridis': CreateColormap(('440154','FDE725')),
+             # Diverging colormaps
              'Coolwarm': CreateDivergingColormap('#265499','#DDDDDD','#B40426'),
              'Blue_n_Red': CreateDivergingColormap('#3F48CC','#FFFFFF','#B30407'),
              'Purple_n_Green': CreateDivergingColormap('#A401A4', '#FFFFFF', '#187D36'),
