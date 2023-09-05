@@ -89,8 +89,8 @@ def GlobalSetting(num_subplot,grid,subplot_param,
     return subplot_list
 
 def VisualizeScatter_Fatband(num_data,data_series,grid,subplot_param,
-                             figsize=(6.4,4.8),color_background='#30123B',x_major_tick=2,y_major_tick=2,
-                             color_split=iColar['Gray'],colormap='turbo',colormap_norm=(0,1),alpha=0.7,**kwargs):
+                             figsize=(6.4,4.8),color_background='#000080',x_major_tick=2,y_major_tick=2,
+                             color_split=iColar['Gray'],colormap='jet',colormap_norm=(0,1),alpha=0.7,**kwargs):
 
     cmap_norm = colors.Normalize(colormap_norm[0], colormap_norm[1])  # 将色谱权重范围转化为matplotlib可读对象
 

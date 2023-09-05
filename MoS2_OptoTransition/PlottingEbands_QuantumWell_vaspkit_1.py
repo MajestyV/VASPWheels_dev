@@ -26,7 +26,8 @@ if __name__=='__main__':
     #Kpath, Kpath_nodes = vw.API_vaspkit.GetProjectedKpath(data_file, num_segment=num_segments)  # 获取K空间轨迹的一维投影
     #print(Kpath_nodes)
 
-    K_range = (1.8184,3.14956)
+    K_range = [(1.8184,3.14956) for i in range(len(layer_list))]
+    E_range = [(-5,5) for i in range(len(layer_list))]
 
     # 获取能带数据
     data = []
@@ -46,10 +47,15 @@ if __name__=='__main__':
     #vw.Visualization_MultiPlot.Fatband_series(data,5,[[0,0],[0,1],[0,2],[0,3],[0,4]],
                                               #[[1,1],[1,1],[1,1],[1,1],[1,1]],(1,5),K_range,figsize=(16,4.2),
                                         #colormap_norm=(0,0.2),colormap=cmap)
-    vw.Visualization_MultiPlot.Plot_test(5,data,(1,5),
-                                         [[(0,0),(1,1)],[(0,1),(1,1)],[(0,2),(1,1)],[(0,3),(1,1)],[(0,4),(1,1)]],
-                                         K_range,figsize=(10,3.6),
-                                         colormap_norm=(0,0.2),colormap=cmap,color_background='#4E2271')
+    #vw.Visualization_MultiPlot.Plot_test(5,data,(1,5),
+                                         #[[(0,0),(1,1)],[(0,1),(1,1)],[(0,2),(1,1)],[(0,3),(1,1)],[(0,4),(1,1)]],
+                                         #K_range,figsize=(10,3.6),
+                                         #colormap_norm=(0,0.2),colormap=cmap,color_background='#4E2271')
+    vw.Visualization_MultiPlot.VisualizeScatter_Fatband(5, data, (1, 5),
+                                         [[(0, 0), (1, 1)], [(0, 1), (1, 1)], [(0, 2), (1, 1)], [(0, 3), (1, 1)],
+                                          [(0, 4), (1, 1)]],
+                                         figsize=(10, 3.6),xlim_list=K_range,ylim_list=E_range,
+                                         colormap='jet',color_background='#000080',colormap_norm=(0, 0.4))
 
     # 5层MoS2，每层对能带的贡献最多为1.0/5=0.2
     #vw.VisualElec_vaspkit.VisualizeProjectedBands(x_band,y_band,w_band,Knodes_projected=Kpath_nodes,
