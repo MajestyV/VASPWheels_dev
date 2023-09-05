@@ -33,7 +33,7 @@ if __name__=='__main__':
     x_dos, y_dos = vw.API_vaspkit.GetDOS(dos_file, Fermi_adjust=Fermi_factor)  # 提取DOS数据
 
     # 画图模块
-    vw.VisualElec_vaspkit.FullAnalysis(x_band,y_band,Kpath_nodes,x_dos,y_dos,dos_range=(0,24),HighSymPath=HighSymPath)
+    vw.VisualElectronic_vaspkit.FullAnalysis(x_band,y_band,Kpath_nodes,x_dos,y_dos,dos_range=(0,24),HighSymPath=HighSymPath)
     # dos_range=(0,28) for Pentalayer
 
     # 保存图像

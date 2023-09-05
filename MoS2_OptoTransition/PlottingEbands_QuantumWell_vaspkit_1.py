@@ -23,13 +23,16 @@ if __name__=='__main__':
 
     num_segments = 3  # 2D
 
-    Kpath, Kpath_nodes = vw.API_vaspkit.GetProjectedKpath(data_file, num_segment=num_segments)  # 获取K空间轨迹的一维投影
-    print(Kpath_nodes)
+    #Kpath, Kpath_nodes = vw.API_vaspkit.GetProjectedKpath(data_file, num_segment=num_segments)  # 获取K空间轨迹的一维投影
+    #print(Kpath_nodes)
 
     K_range = (1.8184,3.14956)
 
     # 获取能带数据
-    x_band, y_band, w_band = vw.API_vaspkit.GetProjectedBands(data_file,'tot',Fermi_adjust=Fermi_factor)
+    data = []
+    for n in layer_list:
+        x_band, y_band, w_band = vw.API_vaspkit.GetProjectedBands(data_file, 'tot', Fermi_adjust=Fermi_factor)
+        data.append([x_band,y_band,w_band])
 
     # cmap = vw.colormap.iColarmap['Coolwarm']
     # cmap = vw.colormap.iColarmap['Blue_n_Red']
@@ -38,10 +41,15 @@ if __name__=='__main__':
     cmap = 'viridis'
 
     # 画图模块
-    vw.VisualElectronic_vaspkit.VisualizePartialProjectedBands(x_band,y_band,w_band,K_range=K_range,
-                                                         colormap=cmap,
-                                                         colormap_norm=(0,0.4),size_band=np.abs(w_band)*5,
-                                                         color_background='#4E2271')
+    # (data_series, num_data, subplot_location, subplot_shape, grid, K_range, **kwargs):
+
+    #vw.Visualization_MultiPlot.Fatband_series(data,5,[[0,0],[0,1],[0,2],[0,3],[0,4]],
+                                              #[[1,1],[1,1],[1,1],[1,1],[1,1]],(1,5),K_range,figsize=(16,4.2),
+                                        #colormap_norm=(0,0.2),colormap=cmap)
+    vw.Visualization_MultiPlot.Plot_test(5,data,(1,5),
+                                         [[(0,0),(1,1)],[(0,1),(1,1)],[(0,2),(1,1)],[(0,3),(1,1)],[(0,4),(1,1)]],
+                                         K_range,figsize=(10,3.6),
+                                         colormap_norm=(0,0.2),colormap=cmap,color_background='#4E2271')
 
     # 5层MoS2，每层对能带的贡献最多为1.0/5=0.2
     #vw.VisualElec_vaspkit.VisualizeProjectedBands(x_band,y_band,w_band,Knodes_projected=Kpath_nodes,

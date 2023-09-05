@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 
 ###############################################################################################################
-# 核心绘图函数
+# 核心绘图函数: 用于单图
 # 用于文章级结果图的matplotlib参数，可以作为matplotlib的全局变量载入
-def GlobalSetting(**kwargs):
+def GlobalSetting(figsize=(6.4,4.8),**kwargs):
     # 设置刻度线方向
     plt.rcParams['xtick.direction'] = 'in'  # 将x轴的刻度线方向设置向内
     plt.rcParams['ytick.direction'] = 'in'  # 将y轴的刻度线方向设置向内
@@ -24,11 +24,7 @@ def GlobalSetting(**kwargs):
     plt.tick_params(which='major', length=5)  # 设置主刻度长度
     plt.tick_params(which='minor', length=2)  # 设置次刻度长度
 
-    # 设置画布大小
-    if 'figsize' in kwargs:
-        plt.figure(figsize=kwargs['figsize'])
-    else:
-        pass
+    plt.figure(figsize=figsize)  # 设置画布大小
 
     # 创建图例对象
     ax = plt.subplot(111)  # 注意有些参数（比如刻度）一般都在ax中设置,不在plot中设置
