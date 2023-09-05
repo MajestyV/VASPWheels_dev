@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors
 from matplotlib.ticker import MultipleLocator
-# from .Visualization import GlobalSetting, CustomSetting  # 从画图核心函数包直接导入画图函数，提高代码运行效率
 
 # 额外从colors中导入颜色数据，提高代码运行效率
 # 普通色值
@@ -18,13 +17,14 @@ from .colormap.Custom_iColarmap import iColarmap
 # 用于文章级结果图的matplotlib参数，可以作为matplotlib的全局变量载入
 # num_subplot (int) 指定子图的数目; grid 指定网格的分割情况
 # subplot_param指定每一幅子图的位置以及大小形状，格式为 [[(x0,y0),(w0,h0)],[(x1,y1),(w1,h1)], ...], 其中(x,y)指定位置，(w,h)指定形状
-def GlobalSetting(num_subplot, grid, subplot_param, figsize=(6.4,4.8), **kwargs):
-    color_background = kwargs['color_background'] if 'color_background' in kwargs else '#FFFFFF'  # 自定义背景颜色
-    plt.rcParams['axes.facecolor'] = color_background  # 更换背景颜色
+def GlobalSetting(num_subplot,grid,subplot_param,
+                  figsize=(6.4,4.8),color_background='#FFFFFF',font_type='Arial',font_weight=200,**kwargs):
+    fig = plt.figure(figsize=figsize)  # 设置画布大小并创建图像对象用于存放多子图
+
+    plt.rcParams['axes.facecolor'] = color_background  # 设置画布背景颜色
 
     # 设置全局字体选项
-    font_type = kwargs['font_type'] if 'font_type' in kwargs else 'Arial'  # 默认字体为Arial
-    font_config = {'font.family': font_type, 'font.weight': 200}  # font.family设定所有字体为font_type
+    font_config = {'font.family': font_type, 'font.weight': font_weight}  # font.family设定所有字体为font_type (默认字体为Arial)
     plt.rcParams.update(font_config)  # 但是对于希腊字母(e.g. α, β, γ等)跟各种数学符号之类的不适用, Latex语法如Γ会被判断为None
 
     plt.rcParams.update({'xtick.direction': 'in', 'ytick.direction': 'in'})   # 设置x轴和y轴刻度线方向向内
@@ -39,9 +39,6 @@ def GlobalSetting(num_subplot, grid, subplot_param, figsize=(6.4,4.8), **kwargs)
     # 设置主次刻度线
     plt.tick_params(which='major', length=5)  # 设置主刻度长度
     plt.tick_params(which='minor', length=2)  # 设置次刻度长度
-
-    # 设置画布大小
-    fig = plt.figure(figsize=figsize)         # 创建图像对象用于存放多子图
 
     # 刻度参数
     x_major_tick = kwargs['x_major_tick'] if 'x_major_tick' in kwargs else 10                # 设置x轴主刻度标签
@@ -90,6 +87,35 @@ def GlobalSetting(num_subplot, grid, subplot_param, figsize=(6.4,4.8), **kwargs)
             pass
 
     return subplot_list
+
+def VisualizeScatter_Fatband(num_data,data_series,grid,subplot_param,
+                             figsize=(6.4,4.8),color_background='#30123B',x_major_tick=2,y_major_tick=2,
+                             color_split=iColar['Gray'],colormap='turbo',colormap_norm=(0,1),alpha=0.7,**kwargs):
+
+    cmap_norm = colors.Normalize(colormap_norm[0], colormap_norm[1])  # 将色谱权重范围转化为matplotlib可读对象
+
+    subplot_list = GlobalSetting(num_data, grid, subplot_param, figsize=figsize, color_background=color_background,
+                                 y_major_tick=y_major_tick)
+
+    for i in range(num_data):
+        x, y, w = data_series[i]
+
+        xlim = kwargs['xlim_list'][i] if 'xlim_list' in kwargs else (min(x),max(x))  # 设置X轴范围
+        ylim = kwargs['ylim_list'][i] if 'ylim_list' in kwargs else (min(y),max(y))  # 设置Y轴范围
+
+        subplot_list[i].scatter(x, y, s=w, c=w, cmap=colormap, norm=cmap_norm, alpha=alpha)  # 画图核心代码语句
+
+        # 画费米面分割线
+        E_fermi = kwargs['Fermi_energy'][i] if 'Fermi_energy' in kwargs else 0.0  # 费米能级位置
+        subplot_list[i].hlines(E_fermi,xlim[0],xlim[1],linewidth=2, linestyles='dashed',colors=color_split, zorder=0)
+
+        subplot_list[i].set_xlim(xlim[0], xlim[1])
+        subplot_list[i].set_ylim(ylim[0], ylim[1])
+
+        Knodes = kwargs['Knodes'] if 'Knodes' in kwargs else ('$\mathrm{K}_1$', '$\mathrm{K}_2$')
+        subplot_list[i].set_xticks(xlim, Knodes, size=16)
+
+    return
 
 def Weight(w_band):
     w_band = np.array(w_band)

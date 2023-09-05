@@ -8,10 +8,18 @@ from matplotlib.ticker import MultipleLocator
 ###############################################################################################################
 # 核心绘图函数: 用于单图
 # 用于文章级结果图的matplotlib参数，可以作为matplotlib的全局变量载入
-def GlobalSetting(figsize=(6.4,4.8),**kwargs):
-    # 设置刻度线方向
-    plt.rcParams['xtick.direction'] = 'in'  # 将x轴的刻度线方向设置向内
-    plt.rcParams['ytick.direction'] = 'in'  # 将y轴的刻度线方向设置向内
+def GlobalSetting(figsize=(6.4,4.8),color_background='#FFFFFF',font_type='Arial',font_weight=200,**kwargs):
+    plt.figure(figsize=figsize)  # 设置画布大小
+
+    plt.rcParams['axes.facecolor'] = color_background  # 设置画布背景颜色
+
+    ax = plt.subplot(111)  # 创建图例对象（注意有些参数（比如刻度）一般都在ax中设置,不在plot中设置）
+
+    # 设置全局字体选项
+    font_config = {'font.family': font_type, 'font.weight': font_weight}  # font.family设定所有字体为font_type (默认字体为Arial)
+    plt.rcParams.update(font_config)  # 但是对于希腊字母(e.g. α, β, γ等)跟各种数学符号之类的不适用, Latex语法如Γ会被判断为None
+
+    plt.rcParams.update({'xtick.direction': 'in', 'ytick.direction': 'in'})  # 设置x轴和y轴刻度线方向向内
 
     # 确认是否显示刻度线
     bottom_tick = kwargs['bottom_tick'] if 'bottom_tick' in kwargs else True  # 底坐标轴刻度
@@ -20,14 +28,9 @@ def GlobalSetting(figsize=(6.4,4.8),**kwargs):
     right_tick = kwargs['right_tick'] if 'right_tick' in kwargs else False    # 右坐标轴刻度
     plt.tick_params(bottom=bottom_tick, top=top_tick, left=left_tick, right=right_tick)
 
-    # 设置主次刻度线
+    # 设置主次刻度线长度
     plt.tick_params(which='major', length=5)  # 设置主刻度长度
     plt.tick_params(which='minor', length=2)  # 设置次刻度长度
-
-    plt.figure(figsize=figsize)  # 设置画布大小
-
-    # 创建图例对象
-    ax = plt.subplot(111)  # 注意有些参数（比如刻度）一般都在ax中设置,不在plot中设置
 
     # 刻度参数
     x_major_tick = kwargs['x_major_tick'] if 'x_major_tick' in kwargs else 10  # 设置x轴主刻度标签
@@ -67,11 +70,6 @@ def GlobalSetting(figsize=(6.4,4.8),**kwargs):
         ax.yaxis.set_ticklabels([])  # 设置y轴刻度标签为空
     else:
         pass
-
-    # 设置全局字体选项
-    font_type = kwargs['font_type'] if 'font_type' in kwargs else 'Arial'  # 默认字体为Arial
-    font_config = {'font.family': font_type, 'font.weight': 200}  # font.family设定所有字体为font_type
-    plt.rcParams.update(font_config)  # 但是对于希腊字母(e.g. α, β, γ等)跟各种数学符号之类的不适用, Latex语法如Γ会被判断为None
 
     return
 
