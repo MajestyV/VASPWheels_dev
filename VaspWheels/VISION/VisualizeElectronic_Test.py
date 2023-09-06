@@ -13,6 +13,27 @@ from .colors.Custom_iColar import iColar
 from .colormap.Custom_iColarmap import iColarmap
 
 ########################################################################################################################
+class plot_vaspkit:
+    ''' This class of functions is designed to visualize the V.A.S.P. data processed by VASPKIT. '''
+    def __init__(self,title='',color_background='#FFFFFF',
+                 color=iColar['Paris'],colormap=iColarmap['Parula'],color_split=iColar['Gray'],
+                 linewidth=2,marker_size=2,**kwargs):
+        self.title = title
+        self.color_background = color_background
+        self.color = color
+        self.colormap = colormap
+        self.color_split = color_split
+        self.linewidth = linewidth
+        self.marker_size = marker_size
+
+        self.energy_major_tick = kwargs['energy_major_tick'] if 'energy_major_tick' in kwargs else 2  # 能量轴主刻度的步长
+
+
+
+
+
+
+
 # 动态变量定义函数，由于各个函数的部分动态变量
 def DefineFigureParameters(kwargs):
     global title

@@ -1,7 +1,6 @@
 # This code is written to visualize the electronic structure computed by V.A.S.P. and post-treated by VASPKIT.
 # 此代码专用于可视化经过VASPKIT后处理的VASP计算结果
 
-import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors
 from matplotlib.ticker import MultipleLocator
@@ -114,113 +113,5 @@ def VisualizeScatter_Fatband(num_data,data_series,grid,subplot_param,
 
         Knodes = kwargs['Knodes'] if 'Knodes' in kwargs else ('$\mathrm{K}_1$', '$\mathrm{K}_2$')
         subplot_list[i].set_xticks(xlim, Knodes, size=16)
-
-    return
-
-def Weight(w_band):
-    w_band = np.array(w_band)
-    print(w_band.shape)
-    for i in range(w_band.shape[0]):
-        for j in range(w_band.shape[1]):
-            w_band[i,j] = (5*w_band[i,j])**(0.25)
-    return w_band
-
-def Weight2(w_band):
-    w_band = np.array(w_band)
-    for i in range(len(w_band)):
-        # w_band[i] = (2*w_band[i])**2
-        w_band[i] = 10**(2*w_band[i]-1)
-    return w_band
-
-def Plot_test(num_data,data_series,grid,subplot_param,K_range, figsize=(6.4,4.8), **kwargs):
-    colormap = kwargs['colormap'] if 'colormap' in kwargs else iColarmap['Viridis']  # colormap，色谱
-    #color_split = kwargs['color_split'] if 'color_split' in kwargs else iColar['Gray']  # 分割线颜色
-    color_background = kwargs['color_background'] if 'color_background' in kwargs else '#FFFFFF'  # 背景颜色
-    xlim = K_range  # X轴范围
-    ylim = kwargs['energy_range'] if 'energy_range' in kwargs else (-5, 5)  # Y轴范围
-    #ylabel = kwargs['ylabel'] if 'ylabel' in kwargs else 'Energy (eV)'  # Y轴名称
-    #y_major_tick = kwargs['y_major_tick'] if 'y_major_tick' in kwargs else 2  # Y轴主刻度的步长
-    size_band = kwargs['size_band'] if 'size_band' in kwargs else 2  # 能带散点的尺寸（若输入二维数据，可画fatband）
-
-    # 设置色谱的对应的权重范围
-    if 'colormap_norm' in kwargs:
-        colormap_norm = kwargs['colormap_norm']
-    else:
-        print(" Please indicate the range of weight ! ")  # 默认为权重的最小值到最大值
-        return
-    cmap_norm = colors.Normalize(colormap_norm[0], colormap_norm[1])  # 将色谱范围转化为matplotlib可读对象
-
-    subplot_list = GlobalSetting(num_data,grid,subplot_param,figsize=figsize,color_background=color_background)
-
-    for i in range(num_data):
-        x_band, y_band, w_band = data_series[i]
-        subplot_list[i].scatter(x_band, y_band, s=Weight2(w_band)*10, c=w_band, cmap=colormap, norm=cmap_norm)
-
-        #locals()['fig_' + str(i + 1)].hlines(E_fermi, xlim[0], xlim[1], linewidth=2, linestyles='dashed',
-                                             #colors=color_split, zorder=0)  # 画费米面分割线
-
-        Knodes = kwargs['Knodes'] if 'Knodes' in kwargs else ('$\mathrm{K}_1$', '$\mathrm{K}_2$')
-        # locals()['fig_' + str(i + 1)].xticks(K_range, Knodes, size=16)
-        subplot_list[i].set_xlim(xlim[0],xlim[1])
-        subplot_list[i].set_ylim(ylim[0],ylim[1])
-
-    # CustomSetting(xlim=xlim, ylim=ylim, title=title, ylabel=ylabel)  # 对能带图进行个性化设置
-
-    return
-
-# 能带贡献分析组图
-def Fatband_series(data_series, num_data, subplot_location, subplot_shape, grid, K_range, **kwargs):
-
-    # 一些画图参数（以动态变量的形式传入）
-    title = kwargs['title'] if 'title' in kwargs else ''  # 能带图标题，默认为无标题
-    colormap = kwargs['colormap'] if 'colormap' in kwargs else iColarmap['Viridis']  # colormap，色谱
-    color_split = kwargs['color_split'] if 'color_split' in kwargs else iColar['Gray']  # 分割线颜色
-    color_background = kwargs['color_background'] if 'color_background' in kwargs else '#FFFFFF'  # 背景颜色
-    xlim = K_range  # X轴范围
-    ylim = kwargs['energy_range'] if 'energy_range' in kwargs else (-5, 5)  # Y轴范围
-    ylabel = kwargs['ylabel'] if 'ylabel' in kwargs else 'Energy (eV)'  # Y轴名称
-    y_major_tick = kwargs['y_major_tick'] if 'y_major_tick' in kwargs else 2  # Y轴主刻度的步长
-    size_band = kwargs['size_band'] if 'size_band' in kwargs else 2  # 能带散点的尺寸（若输入二维数据，可画fatband）
-
-    figsize = kwargs['figsize'] if 'figsize' in kwargs else (2.8, 4.2)  # 图像大小
-
-    # plt.rcParams.update({'xtick.direction': 'in', 'ytick.direction': 'in'})  # 设置x轴和y轴刻度线方向向内
-
-    ############
-    fig = plt.figure(figsize=figsize)  # 创建图像对象用于存放多子图
-
-    for i in range(num_data):
-        location = subplot_location[i]
-        shape = subplot_shape[i]
-        locals()['fig_' + str(i + 1)] = plt.subplot2grid(grid, location, colspan=shape[0], rowspan=shape[1])  # 定义全局变量
-    ###############
-
-    # 设置色谱的对应的权重范围
-    if 'colormap_norm' in kwargs:
-        colormap_norm = kwargs['colormap_norm']
-    else:
-        print(" Please indicate the range of weight ! ")  # 默认为权重的最小值到最大值
-        return
-    cmap_norm = colors.Normalize(colormap_norm[0], colormap_norm[1])  # 将色谱范围转化为matplotlib可读对象
-
-    # 定义好各种参数，接下来是正式的画图部分
-    plt.rcParams['axes.facecolor'] = color_background  # 更换背景颜色
-    GlobalSetting(bottom_tick=False, y_major_tick=y_major_tick, figsize=figsize)  # 引入画图全局变量
-
-    E_fermi = kwargs['E_fermi'] if 'E_fermi' in kwargs else 0.0  # 费米能级
-
-    for i in range(num_data):
-        x_band, y_band, w_band = data_series[i]
-        locals()['fig_' + str(i + 1)].scatter(x_band, y_band, s=size_band, c=w_band, cmap=colormap, norm=cmap_norm)
-
-        #locals()['fig_' + str(i + 1)].hlines(E_fermi, xlim[0], xlim[1], linewidth=2, linestyles='dashed',
-                                             #colors=color_split, zorder=0)  # 画费米面分割线
-
-        Knodes = kwargs['Knodes'] if 'Knodes' in kwargs else ('$\mathrm{K}_1$', '$\mathrm{K}_2$')
-        # locals()['fig_' + str(i + 1)].xticks(K_range, Knodes, size=16)
-        locals()['fig_'+str(i+1)].set_xlim(xlim[0],xlim[1])
-        locals()['fig_'+str(i+1)].set_ylim(ylim[0],ylim[1])
-
-    # CustomSetting(xlim=xlim, ylim=ylim, title=title, ylabel=ylabel)  # 对能带图进行个性化设置
 
     return
