@@ -15,20 +15,57 @@ from .colormap.Custom_iColarmap import iColarmap
 ########################################################################################################################
 class plot_vaspkit:
     ''' This class of functions is designed to visualize the V.A.S.P. data processed by VASPKIT. '''
-    def __init__(self,title='',color_background='#FFFFFF',
+    def __init__(self,title='',figsize=(6.4,4.8),color_background='#FFFFFF',
                  color=iColar['Paris'],colormap=iColarmap['Parula'],color_split=iColar['Gray'],
                  linewidth=2,marker_size=2,**kwargs):
-        self.title = title
-        self.color_background = color_background
-        self.color = color
-        self.colormap = colormap
-        self.color_split = color_split
-        self.linewidth = linewidth
-        self.marker_size = marker_size
+        # 画图核心参数
+        self.title = title                        # 图像标题，默认为无标题
+        self.figsize = figsize                    # 图像大小
+        self.color_background = color_background  # 背景颜色
+        self.color = color                        # 曲线颜色
+        self.colormap = colormap                  # colormap，色谱
+        self.color_split = color_split            # 分割线颜色
+        self.linewidth = linewidth                # 曲线线宽
+        self.marker_size = marker_size            # 散点的尺寸（若输入二维数据，可画fatband）
 
-        self.energy_major_tick = kwargs['energy_major_tick'] if 'energy_major_tick' in kwargs else 2  # 能量轴主刻度的步长
+        # 动态传入的参数（画图辅助参数）
+        self.linewidth_split = kwargs['linewidth_split'] if 'linewidth_split' in kwargs else 2                    # 分割线的线宽
+        self.linestyles_split = kwargs['linestyles_split'] if 'linestyles_split' in kwargs else 'dashed'          # 分割线的线型
+        self.zorder_split = kwargs['zorder_split'] if 'zorder_split' in kwargs else 0  # 分割线的图层顺序，默认置底（防止遮盖数据曲线）
+
+        self.energy_axis_label = kwargs['energy_axis_label'] if 'energy_axis_label' in kwargs else 'Energy (eV)'  # 能量轴名称
+        self.energy_major_tick = kwargs['energy_major_tick'] if 'energy_major_tick' in kwargs else 2              # 能量轴主刻度的步长
+
+        self.HighSymPath_textsize = kwargs['HighSymPath_textsize'] if 'HighSymPath_textsize' in kwargs else 16    # 高对称路径字体大小
 
 
+    # 能带可视化函数
+    # This function is designed for visualizing electronic bands. (此函数利用Visualization模块可视化电子能带)
+    def VisualizeBands(self, x_band, y_band, Knodes_projected, **kwargs):
+        xlim = kwargs['K_range'] if 'K_range' in kwargs else(np.min(x_band), np.max(x_band))             # X轴范围                                                       # X轴范围
+        ylim = kwargs['energy_range'] if 'energy_range' in kwargs else (np.min(y_band), np.max(y_band))  # Y轴范围
+
+        GlobalSetting(bottom_tick=False, y_major_tick=self.energy_major_tick)  # 引入画图全局变量
+
+        plt.plot(x_band, y_band, c=self.color, linewidth=self.linewidth)  # 画能带图
+
+        # 对于能带图，有些参数Visualization模块无法设置，因此在此利用matplotlib进行修改
+        # 画高对称点分割线
+        num_Knodes = len(Knodes_projected)  # K点路径端点的个数，即高对称点的个数
+        for i in range(num_Knodes-2):  # 第一跟最后的一个高对称点跟能带图的左右边界重合，所以不必作分割线
+            plt.vlines(Knodes_projected[i+1],ylim[0],ylim[1],linewidth=self.linewidth,linestyles='dashed',
+                       colors=self.color_split,zorder=self.zorder_split)
+        # 画费米面分割线
+        plt.hlines(0, xlim[0], xlim[1], linewidth=self.linewidth_split, linestyles='dashed', colors=self.color_split,
+                   zorder=self.zorder_split)
+
+        # HighSymPath - High Symmetry Path, 高对称性点路径
+        HighSymPath = kwargs['HighSymPath'] if 'HighSymPath' in kwargs else ['K'+str(n+1) for n in range(num_Knodes)]
+        plt.xticks(Knodes_projected, HighSymPath, size=self.HighSymPath_textsize)
+
+        CustomSetting(xlim=xlim, ylim=ylim, title=self.title, ylabel=self.energy_axis_label)  # 对能带图进行个性化设置
+
+        return
 
 
 
@@ -40,11 +77,11 @@ def DefineFigureParameters(kwargs):
     # global figsize
     global colormap
     # 一些画图参数（以动态变量的形式传入）
-    title = kwargs['title'] if 'title' in kwargs else ''  # 能带图标题，默认为无标题
-    # figsize = kwargs['figsize'] if 'figsize' in kwargs else (2.8, 4.2)  # 图像大小
-    colormap = kwargs['colormap'] if 'colormap' in kwargs else iColarmap['Viridis']  # colormap，色谱
-    color_split = kwargs['color_split'] if 'color_split' in kwargs else iColar['Gray']  # 分割线颜色
-    color_background = kwargs['color_background'] if 'color_background' in kwargs else '#FFFFFF'  # 背景颜色
+    title = kwargs['title'] if 'title' in kwargs else ''
+    # figsize = kwargs['figsize'] if 'figsize' in kwargs else (2.8, 4.2)
+    colormap = kwargs['colormap'] if 'colormap' in kwargs else iColarmap['Viridis']
+    color_split = kwargs['color_split'] if 'color_split' in kwargs else iColar['Gray']
+    color_background = kwargs['color_background'] if 'color_background' in kwargs else '#FFFFFF'
 
     # dos_label = kwargs['energy_label'] if 'energy_label' in kwargs else 'Energy (eV)'  # 能量轴名称
     energy_label = kwargs['energy_label'] if 'energy_label' in kwargs else 'Energy (eV)'  # 能量轴名称
