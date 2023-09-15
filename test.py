@@ -1,23 +1,7 @@
-import numpy as np
+import VaspWheels as vw
 
-a = [1,2,3]
-a2 = [3,2,1]
+data = [0,1,2,3,4,5,6,7,8,9]
 
-b = [[1,1,1],
-     [2,2,2],
-     [3,3,3]]
+data_filtered = vw.Experiment.Moving_average(data,3)
 
-c = np.array([[1,1,1],
-              [0,2,0],
-              [0,0,3]])
-
-#print(np.outer(a,a2))
-#print(np.cross(a,a2))
-# print(np.inner(a,b))
-# print(np.outer(a,b))
-
-#print(np.zeros(3))
-
-print(np.array([a])@np.array(c)@np.array([a]).T)
-print(np.dot(c,c.T))
-print(c@c.T)
+print(data_filtered)

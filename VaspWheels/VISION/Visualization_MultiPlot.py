@@ -2,6 +2,7 @@
 # 此代码专用于可视化经过VASPKIT后处理的VASP计算结果
 
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import colors
 from matplotlib.ticker import MultipleLocator
 
@@ -99,10 +100,14 @@ def VisualizeScatter_Fatband(num_data,data_series,grid,subplot_param,
     for i in range(num_data):
         x, y, w = data_series[i]
 
+        s_weight = 2*np.array(w)
+
+        # print(max(w),min(w))
+
         xlim = kwargs['xlim_list'][i] if 'xlim_list' in kwargs else (min(x),max(x))  # 设置X轴范围
         ylim = kwargs['ylim_list'][i] if 'ylim_list' in kwargs else (min(y),max(y))  # 设置Y轴范围
 
-        subplot_list[i].scatter(x, y, s=w, c=w, cmap=colormap, norm=cmap_norm, alpha=alpha)  # 画图核心代码语句
+        subplot_list[i].scatter(x, y, s=s_weight, c=w, cmap=colormap, norm=cmap_norm, alpha=alpha)  # 画图核心代码语句
 
         # 画费米面分割线
         E_fermi = kwargs['Fermi_energy'][i] if 'Fermi_energy' in kwargs else 0.0  # 费米能级位置
