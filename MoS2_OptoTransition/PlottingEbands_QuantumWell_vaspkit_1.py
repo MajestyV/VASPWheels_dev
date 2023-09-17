@@ -2,12 +2,15 @@ import numpy as np
 import VaspWheels as vw
 
 if __name__=='__main__':
-    Efield = '1.0'
+    Efield = '0.0'
     # JCPGH1
     # data_directory = 'D:/Projects/OptoTransition/Data/Homo-structure/Pentalayer/0 V-nm/'
 
     # MMW502
-    data_directory = 'D:/Projects/OptoTransition/Data/Homo-structure/Pentalayer/'+Efield+' V-nm'
+    # data_directory = 'D:/Projects/OptoTransition/Data/Homo-structure/Pentalayer/'+Efield+' V-nm'
+
+    # Guangzhou
+    data_directory = 'D:/PhD_research/OptoTransition/Data/Homo-structure/Pentalayer/'+Efield+' V-nm'
 
     # layer_list = ['layer1', 'layer2', 'layer3', 'layer4', 'layer5']
     layer_list = ['layer5', 'layer4', 'layer3', 'layer2', 'layer1']
@@ -28,12 +31,12 @@ if __name__=='__main__':
     #print(Kpath_nodes)
 
     K_range = [(1.8184,3.14956) for i in range(len(layer_list))]
-    E_range = [(-2.5,2.5) for i in range(len(layer_list))]
+    E_range = [(-2.2,2.2) for i in range(len(layer_list))]
 
     # 获取能带数据
     data = []
     for n in layer_list:
-        data_file = data_directory + '/' + n + '/PBAND_SUM.dat'  # 数据地址
+        data_file = data_directory + '/' + n + '/PBAND_SUM_SOC.dat'  # 数据地址
         # data_file = data_directory+'/Elementary/'+n+'/PBAND_SUM.dat'  # Test
         x_band, y_band, w_band = vw.API_vaspkit.GetProjectedBands(data_file, 'tot', Fermi_adjust=Fermi_factor)
         data.append([x_band,y_band,w_band])
@@ -42,7 +45,7 @@ if __name__=='__main__':
     # cmap = vw.colormap.iColarmap['Blue_n_Red']
     # cmap = vw.colormap.iColarmap['Purple_n_Green']
     # cmap = 'seismic'  # 采用matplotlib标准色谱
-    cmap = 'viridis'
+    # cmap = 'viridis'
 
     # 画图模块
     # (data_series, num_data, subplot_location, subplot_shape, grid, K_range, **kwargs):
@@ -66,11 +69,11 @@ if __name__=='__main__':
                                                   #colormap=cmap,size_band=np.abs(w_band)*4,
                                                   #y_major_tick=2,colormap_norm=(-1,1),HighSymPath=HighSymPath)
 
-    # MMW502
-    saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹'
+    # saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹'  # MMW502
+    saving_directory = 'D:/PhD_research/OptoTransition/Data/临时存放文件夹'  # Guangzhou
     saving_filename = 'QuantumWell_'+Efield
     vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename)
-    vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename, format='eps')
+    # vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename, format='eps')
 
     # 可视化并保存scalebar
     #vw.CustomizingColormap.ShowColorbar(cmap,(-1,1))

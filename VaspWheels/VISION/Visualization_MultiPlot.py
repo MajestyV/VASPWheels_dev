@@ -100,7 +100,7 @@ def VisualizeScatter_Fatband(num_data,data_series,grid,subplot_param,
     for i in range(num_data):
         x, y, w = data_series[i]
 
-        s_weight = 2*np.array(w)
+        s_weight = np.array(w)*5/(max(w)-min(w))
 
         # print(max(w),min(w))
 
