@@ -98,16 +98,20 @@ def VisualizeScatter_Fatband(num_data,data_series,grid,subplot_param,
                                  y_major_tick=y_major_tick)
 
     for i in range(num_data):
-        x, y, w = data_series[i]
-
-        s_weight = np.array(w)*5/(max(w)-min(w))
-
-        # print(max(w),min(w))
+        # 解压数据
+        if len(data_series[i]) == 3:
+            x, y, w = data_series[i]
+            w_color, w_size = (w,w)
+        elif len(data_series[i]) == 4:
+            x, y, w_color, w_size = data_series[i]
+        else:
+            print('Please check the dimension of the data !!! ')
+            return
 
         xlim = kwargs['xlim_list'][i] if 'xlim_list' in kwargs else (min(x),max(x))  # 设置X轴范围
         ylim = kwargs['ylim_list'][i] if 'ylim_list' in kwargs else (min(y),max(y))  # 设置Y轴范围
 
-        subplot_list[i].scatter(x, y, s=s_weight, c=w, cmap=colormap, norm=cmap_norm, alpha=alpha)  # 画图核心代码语句
+        subplot_list[i].scatter(x, y, s=w_size, c=w_color, cmap=colormap, norm=cmap_norm, alpha=alpha)  # 画图核心代码语句
 
         # 画费米面分割线
         E_fermi = kwargs['Fermi_energy'][i] if 'Fermi_energy' in kwargs else 0.0  # 费米能级位置

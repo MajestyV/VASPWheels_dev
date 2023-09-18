@@ -12,4 +12,4 @@ viridis = cm.get_cmap('viridis', 256)
 jet = cm.get_cmap('jet', 256)
 turbo = cm.get_cmap('turbo', 256)
 
-print(turbo(0))
+print(viridis(0))
