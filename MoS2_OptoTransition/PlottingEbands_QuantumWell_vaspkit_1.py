@@ -1,24 +1,23 @@
 import numpy as np
 import VaspWheels as vw
-from matplotlib import cm
 
 def Rescale(data):
     data_rescaled = 10*(np.array(data)/(max(data)-min(data)))**2
     return data_rescaled
 
 if __name__=='__main__':
-    Efield = '0.2'
+    Efield = '0.10'
     # JCPGH1
     # data_directory = 'D:/Projects/OptoTransition/Data/Homo-structure/Pentalayer/0 V-nm/'
 
     # MMW502
-    data_directory = 'D:/Projects/OptoTransition/Data/Homo-structure/Pentalayer/'+Efield+' V-nm'
+    data_directory = 'D:/Projects/OptoTransition/Data/Homo-structure/Pentalayer/5_ProjectedBands_nonSOC_noSYM/E_'+Efield
 
     # Guangzhou
     # data_directory = 'D:/PhD_research/OptoTransition/Data/Homo-structure/Pentalayer/'+Efield+' V-nm'
 
-    # layer_list = ['layer1', 'layer2', 'layer3', 'layer4', 'layer5']
-    layer_list = ['layer5', 'layer4', 'layer3', 'layer2', 'layer1']
+    layer_list = ['layer1', 'layer2', 'layer3', 'layer4', 'layer5']
+    # layer_list = ['layer5', 'layer4', 'layer3', 'layer2', 'layer1']
     # layer_list = ['Mo', 'S', 'Total']
 
     # 保存目录
@@ -28,7 +27,7 @@ if __name__=='__main__':
     # saving_filename = layer_list[control_index]
 
     # Fermi_factor = 0.20  # 费米面调零参数
-    Fermi_factor = 0.185
+    Fermi_factor = 0.195
 
     num_segments = 3  # 2D
 
@@ -78,7 +77,7 @@ if __name__=='__main__':
                                                   #colormap=cmap,size_band=np.abs(w_band)*4,
                                                   #y_major_tick=2,colormap_norm=(-1,1),HighSymPath=HighSymPath)
 
-    saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹'  # MMW502
+    saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹/Version_20230919'  # MMW502
     # saving_directory = 'D:/PhD_research/OptoTransition/Data/临时存放文件夹'  # Guangzhou
     saving_filename = 'QuantumWell_'+Efield
     vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename)
