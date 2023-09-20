@@ -1,5 +1,6 @@
 import numpy as np
 import VaspWheels as vw
+import matplotlib.pyplot as plt
 
 def Rescale(data):
     data_rescaled = 10*(np.array(data)/(max(data)-min(data)))**2
@@ -8,10 +9,10 @@ def Rescale(data):
 if __name__=='__main__':
     Efield = '0.00'
     # JCPGH1
-    # data_directory = 'D:/Projects/OptoTransition/Data/Homo-structure/Pentalayer/0 V-nm/'
+    data_directory = 'D:/Projects/OptoTransition/Data/Homo-structure/Pentalayer/5_ProjectedBands_nonSOC_noSYM/E_'+Efield
 
     # MMW502
-    data_directory = 'D:/Projects/OptoTransition/Data/Homo-structure/Pentalayer/5_ProjectedBands_nonSOC_noSYM/E_'+Efield
+    # data_directory = 'D:/Projects/OptoTransition/Data/Homo-structure/Pentalayer/5_ProjectedBands_nonSOC_noSYM/E_'+Efield
 
     # Guangzhou
     # data_directory = 'D:/PhD_research/OptoTransition/Data/Homo-structure/Pentalayer/'+Efield+' V-nm'
@@ -77,7 +78,8 @@ if __name__=='__main__':
                                                   #colormap=cmap,size_band=np.abs(w_band)*4,
                                                   #y_major_tick=2,colormap_norm=(-1,1),HighSymPath=HighSymPath)
 
-    saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹/Version_20230919'  # MMW502
+    saving_directory = 'D:/Projects/OptoTransition/Gallery/临时数据文件夹'  # JCPGH1
+    # saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹/Version_20230919'  # MMW502
     # saving_directory = 'D:/PhD_research/OptoTransition/Data/临时存放文件夹'  # Guangzhou
     saving_filename = 'QuantumWell_'+Efield
     vw.SavingFigure(saving_directory=saving_directory, file_name=saving_filename)

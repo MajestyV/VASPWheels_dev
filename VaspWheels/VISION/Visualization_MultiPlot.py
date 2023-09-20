@@ -86,6 +86,8 @@ def GlobalSetting(num_subplot,grid,subplot_param,
         else:
             pass
 
+        locals()['subplot_'+str(i+1)].tick_params(which='both', colors='#BCBCBC')  # 启用这条代码以修改刻度颜色
+
     return subplot_list
 
 def VisualizeScatter_Fatband(num_data,data_series,grid,subplot_param,
