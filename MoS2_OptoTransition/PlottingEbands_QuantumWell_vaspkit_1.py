@@ -6,7 +6,7 @@ def Rescale(data):
     return data_rescaled
 
 if __name__=='__main__':
-    Efield = '0.10'
+    Efield = '0.00'
     # JCPGH1
     # data_directory = 'D:/Projects/OptoTransition/Data/Homo-structure/Pentalayer/0 V-nm/'
 
@@ -16,8 +16,8 @@ if __name__=='__main__':
     # Guangzhou
     # data_directory = 'D:/PhD_research/OptoTransition/Data/Homo-structure/Pentalayer/'+Efield+' V-nm'
 
-    layer_list = ['layer1', 'layer2', 'layer3', 'layer4', 'layer5']
-    # layer_list = ['layer5', 'layer4', 'layer3', 'layer2', 'layer1']
+    # layer_list = ['layer1', 'layer2', 'layer3', 'layer4', 'layer5']
+    layer_list = ['layer5', 'layer4', 'layer3', 'layer2', 'layer1']
     # layer_list = ['Mo', 'S', 'Total']
 
     # 保存目录
