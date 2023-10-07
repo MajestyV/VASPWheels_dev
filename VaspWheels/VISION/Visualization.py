@@ -13,8 +13,6 @@ def GlobalSetting(figsize=(6.4,4.8),color_background='#FFFFFF',font_type='Arial'
 
     plt.rcParams['axes.facecolor'] = color_background  # 设置画布背景颜色
 
-    ax = plt.subplot(111)  # 创建图例对象（注意有些参数（比如刻度）一般都在ax中设置,不在plot中设置）
-
     # 设置全局字体选项
     font_config = {'font.family': font_type, 'font.weight': font_weight}  # font.family设定所有字体为font_type (默认字体为Arial)
     plt.rcParams.update(font_config)  # 但是对于希腊字母(e.g. α, β, γ等)跟各种数学符号之类的不适用, Latex语法如Γ会被判断为None
@@ -38,6 +36,7 @@ def GlobalSetting(figsize=(6.4,4.8),color_background='#FFFFFF',font_type='Arial'
     x_minor_tick = kwargs['x_minor_tick'] if 'x_minor_tick' in kwargs else x_major_tick / 5.0  # 设置x轴次刻度标签
     y_minor_tick = kwargs['y_minor_tick'] if 'y_minor_tick' in kwargs else y_major_tick / 5.0  # 设置y轴次刻度标签
 
+    ax = plt.subplot(111)  # 创建图例对象（注意有些参数（比如刻度）一般都在ax中设置,不在plot中设置）
     # 控制是否关闭坐标轴刻度
     hide_tick = kwargs['hide_tick'] if 'hide_tick' in kwargs else ''  # 控制关闭哪根坐标轴的刻度
     if hide_tick == 'x':

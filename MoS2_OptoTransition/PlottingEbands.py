@@ -23,8 +23,8 @@ if __name__=='__main__':
     # data_directory = 'D:/PhD_research/Data/Simulation/MoS2/MoS2_pawpbe_vasp5_SOC/D3BJ/5/result'
 
     # Guangzhou
-    data_directory = 'D:/PhD_research/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_14_14_1'  # Pentalayer - E = 0 V/nm
-    # data_directory = 'D:/PhD_research/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/Electric_field/E_0.10'  # Pentalayer - E = 1 V/nm
+    # data_directory = 'D:/PhD_research/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/E_prop_SOC_SYM_14_14_1'  # Pentalayer - E = 0 V/nm
+    data_directory = 'D:/PhD_research/OptoTransition/Data/MoS2_ElectronicStructure/Pentalayer/Electric_field/E_0.10'  # Pentalayer - E = 1 V/nm
 
     # 保存目录
     # saving_directory = 'C:/Users/DELL/Desktop/DataFig_Desktop'  # Zhuhai
