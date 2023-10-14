@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.signal import find_peaks
 
 
 import pandas as pd
@@ -27,8 +28,13 @@ if __name__=='__main__':
     x, y = (21,21)
     excitation_wavelength = 529.8  # [=] nm
     baseline = 800  # 基线强度
+    num_peaks = 2  # 峰值个数
+    a, b = (700,750)
 
-    data_file = '/Users/liusongwei/OptoTransition/Experiment/南科大/Uniformity.csv'
+    # Guangzhou
+    data_file = 'C:/Users/DELL/Desktop/临时数据文件夹/1.csv'
+    # MacBook Pro 13'
+    # data_file = '/Users/liusongwei/OptoTransition/Experiment/南科大/Uniformity.csv'
 
     data_DataFrame = pd.read_csv(data_file, header=None, sep=',')
     data_array = data_DataFrame.values
@@ -38,20 +44,64 @@ if __name__=='__main__':
     wavelength = data_array[:, 0]  # 第一列数据为测试波长
 
     excitation_photon_energy = 1239.8/excitation_wavelength
-    print(excitation_photon_energy)
+    # print(excitation_photon_energy)
 
     photon_energy = 1239.8/wavelength
     energy_shift = photon_energy-excitation_photon_energy
     wavenumber_shift = 8065.5*energy_shift
-    print(wavenumber_shift)
+    # print(wavenumber_shift)
 
     data = np.empty((x,y,data_length))  # 创建空数据以存放数据
     for n in range(x):
         for m in range(y):
             data[n,m] = data_array[:,n*m+1]-baseline  # 第一列数据为测试波长
 
+    plt.plot(wavenumber_shift, data[4, 16])
+    plt.show()
 
-    plt.plot(wavenumber_shift,data[0,0])
+    data_detection = np.zeros((x, y, 1))
+    data_peak_intensity = np.empty((x, y, num_peaks))
+    data_peak_location = np.empty((x,y,num_peaks))
+    for n in range(x):
+        for m in range(y):
+            # peaks, properties = find_peaks(data[n, m], prominence=(100, 2500), width=2, distance=15)
+            peaks, properties = find_peaks(data[n, m], height=20, prominence=(50, 4000), distance=5)
+
+            peaks_ranged = []
+            for i in range(len(peaks)):
+                if peaks[i] >= a and peaks[i] <=b:
+                    peaks_ranged.append(peaks[i])
+                else:
+                    pass
+            peaks_ranged = np.array(peaks_ranged)
+            print(peaks_ranged)
+
+            peak_intensity = np.array([data[n,m][peaks_ranged[i]] for i in range(num_peaks)])
+            peak_location = np.array([wavenumber_shift[peaks_ranged[i]] for i in range(num_peaks)])
+
+            data_peak_intensity[n,m] = peak_intensity
+            data_peak_location[n,m] = peak_location
+
+            data_detection[n,m] = 1  # 如果数据正常，则置1
+
+    print(data_peak_location)
+    print(data_peak_intensity)
+
+    # 此代码使用scipy自带的find_peaks()函数实现峰值检测
+    # https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html
+    # 使用教程：https://blog.csdn.net/chehec2010/article/details/117336967
+    #peaks, properties = find_peaks(data[0,0],prominence=(200,1000),width=2,distance=5)
+
+
+    #print(peaks)
+    #for i in range(len(peaks)):
+        #print(wavenumber_shift[peaks[i]])
+    #print(properties)
+
+
+    #plt.plot(wavenumber_shift,data[0,0])
+    #plt.show()
+
 
     # print(data)
 
