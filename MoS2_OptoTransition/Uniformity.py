@@ -26,15 +26,15 @@ def GetData(data_file, header=None, sep='\s+', **kwargs):
 
 if __name__=='__main__':
     x, y = (21,21)
-    excitation_wavelength = 529.8  # [=] nm
+    excitation_wavelength = 529.4  # [=] nm
     baseline = 800  # 基线强度
     num_peaks = 2  # 峰值个数
     a, b = (700,750)
 
     # Guangzhou
-    data_file = 'C:/Users/DELL/Desktop/临时数据文件夹/1.csv'
+    # data_file = 'C:/Users/DELL/Desktop/临时数据文件夹/1.csv'
     # MacBook Pro 13'
-    # data_file = '/Users/liusongwei/OptoTransition/Experiment/南科大/Uniformity.csv'
+    data_file = '/Users/liusongwei/OptoTransition/Experiment/南科大/Uniformity.csv'
 
     data_DataFrame = pd.read_csv(data_file, header=None, sep=',')
     data_array = data_DataFrame.values
@@ -44,7 +44,7 @@ if __name__=='__main__':
     wavelength = data_array[:, 0]  # 第一列数据为测试波长
 
     excitation_photon_energy = 1239.8/excitation_wavelength
-    # print(excitation_photon_energy)
+    print(excitation_photon_energy)
 
     photon_energy = 1239.8/wavelength
     energy_shift = photon_energy-excitation_photon_energy
@@ -56,7 +56,7 @@ if __name__=='__main__':
         for m in range(y):
             data[n,m] = data_array[:,n*m+1]-baseline  # 第一列数据为测试波长
 
-    plt.plot(wavenumber_shift, data[4, 16])
+    plt.plot(wavenumber_shift, data[0, 0])
     plt.show()
 
     data_detection = np.zeros((x, y, 1))
@@ -74,7 +74,7 @@ if __name__=='__main__':
                 else:
                     pass
             peaks_ranged = np.array(peaks_ranged)
-            print(peaks_ranged)
+            # print(peaks_ranged)
 
             peak_intensity = np.array([data[n,m][peaks_ranged[i]] for i in range(num_peaks)])
             peak_location = np.array([wavenumber_shift[peaks_ranged[i]] for i in range(num_peaks)])
@@ -85,7 +85,18 @@ if __name__=='__main__':
             data_detection[n,m] = 1  # 如果数据正常，则置1
 
     print(data_peak_location)
-    print(data_peak_intensity)
+    # print(data_peak_intensity)
+
+    A = [[1,2],[4,5]]
+    B = [[A[i][j] for i in range(2)] for j in range(2)]
+    # plt.imshow(B)
+
+    data_mapping = np.array([[data_peak_intensity[n,m,0] for n in range(x)] for m in range(y)])
+    #data_mapping = np.array([[data_peak_location[n,m,0]-data_peak_location[n,m,1]
+                              #for n in range(x)]
+                             #for m in range(y)])
+
+    plt.imshow(data_mapping)
 
     # 此代码使用scipy自带的find_peaks()函数实现峰值检测
     # https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html
