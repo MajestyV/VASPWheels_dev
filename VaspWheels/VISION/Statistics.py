@@ -42,3 +42,26 @@ def Histogram(figure,data,num_bins=10,dropping_extremum=True,num_dropped=1,show_
     figure.plot(x_fitting, y_fitting, color=color_fitting, linestyle='--',label=label_fitting,linewidth=2)  # 绘制拟合曲线
 
     return
+
+# 设置刻度
+# 设置主刻度
+#x_major_locator_t = MultipleLocator(2.5)  # 将x主刻度标签设置为x_major_tick的倍数
+#y_major_locator_t = MultipleLocator(0.05)  # 将y主刻度标签设置为y_major_tick的倍数
+#thickness_hist.xaxis.set_major_locator(x_major_locator_t)
+#thickness_hist.yaxis.set_major_locator(y_major_locator_t)
+# 设置次刻度
+#x_minor_locator_t = MultipleLocator(0.5)  # 将x主刻度标签设置为x_major_tick/5.0的倍数
+#y_minor_locator_t = MultipleLocator(0.01)  # 将y主刻度标签设置为y_major_tick/5.0的倍数
+#thickness_hist.xaxis.set_minor_locator(x_minor_locator_t)
+#thickness_hist.yaxis.set_minor_locator(y_minor_locator_t)
+# 设置x轴跟y轴刻度坐标
+#thickness_hist.set_xticks([0,2.5,5,7.5,10,12.5,15])
+#thickness_hist.set_xticklabels([0,2.5,5,7.5,10,12.5,15],size=18)
+#thickness_hist.set_yticks([0,0.05,0.1,0.15,0.2])
+#thickness_hist.set_yticklabels([0,5,10,15,20],size=18)
+
+#thickness_hist.set_xlabel('Thickness (nm)',size=20)  # 绘制x轴
+#thickness_hist.set_ylabel('Count (%)',size=20)  # 绘制y轴
+
+# 图例
+#thickness_hist.legend(loc='best',frameon=False,fontsize=18)

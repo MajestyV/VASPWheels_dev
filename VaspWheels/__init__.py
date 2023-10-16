@@ -35,18 +35,25 @@ from .Crystallography import HighSymmetryPath  # 高对称点路径
 
 ########################################################################################################################
 # 可视化模块
+
 # 色彩模块
 from .VISION import colors as colors                                           # 导入预设色值库
 from .VISION.colors import ColorConvertion as ColorConvertion                  # 色值格式转换函数库
+
 # 色谱模块
 from .VISION import colormap as colormap                                       # 导入预设色谱库
 from .VISION.colormap import CustomizingColormap as CustomizingColormap        # 色谱定制函数库
+
 # 各种画图专用函数
 from .VISION import Visualization as Visualization                             # 核心画图模块 - 单图
 from .VISION import Visualization_MultiPlot as Visualization_MultiPlot         # 核心画图模块 - 多子图组图
 from .VISION import VisualizeElectronic as VisualizeElectronic                 # 电子性能可视化函数包
 # 专用于可视化VASPKIT输出结果的函数包
 from .VISION import VisualizeElectronic_vaspkit as VisualElectronic_vaspkit    # VASPKIT专用电子性能可视化函数包
+
+# 画图专用函数 - 延申版
+from .VISION import Mapping as Mapping                                         # 延申画图模块 - 热度图
+from .VISION import Statistics as Statistics                                   # 延申画图模块 - 统计学专用图，如：直方图
 
 ########################################################################################################################
 # 通用模块

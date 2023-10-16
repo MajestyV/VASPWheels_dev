@@ -2,9 +2,6 @@ import numpy as np
 import pandas as pd
 import VaspWheels as vw
 import matplotlib.pyplot as plt
-from matplotlib import cm,colors
-from matplotlib.cm import ScalarMappable
-from matplotlib.colors import Normalize,ListedColormap, LinearSegmentedColormap
 from scipy.signal import find_peaks
 
 # 此代码使用scipy自带的find_peaks()函数实现峰值检测
@@ -53,41 +50,6 @@ def Peak_correction(peaks,expected_num_peaks,expected_peaks_loc,tolerated_error)
                 pass
     return peaks_corrected  # 如果出现测试结果少于预测的情况，则利用预设峰位去读取对应的基线强度，尽量还原数据
 
-# color bar
-def show_cmap(cmap, norm=None, extend=None):
-    '''展示一个colormap.'''
-    if norm is None:
-        norm = colors.Normalize(vmin=0, vmax=cmap.N)
-    im = ScalarMappable(norm=norm, cmap=cmap)
-
-    fig, ax = plt.subplots(figsize=(6, 1))
-    fig.subplots_adjust(bottom=0.5)
-    fig.colorbar(im, cax=ax, orientation='horizontal', extend=extend)
-    plt.show()
-
-# 设置刻度
-# 设置主刻度
-#x_major_locator_t = MultipleLocator(2.5)  # 将x主刻度标签设置为x_major_tick的倍数
-#y_major_locator_t = MultipleLocator(0.05)  # 将y主刻度标签设置为y_major_tick的倍数
-#thickness_hist.xaxis.set_major_locator(x_major_locator_t)
-#thickness_hist.yaxis.set_major_locator(y_major_locator_t)
-# 设置次刻度
-#x_minor_locator_t = MultipleLocator(0.5)  # 将x主刻度标签设置为x_major_tick/5.0的倍数
-#y_minor_locator_t = MultipleLocator(0.01)  # 将y主刻度标签设置为y_major_tick/5.0的倍数
-#thickness_hist.xaxis.set_minor_locator(x_minor_locator_t)
-#thickness_hist.yaxis.set_minor_locator(y_minor_locator_t)
-# 设置x轴跟y轴刻度坐标
-#thickness_hist.set_xticks([0,2.5,5,7.5,10,12.5,15])
-#thickness_hist.set_xticklabels([0,2.5,5,7.5,10,12.5,15],size=18)
-#thickness_hist.set_yticks([0,0.05,0.1,0.15,0.2])
-#thickness_hist.set_yticklabels([0,5,10,15,20],size=18)
-
-#thickness_hist.set_xlabel('Thickness (nm)',size=20)  # 绘制x轴
-#thickness_hist.set_ylabel('Count (%)',size=20)  # 绘制y轴
-
-# 图例
-#thickness_hist.legend(loc='best',frameon=False,fontsize=18)
-
 if __name__=='__main__':
     x, y = (21,21)  # (行，列）
     excitation_wavelength = 529.4  # [=] nm
@@ -96,7 +58,10 @@ if __name__=='__main__':
     search_range = (700,725)
 
     # MMW502
-    data_file = 'D:/Projects/OptoTransition/Experiment/南科大/20231010_Raman均匀性/Uniformity.csv'
+    # data_file = 'D:/Projects/OptoTransition/Experiment/南科大/20231010_Raman均匀性/Uniformity.csv'
+    # saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹'
+    # JCPGH1
+    data_file = 'D:/Projects/OptoTransition/Experiment/南科大/MoS2_Raman/Uniformity.csv'
     saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹'
     # Guangzhou
     # data_file = 'C:/Users/DELL/Desktop/临时数据文件夹/1.csv'
@@ -154,29 +119,28 @@ if __name__=='__main__':
     #B = [[A[i][j] for i in range(2)] for j in range(2)]
     # plt.imshow(B)
 
-    data_mapping = np.array([[data_peak_intensity[n,m,1] for n in range(x)] for m in range(y)])
-    # data_mapping = np.array([[data_peak_location[n,m,0]-data_peak_location[n,m,1]
-                              #for n in range(x)]
-                             #for m in range(y)])
+    # data_mapping = np.array([[data_peak_intensity[n,m,1] for n in range(x)] for m in range(y)])
+    data_mapping = np.array([[data_peak_location[n,m,0]-data_peak_location[n,m,1]
+                              for n in range(x)]
+                             for m in range(y)])
 
     data_histogram = np.array([data_peak_intensity[n,m,1] for n in range(x) for m in range(y)])
 
+    # 画图模块
+    # 分布直方图
     ax = plt.subplot(111)
 
     # Histogram(ax,data_histogram,num_dropped=1,num_bins=200)
 
-    # 画图模块
-    plt.tick_params(bottom=True, top=False, left=True, right=False)
-    plt.rcParams.update({'xtick.direction': 'in', 'ytick.direction': 'in'})  # 设置x轴和y轴刻度线方向向内
-
-    color_list = ['#072C54','#FFFFFF']
-    cm = LinearSegmentedColormap.from_list('customed', color_list, N=100)
-
-    # https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
-    # plt.imshow(data_mapping,interpolation='gaussian',norm=colors.Normalize(vmin=0,vmax=2000),cmap=cm)
+    # 热度图
+    # print(np.min(data_mapping),np.max(data_mapping))
+    heatmap = vw.Mapping.Heatmap(data_mapping,interpolation='gaussian',mapping_range=(22,30),
+                                 customize_colorbar=False,cmap='coolwarm')
+    heatmap.ShowImage()
+    # heatmap.SavingFigure()
 
     # color bar
-    show_cmap(cm)
+    # show_cmap(cm)
     # cb = plt.colorbar(cm.ScalarMappable(cmap=cm, norm=colors.Normalize(vmin=0,vmax=2000)),orientation='vertical')
     #cb.outline.set_color('none')
     #cb.ax.set_title('Intensity (a.u.)', fontsize=6, pad=5)
