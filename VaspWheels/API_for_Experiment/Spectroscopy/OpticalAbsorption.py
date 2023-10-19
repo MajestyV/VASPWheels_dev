@@ -6,7 +6,6 @@
 import pandas as pd
 import numpy as np
 import scipy.stats as st
-from Visualize import Visualization
 
 class Tauc_plot:
     def __init__(self):

@@ -22,6 +22,7 @@ from .API_for_external import API_phonopy as API_phonopy  # API for phonopy (htt
 
 # 导入用于处理实验数据的模块
 from . import API_for_Experiment as Experiment
+from .API_for_Experiment import Spectroscopy as Spectroscopy  # 光谱学函数库
 
 ########################################################################################################################
 # 子package导入模块，方便外部调用
