@@ -61,12 +61,13 @@ if __name__=='__main__':
     # data_file = 'D:/Projects/OptoTransition/Experiment/南科大/20231010_Raman均匀性/Uniformity.csv'
     # saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹'
     # JCPGH1
-    data_file = 'D:/Projects/OptoTransition/Experiment/南科大/MoS2_Raman/Uniformity.csv'
-    saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹'
+    # data_file = 'D:/Projects/OptoTransition/Experiment/南科大/MoS2_Raman/Uniformity.csv'
+    # saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹'
     # Guangzhou
     # data_file = 'C:/Users/DELL/Desktop/临时数据文件夹/1.csv'
     # MacBook Pro 13'
-    # data_file = '/Users/liusongwei/OptoTransition/Experiment/南科大/Uniformity.csv'
+    data_file = '/Users/liusongwei/OptoTransition/Experiment/南科大/Uniformity.csv'
+    saving_directory = '/Users/liusongwei/OptoTransition/临时数据文件夹'
 
     data_DataFrame = pd.read_csv(data_file, header=None, sep=',')
     data_array = data_DataFrame.values
@@ -136,17 +137,11 @@ if __name__=='__main__':
     # print(np.min(data_mapping),np.max(data_mapping))
     heatmap = vw.Mapping.Heatmap(data_mapping,interpolation='gaussian',mapping_range=(22,30),
                                  customize_colorbar=False,cmap='coolwarm')
-    heatmap.ShowImage()
+    # heatmap.ShowImage()
+    heatmap.ShowColorbar()
     # heatmap.SavingFigure()
 
-    # color bar
-    # show_cmap(cm)
-    # cb = plt.colorbar(cm.ScalarMappable(cmap=cm, norm=colors.Normalize(vmin=0,vmax=2000)),orientation='vertical')
-    #cb.outline.set_color('none')
-    #cb.ax.set_title('Intensity (a.u.)', fontsize=6, pad=5)
-    #cb.ax.tick_params(which='major', direction='in', length=3, width=0.5, color='white', left=False, labelsize=6)
-
-    Raman_mode = 'colorbar'
+    Raman_mode = 'Phonon_energy_gap_colorbar'
     vw.SavingFigure(saving_directory=saving_directory, file_name=Raman_mode)
     vw.SavingFigure(saving_directory=saving_directory, file_name=Raman_mode, format='eps')
 

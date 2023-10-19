@@ -50,7 +50,7 @@ class Heatmap:
         return
 
     # 此函数可用于展示一个colormap
-    def ShowCmap(self):
+    def ShowColorbar(self):
         self.FigureSetting()
         cmap = ScalarMappable(norm=self.color_norm, cmap=self.cmap)
         fig, ax = plt.subplots(figsize=(6, 1))
