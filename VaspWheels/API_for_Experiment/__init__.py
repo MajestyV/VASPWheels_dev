@@ -2,4 +2,4 @@
 from .DataAnalyzer import Moving_average
 
 # 调用子模块函数库
-from .Spectroscopy import OpticalAbsorption, RamanScattering  # 光谱学函数库
+from .Spectroscopy import OpticalAbsorption  # 光谱学函数库
