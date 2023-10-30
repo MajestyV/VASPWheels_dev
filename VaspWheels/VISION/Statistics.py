@@ -35,7 +35,7 @@ def Histogram(figure,data,num_bins=10,dropping_extremum=True,num_dropped=1,show_
 
     # 直方图函数，x为x轴的值，normed=1表示为概率密度，即和为一，绿色方块，色深参数0.5.返回n个概率，直方块左边线的x值，及各个方块对象
     n, bins, patches = figure.hist(data, num_bins, weights=weight_list, alpha=alpha_hist, color=color_hist, label=label_hist)
-    print(n,bins,patches)
+    # print(n,bins,patches)
     # 画拟合曲线
     x_fitting = np.linspace(range_fitting[0],range_fitting[1],npoints_fitting)
     y_fitting = stats.norm.pdf(x_fitting,mu,sigma)  # 拟合一条最佳正态分布曲线y

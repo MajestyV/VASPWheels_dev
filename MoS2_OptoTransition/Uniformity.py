@@ -58,16 +58,16 @@ if __name__=='__main__':
     search_range = (700,725)
 
     # MMW502
-    # data_file = 'D:/Projects/OptoTransition/Experiment/南科大/20231010_Raman均匀性/Uniformity.csv'
-    # saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹'
+    data_file = 'D:/Projects/OptoTransition/Experiment/南科大/20231010_Raman均匀性/Uniformity.csv'
+    saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹'
     # JCPGH1
     # data_file = 'D:/Projects/OptoTransition/Experiment/南科大/MoS2_Raman/Uniformity.csv'
     # saving_directory = 'D:/Projects/OptoTransition/临时数据文件夹'
     # Guangzhou
     # data_file = 'C:/Users/DELL/Desktop/临时数据文件夹/1.csv'
     # MacBook Pro 13'
-    data_file = '/Users/liusongwei/OptoTransition/Experiment/南科大/Uniformity.csv'
-    saving_directory = '/Users/liusongwei/OptoTransition/临时数据文件夹'
+    # data_file = '/Users/liusongwei/OptoTransition/Experiment/南科大/Uniformity.csv'
+    # saving_directory = '/Users/liusongwei/OptoTransition/临时数据文件夹'
 
     data_DataFrame = pd.read_csv(data_file, header=None, sep=',')
     data_array = data_DataFrame.values
@@ -102,7 +102,7 @@ if __name__=='__main__':
 
             peaks_ranged = Peak_range_refinement(peaks,search_range)
             peaks_corrected = Peak_correction(peaks_ranged,2,(706,721),2)
-            print(peaks_corrected)
+            # print(peaks_corrected)
 
 
             peak_intensity = np.array([data[n,m][peaks_corrected[i]] for i in range(num_peaks)])
@@ -113,36 +113,41 @@ if __name__=='__main__':
 
             data_detection[n,m] = 1  # 如果数据正常，则置1
 
-    print(data_peak_location)
+    # print(data_peak_location)
     # print(data_peak_intensity)
 
     #A = [[1,2],[4,5]]
     #B = [[A[i][j] for i in range(2)] for j in range(2)]
     # plt.imshow(B)
 
-    # data_mapping = np.array([[data_peak_intensity[n,m,1] for n in range(x)] for m in range(y)])
-    data_mapping = np.array([[data_peak_location[n,m,0]-data_peak_location[n,m,1]
-                              for n in range(x)]
-                             for m in range(y)])
+    data_mapping = np.array([[data_peak_intensity[n,m,0] for n in range(x)] for m in range(y)])
+    # data_mapping = np.array([[data_peak_location[n,m,0]-data_peak_location[n,m,1]
+                              # for n in range(x)]
+                             # for m in range(y)])
 
-    data_histogram = np.array([data_peak_intensity[n,m,1] for n in range(x) for m in range(y)])
+    data_histogram = np.array([data_peak_location[n,m,1] for n in range(x) for m in range(y)])
 
     # 画图模块
     # 分布直方图
-    ax = plt.subplot(111)
+    # ax = plt.subplot(111)
 
-    # Histogram(ax,data_histogram,num_dropped=1,num_bins=200)
+    # vw.Statistics.Histogram(ax,data_histogram,dropping_extremum=False,num_bins=1000)
 
     # 热度图
     # print(np.min(data_mapping),np.max(data_mapping))
-    heatmap = vw.Mapping.Heatmap(data_mapping,interpolation='gaussian',mapping_range=(22,30),
-                                 customize_colorbar=False,cmap='coolwarm')
-    # heatmap.ShowImage()
-    heatmap.ShowColorbar()
+    # Peak intensity
+    heatmap = vw.Mapping.Heatmap(data_mapping,interpolation='gaussian',mapping_range=(0,1800),
+                                 customize_colorbar=True)
+    # Peak location
+    # heatmap = vw.Mapping.Heatmap(data_mapping, interpolation='gaussian', mapping_range=(22, 30),
+                                 # customize_colorbar=False, cmap='coolwarm')
+
+    heatmap.ShowImage()
+    # heatmap.ShowColorbar()
     # heatmap.SavingFigure()
 
-    Raman_mode = 'Phonon_energy_gap_colorbar'
-    vw.SavingFigure(saving_directory=saving_directory, file_name=Raman_mode)
-    vw.SavingFigure(saving_directory=saving_directory, file_name=Raman_mode, format='eps')
+    #Raman_mode = 'Phonon_energy_gap'
+    #vw.SavingFigure(saving_directory=saving_directory, file_name=Raman_mode)
+    #vw.SavingFigure(saving_directory=saving_directory, file_name=Raman_mode, format='eps')
 
     plt.show(block=True)  # https://blog.csdn.net/qq_56039091/article/details/124024286
