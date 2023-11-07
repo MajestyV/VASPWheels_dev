@@ -1,3 +1,4 @@
+import xlwt
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -31,6 +32,38 @@ def WriteCSV(data, sep = ' ', saving_directory=default_path, file_name='untitled
         content = file.read()                      # 将已有的内容读取出来
         file.seek(0, 0)                            # 找到数据文件的开头
         file.write('sep=' + sep + '\n' + content)  # 写入分隔符信息
+
+    print("csv格式表格写入数据成功！")
+
+    return
+
+# 此函数可以将二维数组形式的数据写入Excel文件
+def WriteExcel(data, saving_directory=default_path, file_name='untitled', **kwargs):
+    data = np.array(data)  # 数据转换，确保data的形式为numpy二维数组，防止出bug
+    num_row, num_col = data.shape  # 获取数据的维度，（行数，列数）
+
+    sheet_name = kwargs['sheet_name'] if 'sheet_name' in kwargs else 'data'  # 默认的表格名称
+    write_title = kwargs['write_title'] if 'write_title' in kwargs else True  # 默认写入数据标题
+    title = kwargs['title'] if 'title' in kwargs else ['col_'+str(i) for i in range(num_col)]  # 默认的数据标题
+
+    workbook = xlwt.Workbook()  # 新建一个工作簿
+    sheet = workbook.add_sheet(sheet_name)  # 在工作簿中新建一个表格
+
+    if write_title:
+        for i in range(num_col):
+            sheet.write(0, i, title[i])  # 写入标题
+        for i in range(num_row):
+            for j in range(num_col):
+                sheet.write(i+1, j, data[i][j])  # 像表格中写入数据（对应的行和列）
+    else:
+        for i in range(num_row):
+            for j in range(num_col):
+                sheet.write(i, j, data[i][j])  # 像表格中写入数据（对应的行和列）
+
+    saving_address = saving_directory + '/' + file_name + '.xls'  # 文件储存地址
+    workbook.save(saving_address)  # 保存工作簿
+    print("xls格式表格写入数据成功！")
+
     return
 
 ########################################################################################################################

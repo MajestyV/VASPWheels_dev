@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import VaspWheels as vw
 import matplotlib.pyplot as plt
@@ -47,6 +48,7 @@ def DifferentialAbsorption():
     return
 
 if __name__=='__main__':
+    # JCPGH1
     data_file = ('D:/Projects/OptoTransition/Experiment/南科大/临时工作区/Absorption.xls')
 
     data = pd.read_excel(data_file, sheet_name=None)  # 利用pandas读取excel文件中的数据
@@ -97,13 +99,24 @@ if __name__=='__main__':
 
     print(hot_list)
 
-    plt.plot(E_photon, dA_10V, c=hot_list[5])
-    plt.plot(E_photon, dA_20V, c=hot_list[4])
-    plt.plot(E_photon, dA_30V, c=hot_list[3])
-    plt.plot(E_photon, dA_40V, c=hot_list[2])
-    plt.plot(E_photon, dA_50V, c=hot_list[1])
-    plt.xlim(1.6, 3.0)
-    plt.ylim(-50,900)
+    #plt.plot(E_photon, dA_10V, c=hot_list[5])
+    #plt.plot(E_photon, dA_20V, c=hot_list[4])
+    #plt.plot(E_photon, dA_30V, c=hot_list[3])
+    #plt.plot(E_photon, dA_40V, c=hot_list[2])
+    #plt.plot(E_photon, dA_50V, c=hot_list[1])
+    #plt.xlim(1.6, 3.0)
+    #plt.ylim(-50, 900)
+    plt.plot(wavelength, dA_10V, c=hot_list[5])
+    plt.plot(wavelength, dA_20V, c=hot_list[4])
+    plt.plot(wavelength, dA_30V, c=hot_list[3])
+    plt.plot(wavelength, dA_40V, c=hot_list[2])
+    plt.plot(wavelength, dA_50V, c=hot_list[1])
+    plt.xlim(550, 750)
+    plt.ylim(-50, 900)
+
+    excel_data = np.array([wavelength,dA_10V,dA_20V,dA_30V,dA_40V,dA_50V]).T  # 通过转置（transpose）重整数据
+    vw.WriteExcel(excel_data,saving_directory='D:/Projects/OptoTransition/Experiment/南科大/临时工作区')
+
 
 
     # print(data_array)
