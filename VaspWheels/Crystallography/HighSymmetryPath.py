@@ -5,4 +5,5 @@ _2D = {'HEX':   [r'$\Gamma$', 'M', 'K', r'$\Gamma$'],
        'ORT_2': [r'$\Gamma$', 'X', 'S', r'$\Gamma$', 'Y']}
 
 # High symmetry path (HSP) for three-dimensional (3D) materials
-_3D = {'HEX': [r'$\Gamma$', 'M', 'K', r'$\Gamma$', 'A', 'L', 'H', 'A']}
+_3D = {'HEX': [r'$\Gamma$', 'M', 'K', r'$\Gamma$', 'A', 'L', 'H', 'A'],
+       'Ice_Ih': [r'$\Gamma$', 'M', 'K', r'$\Gamma$', 'A', 'L', 'H', 'A', 'M', 'H']}

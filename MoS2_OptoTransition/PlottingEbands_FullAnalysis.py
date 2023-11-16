@@ -1,5 +1,4 @@
 import numpy as np
-
 import VaspWheels as vw
 
 if __name__=='__main__':
