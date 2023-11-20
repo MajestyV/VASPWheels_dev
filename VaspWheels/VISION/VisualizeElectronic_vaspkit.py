@@ -31,7 +31,7 @@ def VisualizeBands(x_band,y_band,Knodes_projected,**kwargs):
     GlobalSetting(bottom_tick=False, y_major_tick=y_major_tick)        # 引入画图全局变量
 
     # 画能带图
-    plt.plot(x_band,y_band,c=color,linewidth=2)
+    plt.scatter(x_band,y_band,c=color,s=1)
 
     # 对于能带图，有些参数Visualization模块无法设置，因此在此利用matplotlib进行修改
     # 画高对称点分割线，通过zorder=0将分割线置底
