@@ -20,6 +20,9 @@ from .API_for_VASP import ReciprocalSpace      # K空间（倒易空间）相关
 from .API_for_external import API_vaspkit as API_vaspkit  # API for VASPKIT (https://vaspkit.com/)
 from .API_for_external import API_phonopy as API_phonopy  # API for phonopy (https://phonopy.github.io/phonopy/)
 
+# 分子动力学分析模块
+from .API_for_MolecularDynamics import GetTrajectory as GetTrajectory
+
 # 导入用于处理实验数据的模块
 from . import API_for_Experiment as Experiment
 from .API_for_Experiment import Spectroscopy as Spectroscopy  # 光谱学函数库
