@@ -48,12 +48,12 @@ if __name__=='__main__':
     print(data_array)
 
     # 画图模块
-    # Plot_AbsorptionCoefficient()
-    plt.rcParams.update({'xtick.direction': 'in', 'ytick.direction': 'in'})  # 设置x轴和y轴刻度线方向向内
+    Plot_AbsorptionCoefficient()
+    #plt.rcParams.update({'xtick.direction': 'in', 'ytick.direction': 'in'})  # 设置x轴和y轴刻度线方向向内
 
-    plt.plot(wavelength,md_50)
+    #plt.plot(wavelength,md_50)
 
-    plt.show(block=True)
+    #plt.show(block=True)
 
     # 数据保存模块
     #excel_data = np.array([wavelength, md_0, md_10, md_20, md_30, md_40, md_50]).T  # 通过转置（transpose）重整数据

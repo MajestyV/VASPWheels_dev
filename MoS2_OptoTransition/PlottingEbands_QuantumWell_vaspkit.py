@@ -5,7 +5,7 @@ if __name__=='__main__':
     control_index = 0  # 控制字
 
     # JCPGH1
-    data_directory = 'D:/Projects/OptoTransition/Data/Homo-structure/Pentalayer/0 V-nm/'
+    data_directory = 'D:/Projects/OptoTransition/Data/Homo-structure/Pentalayer/Test/0.0 V-nm/'
 
     layer_list = ['layer1', 'layer2', 'layer3', 'layer4', 'layer5']
 
