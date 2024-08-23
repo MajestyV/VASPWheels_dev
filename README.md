@@ -3,6 +3,9 @@
 
 ## Introduction
 
+This is the old version used for development.
+For the new version, please refer to [VASPWheels](https://github.com/MajestyV/VASPWheels)
+
 ## Theory
 
 ## Important knowledge
